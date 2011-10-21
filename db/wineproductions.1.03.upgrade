@@ -1,0 +1,9 @@
+#
+# This file will upgrade the database table wineproductions to version 1.02.
+#
+ALTER TABLE wineproductions ADD COLUMN order_flags smallint unsigned not null after filter_colour;
+ALTER TABLE wineproductions ADD COLUMN bottling_flags smallint unsigned not null after filter_date;
+ALTER TABLE wineproductions CHANGE rack_length kit_length varchar(2) not null;
+UPDATE wineproductions SET kit_length = (kit_length/7) + 2;
+UPDATE product_details SET detail_key = 'kit_length', detail_value = (detail_value/7)+2 WHERE detail_key = 'rack_length';
+ALTER TABLE wineproductions COMMENT='v1.03';

@@ -1,0 +1,63 @@
+#
+# Description
+# -----------
+# This table is used to store the businesses settings for the wine production module.
+#
+# Some examples:
+# - racking.autoschedule.madeonsun = 11;
+# - racking.autoschedule.madeonmon = 10;
+# - racking.autoschedule.madeontue = 9;
+# - racking.autoschedule.madeonwed = 13;
+# - racking.autoschedule.madeonthu = 12;
+# - racking.autoschedule.madeonfri = 11;
+# - racking.autoschedule.madeonsat = 10;
+#
+# - filter_colours.*.code = #ffffff;
+# - filter_colours.*.name = Unknown;
+# - filter_colours.yellow.code = #ffcc00
+# - filter_colours.yellow.name = Yellow;
+# - filter_colours.lightred.code = #ffcc00
+# - filter_colours.lightred.name = Light Red;
+#
+# - rack_colours.*.code = #ffffff;
+# - rack_colours.*.name = Unknown;
+# - rack_colours.yellow.code = #ffcc00
+# - rack_colours.yellow.name = Yellow;
+# - rack_colours.lightred.code = #ffcc00
+# - rack_colours.lightred.name = Light Red;
+#
+# - scheduling.start = 10:00
+# - scheduling.end = 18:00
+# - scheduling.interval = 30
+#
+#
+# The order_flags and bottling_flags have available up to 16 flags.  That means, the
+# numbering goes from 1 -> 16 in decimal, which will be translated to binary to
+# find if the flags has been set.
+#
+# - order_flags.1.name = 'No Top Up'
+# - order_flags.1.colour = '#ffffff';
+# - order_flags.2.name
+#
+# - bottling.flags.6.name = 'Confirmed';
+# - bottling.flags.6.colour = '#ff0000';
+# - bottling.flags.6.font_colour = '#000000';		- this is used for the font when on the plain white list background
+#
+#
+# Fields
+# ------
+# business_id:	The id of the business the detail is for.
+# detail_key:	The unique key for the detail.
+# detail_value:	The value stored for this key.
+# date_added:	The date and time the entry was created in the database.
+# last_updated:	The date and time the entry was last updated.
+#
+create table wineproduction_settings (
+	business_id int not null,
+	detail_key varchar(50) not null,
+	detail_value varchar(255) not null,
+	date_added datetime not null,
+	last_updated datetime not null,
+	primary key (business_id, detail_key),
+	index (last_updated)
+) ENGINE=InnoDB, COMMENT='v1.01';

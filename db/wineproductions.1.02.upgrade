@@ -1,0 +1,9 @@
+#
+# This file will upgrade the database table wineproductions to version 1.02.
+#
+DROP INDEX customer_name ON wineproductions;
+ALTER TABLE wineproductions DROP COLUMN customer_name;
+ALTER TABLE wineproductions DROP COLUMN wine_name;
+ALTER TABLE wineproductions ADD COLUMN colour_tag varchar(20) not null after status;
+CREATE INDEX customer_name ON wineproductions (customer_id, invoice_number, product_id);
+ALTER TABLE wineproductions COMMENT='v1.02';

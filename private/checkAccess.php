@@ -1,0 +1,114 @@
+<?php
+//
+// Description
+// -----------
+// This function will validate the user making the request has the 
+// proper permissions to access or change the data.  This function
+// must be called by all public API functions to ensure security.
+//
+// Info
+// ----
+// Status: 			beta
+//
+// Arguments
+// ---------
+// business_id: 		The ID of the business the request is for.
+// 
+// Returns
+// -------
+//
+function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
+
+	//
+	// Load the rulesets for this module
+	//
+	require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/getRulesets.php');
+	$rulesets = ciniki_wineproduction_getRuleSets($ciniki);
+
+	//
+	// Check if the module is turned on for the business
+	// Check the business is active
+	// Get the ruleset for this module
+	//
+	$strsql = "SELECT ruleset FROM businesses, business_permissions "
+		. "WHERE businesses.id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+		. "AND businesses.status = 1 "
+		. "AND (businesses.modules & 0x200000) = 0x200000 "
+		. "AND businesses.id = business_permissions.business_id "
+		. "AND business_permissions.module = 'wineproduction' "
+		. "";
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'module');
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	if( !isset($rc['module']) || !isset($rc['module']['ruleset']) || $rc['module']['ruleset'] == '' ) {
+		return array('stat'=>'fail', 'err'=>array('code'=>'357', 'msg'=>'Access denied.'));
+	}
+
+	//
+	// Sysadmins are allowed full access
+	//
+	if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 ) {
+		return array('stat'=>'ok');
+	}
+
+	//
+	// Check to see if the ruleset is valid
+	//
+	if( !isset($rulesets[$rc['module']['ruleset']]) ) {
+		return array('stat'=>'fail', 'err'=>array('code'=>'358', 'msg'=>'Access denied.'));
+	}
+	$ruleset = $rc['module']['ruleset'];
+
+	// 
+	// Get the rules for the specified method
+	//
+	$rules = array();
+	if( isset($rulesets[$ruleset]['methods']) && isset($rulesets[$ruleset]['methods'][$method]) ) {
+		$rules = $rulesets[$ruleset]['methods'][$method];
+	} elseif( isset($rulesets[$ruleset]['default']) ) {
+		$rules = $rulesets[$ruleset]['default'];
+	} else {
+		return array('stat'=>'fail', 'err'=>array('code'=>'359', 'msg'=>'Access denied.'));
+	}
+
+
+	//
+	// Apply the rules.  Any matching rule will allow access.
+	//
+
+
+	//
+	// If business_group specified, check the session user in the business_users table.
+	//
+	if( isset($rules['business_group']) && $rules['business_group'] > 0 ) {
+		//
+		// Compare the session users bitmask, with the bitmask specified in the rules
+		// If when OR'd together, any bits are set, they have access.
+		//
+		$strsql = sprintf("SELECT business_id, user_id FROM business_users "
+			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+			. "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
+			. "AND (groups & 0x%x) > 0 ", ciniki_core_dbQuote($ciniki, $rules['business_group']));
+		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'user');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		//
+		// Double check business_id and user_id match, for single row returned.
+		//
+		if( !isset($rc['user']) || !isset($rc['user']['business_id']) 
+			|| $rc['user']['business_id'] != $business_id 
+			|| $rc['user']['user_id'] != $ciniki['session']['user']['id'] ) {
+			// Access Granted!
+			return array('stat'=>'fail', 'err'=>array('code'=>'360', 'msg'=>'Access denied.'));
+		}
+	}
+
+	//
+	// If all tests passed, then return ok
+	//
+	return array('stat'=>'ok');
+}
+?>
