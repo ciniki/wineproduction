@@ -244,7 +244,6 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	}
 
 
-	print "Done, sending email now.\n";
 	//
 	// Create email message with XLS attached
 	//
@@ -276,8 +275,6 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		// Attache the excel file
 		$msg .= "--{$mime_boundary}\n";
 
-		error_log("sending email");
-		print "Sending...\n";
 		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
 		$dptr = fopen("php://temp:100000000", "r+");
 		$data = $objWriter->save($dptr);
