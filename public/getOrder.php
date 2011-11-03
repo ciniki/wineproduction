@@ -73,7 +73,7 @@ function ciniki_wineproduction_getOrder($ciniki) {
 		return $rc;
 	}
 	if( !isset($rc['order']) ) {
-		return array('stat'=>'fail', 'err'=>array('code'=>'366', 'msg'=>'Invalid order'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'366', 'msg'=>'Invalid order'));
 	}
 	return array('stat'=>'ok', 'order'=>$rc['order']);
 }

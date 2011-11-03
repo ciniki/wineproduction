@@ -122,7 +122,7 @@ function ciniki_wineproduction_update($ciniki) {
 	}
 	if( !isset($rc['num_affected_rows']) || $rc['num_affected_rows'] != 1 ) {
 		ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
-		return array('stat'=>'fail', 'err'=>array('code'=>'367', 'msg'=>'Unable to add order'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'367', 'msg'=>'Unable to add order'));
 	}
 
 	//

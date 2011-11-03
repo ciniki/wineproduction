@@ -43,7 +43,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 		return $rc;
 	}
 	if( !isset($rc['module']) || !isset($rc['module']['ruleset']) || $rc['module']['ruleset'] == '' ) {
-		return array('stat'=>'fail', 'err'=>array('code'=>'357', 'msg'=>'Access denied.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'357', 'msg'=>'Access denied.'));
 	}
 
 	//
@@ -57,7 +57,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 	// Check to see if the ruleset is valid
 	//
 	if( !isset($rulesets[$rc['module']['ruleset']]) ) {
-		return array('stat'=>'fail', 'err'=>array('code'=>'358', 'msg'=>'Access denied.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'358', 'msg'=>'Access denied.'));
 	}
 	$ruleset = $rc['module']['ruleset'];
 
@@ -70,7 +70,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 	} elseif( isset($rulesets[$ruleset]['default']) ) {
 		$rules = $rulesets[$ruleset]['default'];
 	} else {
-		return array('stat'=>'fail', 'err'=>array('code'=>'359', 'msg'=>'Access denied.'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'359', 'msg'=>'Access denied.'));
 	}
 
 
@@ -102,7 +102,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 			|| $rc['user']['business_id'] != $business_id 
 			|| $rc['user']['user_id'] != $ciniki['session']['user']['id'] ) {
 			// Access Granted!
-			return array('stat'=>'fail', 'err'=>array('code'=>'360', 'msg'=>'Access denied.'));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'360', 'msg'=>'Access denied.'));
 		}
 	}
 

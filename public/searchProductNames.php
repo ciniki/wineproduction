@@ -73,7 +73,7 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 				. ") "
 			. "AND products.status = 1 ";
 	} else {
-		return array('stat'=>'fail', 'err'=>array('code'=>'372', 'msg'=>'No search specified'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'372', 'msg'=>'No search specified'));
 	}
 
 	$strsql .= "GROUP BY products.id "

@@ -12,6 +12,12 @@
 // ---------
 // 
 // user_id: 		The user making the request
+//
+// API Arguments
+// -------------
+// business_id:		The ID of the business to get the stats schedule for.
+// start_date:		The first date to get the stats from.
+// days:			The number of days to collect stats for.
 // 
 // Returns
 // -------
@@ -32,7 +38,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'start_date'=>array('required'=>'yes', 'type'=>'date', 'blank'=>'no', 'errmsg'=>'No business specified'), 
+        'start_date'=>array('required'=>'yes', 'type'=>'date', 'blank'=>'no', 'errmsg'=>'No start date specified'), 
         'days'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -86,7 +92,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'racking', 'stat', array('stat'=>'ok', 'racking'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'428', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'428', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	if( !isset($rc['racking']) ) {
 		return array('stat'=>'ok', 'stats'=>$stats);
@@ -106,7 +112,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'429', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'429', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	$stats['racking']['past'] = $rc['racking']['count'];
 
@@ -117,7 +123,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'431', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'431', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	$stats['racking']['future'] = $rc['racking']['count'];
 	
@@ -139,7 +145,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'filtering', 'stat', array('stat'=>'ok', 'filtering'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'430', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'430', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	if( !isset($rc['filtering']) ) {
 		return array('stat'=>'ok', 'stats'=>$stats);
@@ -159,7 +165,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'418', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'418', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	$stats['filtering']['past'] = $rc['filtering']['count'];
 
@@ -170,7 +176,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'417', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'417', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	$stats['filtering']['future'] = $rc['filtering']['count'];
 

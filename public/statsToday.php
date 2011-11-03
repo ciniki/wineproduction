@@ -58,7 +58,7 @@ function ciniki_wineproduction_statsToday($ciniki) {
 		. "GROUP BY status ";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('code'=>'375', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'375', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	if( !isset($rc['stats']) ) {
 		return array('stat'=>'ok', 'stats'=>array());
