@@ -6,10 +6,6 @@
 // This allows the user to view what has happened to a data element, and if they
 // choose, revert to a previous version.
 //
-// Info
-// ----
-// Status: beta
-//
 // Arguments
 // ---------
 // api_key:
@@ -55,6 +51,9 @@ function ciniki_wineproduction_getHistory($ciniki) {
 	if( $args['field'] == 'customer_id' ) {
 		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogFkId.php');
 		return ciniki_core_dbGetChangeLogFkId($ciniki, $args['business_id'], 'wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'customers', 'id', "CONCAT_WS(' ', customers.first, customers.last)");
+	} elseif( $args['field'] == 'product_id' ) {
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogFkId.php');
+		return ciniki_core_dbGetChangeLogFkId($ciniki, $args['business_id'], 'wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'products', 'id', "products.name");
 	} elseif( $args['field'] == 'order_date' 
 		|| $args['field'] == 'start_date' 
 		|| $args['field'] == 'racking_date' 
