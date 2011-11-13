@@ -182,7 +182,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND status < 40 "
+		. "AND status < 60 "
 		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '') "
 		. "AND (filtering_date > 0 AND filtering_date < NOW()) "
 		. "GROUP BY status "
