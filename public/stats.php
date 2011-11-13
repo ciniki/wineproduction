@@ -177,6 +177,25 @@ function ciniki_wineproduction_stats($ciniki) {
 	}
 	$latewines = $rc['stats'];
 
-	return array('stat'=>'ok', 'stats'=>$stats, 'past'=>$past_stats, 'todays'=>$todays_stats, 'future'=>$future_stats, 'workdone'=>$workdone, 'latewines'=>$latewines);
+	//
+	// Get Call to Book Stats
+	//
+	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND status < 40 "
+		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '') "
+		. "AND (filtering_date > 0 AND filtering_date < NOW()) "
+		. "GROUP BY status "
+		. "";
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
+    if( $rc['stat'] != 'ok' ) { 
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'473', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+    }
+	if( !isset($rc['stats']) ) {
+		return array('stat'=>'ok', 'stats'=>array());
+	}
+	$ctb = $rc['stats'];
+
+	return array('stat'=>'ok', 'stats'=>$stats, 'past'=>$past_stats, 'todays'=>$todays_stats, 'future'=>$future_stats, 'workdone'=>$workdone, 'latewines'=>$latewines, 'ctb'=>$ctb);
 }
 ?>

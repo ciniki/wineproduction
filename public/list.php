@@ -208,6 +208,12 @@ function ciniki_wineproduction_list($ciniki) {
 			. "OR bottling_date < start_date) ";
 	}
 
+	if( isset($args['bottling_date']) && $args['bottling_date'] == 'ctb' ) {
+		$strsql .= "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '') "
+			. "AND (filtering_date > 0 AND filtering_date < NOW()) "
+			. " ";
+	}
+
 	if( isset($args['schedule_date']) && $args['schedule_date'] == 'today' ) {
 		$strsql .= "AND ((order_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
 			. "(start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
