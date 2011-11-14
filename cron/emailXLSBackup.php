@@ -65,7 +65,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		. "IFNULL(DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS bottling_date, "
 		. "IFNULL(DATE_FORMAT(bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS bottle_date, "
 		. "IFNULL(DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), DATE_ADD(start_date, INTERVAL kit_length WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS approx_filtering_date "
-		. ", wineproductions.notes "
+		. ", wineproductions.notes, wineproductions.batch_code "
 		. "FROM wineproductions "
 		. "LEFT JOIN customers ON (wineproductions.customer_id = customers.id "
 			. "AND customers.business_id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "') "
@@ -125,6 +125,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		$sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Racked', false);
 		$sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'FD', false);
 		$sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Filtered', false);
+		$sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Batch Code', false);
 		$sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Notes', false);
 		$sheets[$status]['count']++;
 		// for($j=0;$j<14;$j++){
@@ -196,6 +197,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		$sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['rack_date'], false);
 		$sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['filtering_date'], false);
 		$sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['filter_date'], false);
+		$sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['batch_code'], false);
 		$sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['notes'], false);
 
 		if( $colour != '' && $colour != 'ffffff' ) {

@@ -42,6 +42,9 @@
 # bottling_date:		The date and time the customer is scheduled for bottling.
 # bottle_date:			The date and time the customer bottled the wine.
 # notes:				Any notes for the order.
+# batch_code:			The batch code or product code from the kit.  This field is used to track
+#						the manufacturers product code or batch code.  This is a reference incase there is
+#						a problem with the finished product.
 # 
 # date_added:			The date and time the record was added.
 # last_updated:			The date and time the record was last updated.
@@ -71,10 +74,11 @@ create table wineproductions (
 	bottling_date datetime not null,
 	bottle_date date not null,
 	notes varchar(1000) not null,
+	batch_code varchar(50) not null,
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
 	index (business_id, status),
 	index (customer_id, invoice_number, product_id),
 	index (racking_date, filtering_date, bottling_date)
-) ENGINE='InnoDB', COMMENT='v1.03';
+) ENGINE='InnoDB', COMMENT='v1.04';

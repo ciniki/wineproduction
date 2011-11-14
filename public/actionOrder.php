@@ -38,6 +38,7 @@ function ciniki_wineproduction_actionOrder($ciniki) {
         'action'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No action specified'), 
         'sg_reading'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No SG Reading specified'), 
         'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No racking length specified'), 
+        'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'errmsg'=>'No batch code specified'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -89,7 +90,9 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 	//
 	$strsql = "";
 	if( $args['action'] == 'Started' ) {
-		$strsql = "UPDATE wineproductions SET start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', ";
+		$strsql = "UPDATE wineproductions SET start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', "
+			. "batch_code = '" . ciniki_core_dbQuote($ciniki, $args['batch_code']) . "', "
+			. "";
 		$racking_autoschedule = "racking.autoschedule.madeon" . strtolower(date('D', strtotime($todays_date)));
 		if( isset($settings[$racking_autoschedule]) && $settings[$racking_autoschedule] > 0 ) {
 			// FIXME: Replace following with commented line when rackspace updated to php 5.3.x

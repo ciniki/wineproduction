@@ -1,0 +1,5 @@
+#
+# This file will upgrade the database table wineproductions to version 1.02.
+#
+ALTER TABLE wineproductions ADD COLUMN batch_code varchar(50) not null after notes;
+ALTER TABLE wineproductions COMMENT='v1.04';

@@ -44,6 +44,7 @@ function ciniki_wineproduction_update($ciniki) {
         'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
         'bottle_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No bottle date specified'), 
         'notes'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No notes specified'), 
+        'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No batch code specified'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -105,6 +106,7 @@ function ciniki_wineproduction_update($ciniki) {
 		'bottling_date',
 		'bottle_date',
 		'notes',
+		'batch_code',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) ) {
