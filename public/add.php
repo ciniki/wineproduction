@@ -76,7 +76,7 @@ function ciniki_wineproduction_add($ciniki) {
 	//
 	// Add the order to the database
 	//
-	$strsql = "INSERT INTO wineproductions (business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
+	$strsql = "INSERT INTO ciniki_wineproductions (business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
 		. "status, rack_colour, filter_colour, order_flags, "
 		. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, bottling_flags, bottle_date, bottling_date, notes, "
 		. "date_added, last_updated) VALUES ("
@@ -142,7 +142,7 @@ function ciniki_wineproduction_add($ciniki) {
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) && $args[$field] != '' ) {
 			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'wineproductions', $wineproduction_id, $field, $args[$field]);
+				'ciniki_wineproductions', $wineproduction_id, $field, $args[$field]);
 		}
 	}
 

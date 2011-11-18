@@ -45,8 +45,8 @@ function ciniki_wineproduction_searchFull($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
 	$date_format = ciniki_users_dateFormat($ciniki);
 	
-	$strsql = "SELECT wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
-		. "products.name AS wine_name, wine_type, kit_length, wineproductions.status, rack_colour, filter_colour, "
+	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
+		. "ciniki_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, rack_colour, filter_colour, "
 		. "DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as order_date, "
 		. "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as start_date, "
 		. "DATE_FORMAT(racking_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as racking_date, "
@@ -56,27 +56,27 @@ function ciniki_wineproduction_searchFull($ciniki) {
 		. "DATE_FORMAT(filter_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filter_date, "
 		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as bottling_date, "
 		. "DATE_FORMAT(bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as bottle_date "
-		. "FROM wineproductions "
-		. "LEFT JOIN customers ON (wineproductions.customer_id = customers.id "
-			. "AND customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-		. "LEFT JOIN products ON (wineproductions.product_id = products.id "
-			. "AND products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-		. "WHERE wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
+		. "FROM ciniki_wineproductions "
+		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
+			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
+			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' ";
 	if( is_numeric($args['search_str']) ) {
 		$strsql .= "AND invoice_number LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
 			. "";
 	} else {
-		$strsql .= "AND ( customers.first LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
-			. "OR customers.last LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
-			. "OR products.name LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' ) "
+		$strsql .= "AND ( ciniki_customers.first LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
+			. "OR ciniki_customers.last LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
+			. "OR ciniki_products.name LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' ) "
 			. "";
 	}
 
 	if( isset($args['finished']) && $args['finished'] == 'no' ) {
-		$strsql . "AND wineproductions.status < 60";
+		$strsql . "AND ciniki_wineproductions.status < 60";
 	}
 
-	$strsql .= "ORDER BY wineproductions.invoice_number ASC ";
+	$strsql .= "ORDER BY ciniki_wineproductions.invoice_number ASC ";
 	if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
 		$strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";	// is_numeric verified
 	}

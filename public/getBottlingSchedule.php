@@ -48,7 +48,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	// Grab the settings for the business from the database
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'wineproduction_settings', 'business_id', $args['business_id'], 'wineproductions', 'settings', '');
+	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -62,19 +62,19 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
 
-	$strsql = "SELECT wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, products.name AS wine_name, "
+	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, ciniki_products.name AS wine_name, "
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') as bottling_date, "
 		. "DATE_FORMAT(bottling_date, '%H:%i') as bottling_time, "
 		. "DATE_FORMAT(bottling_date, '%l:%i') as bottling_12hour, "
 		. "UNIX_TIMESTAMP(bottling_date) as bottling_timestamp "
-		. "FROM wineproductions "
-		. "JOIN products ON (wineproductions.product_id = products.id "
-			. "AND products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-		. "LEFT JOIN customers ON (wineproductions.customer_id = customers.id "
-			. "AND customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-		. "WHERE wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND wineproductions.product_id = products.id "
-		. "AND products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "FROM ciniki_wineproductions "
+		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
+			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
+			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND ciniki_wineproductions.product_id = ciniki_products.id "
+		. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' "
 		. "ORDER BY bottling_date, bottling_time, customer_name, invoice_number "
 		. "";

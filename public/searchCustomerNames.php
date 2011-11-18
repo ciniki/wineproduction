@@ -46,7 +46,7 @@ function ciniki_wineproduction_searchCustomerNames($ciniki) {
 	// if no rows found, then return empty array
 	// Look for any active wines, anything finished will not show up
 	//
-	$strsql = "SELECT customer_name FROM wineproductions "
+	$strsql = "SELECT customer_name FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND customer_name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 		. "GROUP BY customer_name "

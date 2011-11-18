@@ -246,11 +246,11 @@ function ciniki_wineproduction_updateSettings($ciniki) {
 		);
 	//
 	// Check each valid setting and see if a new value was passed in the arguments for it.
-	// Insert or update the entry in the wineproduction_settings table
+	// Insert or update the entry in the ciniki_wineproduction_settings table
 	//
 	foreach($changelog_fields as $field) {
 		if( isset($ciniki['request']['args'][$field]) ) {
-			$strsql = "INSERT INTO wineproduction_settings (business_id, detail_key, detail_value, date_added, last_updated) "
+			$strsql = "INSERT INTO ciniki_wineproduction_settings (business_id, detail_key, detail_value, date_added, last_updated) "
 				. "VALUES ('" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['business_id']) . "'"
 				. ", '" . ciniki_core_dbQuote($ciniki, $field) . "'"
 				. ", '" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args'][$field]) . "'"
@@ -263,7 +263,7 @@ function ciniki_wineproduction_updateSettings($ciniki) {
 				ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
 				return $rc;
 			}
-			ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 'wineproduction_settings', $field, 'detail_value', $ciniki['request']['args'][$field]);
+			ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 'ciniki_wineproduction_settings', $field, 'detail_value', $ciniki['request']['args'][$field]);
 		}
 	}
 

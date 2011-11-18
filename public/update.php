@@ -78,7 +78,7 @@ function ciniki_wineproduction_update($ciniki) {
 	//
 	// Add the order to the database
 	//
-	$strsql = "UPDATE wineproductions SET last_updated = UTC_TIMESTAMP()";
+	$strsql = "UPDATE ciniki_wineproductions SET last_updated = UTC_TIMESTAMP()";
 
 	//
 	// Add all the fields to the change log
@@ -112,7 +112,7 @@ function ciniki_wineproduction_update($ciniki) {
 		if( isset($args[$field]) ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
 			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'wineproductions', $args['wineproduction_id'], $field, $args[$field]);
+				'ciniki_wineproductions', $args['wineproduction_id'], $field, $args[$field]);
 		}
 	}
 	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

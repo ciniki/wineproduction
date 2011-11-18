@@ -91,8 +91,8 @@ function ciniki_wineproduction_list($ciniki) {
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuoteIDs.php');
 
-	$strsql = "SELECT wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
-		. "products.name AS wine_name, wine_type, kit_length, wineproductions.status, colour_tag, rack_colour, filter_colour, "
+	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
+		. "ciniki_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, colour_tag, rack_colour, filter_colour, "
 		. "order_flags, "
 		. "DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS order_date, "
 		. "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
@@ -106,24 +106,24 @@ function ciniki_wineproduction_list($ciniki) {
 		. "DATE_FORMAT(bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS bottle_date, "
 		. "DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), DATE_ADD(start_date, INTERVAL kit_length WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS approx_filtering_date "
 	//	. "DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), DATE_ADD(start_date, INTERVAL (kit_length) WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS approx_date "
-		. ", wineproductions.notes "
-		. "FROM wineproductions "
-		. "LEFT JOIN customers ON (wineproductions.customer_id = customers.id "
-			. "AND customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-		. "LEFT JOIN products ON (wineproductions.product_id = products.id "
-			. "AND products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-		. "WHERE wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND wineproductions.product_id = products.id "
-		. "AND products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. ", ciniki_wineproductions.notes "
+		. "FROM ciniki_wineproductions "
+		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
+			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
+			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND ciniki_wineproductions.product_id = ciniki_products.id "
+		. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "";
 	if( isset($args['customer_id']) && $args['customer_id'] > 0 ) {
-		$strsql .= "AND wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
+		$strsql .= "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
 	}
 
 	if( isset($args['status_list']) && is_array($args['status_list']) && count($args['status_list']) ) {
-		$strsql .= "AND wineproductions.status IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['status_list']) . ") ";
+		$strsql .= "AND ciniki_wineproductions.status IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['status_list']) . ") ";
 	} elseif( isset($args['status']) && $args['status'] != '' ) {
-		$strsql .= "AND wineproductions.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
+		$strsql .= "AND ciniki_wineproductions.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
 	}
 
 	if( isset($args['before_start_date']) && $args['before_start_date'] == 'today' ) {
@@ -245,9 +245,9 @@ function ciniki_wineproduction_list($ciniki) {
 	if( $args['sorting'] == 'invoice_number' ) {
 		$strsql .= "ORDER BY invoice_number, wine_type DESC ";
 	} else if( $args['sorting'] == 'racking_date,invoice_number' ) {
-		$strsql .= "ORDER BY wineproductions.racking_date, wineproductions.invoice_number ";
+		$strsql .= "ORDER BY ciniki_wineproductions.racking_date, ciniki_wineproductions.invoice_number ";
 	} else if( $args['sorting'] == 'bottling_date' ) {
-		$strsql .= "ORDER BY wineproductions.bottling_date ";
+		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date ";
 	} else if( $args['status'] == '10' ) {
 		$strsql .= "ORDER BY kit_length, wine_type DESC, order_date ASC ";
 	} else if( $args['status'] == '20' ) {
@@ -259,7 +259,7 @@ function ciniki_wineproduction_list($ciniki) {
 	} else if( $args['customer_id'] > 0 ) {
 		$strsql .= "ORDER BY status, order_date ASC ";
 	} else {
-		$strsql .= "ORDER BY wineproductions.invoice_number DESC ";
+		$strsql .= "ORDER BY ciniki_wineproductions.invoice_number DESC ";
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');

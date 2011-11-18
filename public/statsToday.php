@@ -47,7 +47,7 @@ function ciniki_wineproduction_statsToday($ciniki) {
 	// Get the number of orders in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ("
 			. "(status = 10 AND start_date <= NOW()) "

@@ -50,6 +50,6 @@ function ciniki_wineproduction_getSettingsHistory($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLog.php');
-	return ciniki_core_dbGetChangeLog($ciniki, $args['business_id'], 'wineproduction_settings', $args['fields'], 'detail_value', 'wineproductions');
+	return ciniki_core_dbGetChangeLog($ciniki, $args['business_id'], 'ciniki_wineproduction_settings', $args['fields'], 'detail_value', 'wineproduction');
 }
 ?>

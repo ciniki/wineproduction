@@ -54,7 +54,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	// Get the complete count information
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "GROUP BY status ";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
@@ -70,7 +70,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get past stats
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ("
 			. "(status = 10 AND start_date < '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
@@ -92,7 +92,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get todays or previous order stats
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ("
 			. "(status = 10 AND start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
@@ -114,7 +114,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get future stats
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ("
 			. "(status = 10 AND start_date > '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
@@ -137,7 +137,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get Work Completed stats
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ((status = 10 && order_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
 			. "(status = 20 && start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
@@ -159,7 +159,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get Late Wines stats
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status < 40 "
 		. "AND bottling_date > 0 AND (bottling_date < filtering_date "
@@ -180,7 +180,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get Call to Book Stats
 	//
-	$strsql = "SELECT status, COUNT(status) AS count FROM wineproductions "
+	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status < 60 "
 		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '') "

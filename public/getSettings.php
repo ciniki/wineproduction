@@ -64,7 +64,7 @@ function ciniki_wineproduction_getSettings($ciniki) {
 	// Grab the settings for the business from the database
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc = ciniki_core_dbDetailsQuery($ciniki, 'wineproduction_settings', 'business_id', $args['business_id'], 'wineproductions', 'settings', '');
+	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -72,37 +72,8 @@ function ciniki_wineproduction_getSettings($ciniki) {
 	$rc['date_today'] = $formatted_date;
 
 	//
-	// Build the colour arrays
-	//
-//	$rc['colours']['racking_colours'] = array(''=>array('code'=>'#ffffff'));
-//	$rc['colours']['filtering_colours'] = array(''=>array('code'=>'#ffffff'));
-
-//	foreach($rc['settings'] as $detail_key => $detail_value) {
-//		if( preg_match('/racking.autocolour./', $detail_key) ) { 
-//			$rc['colours']['racking_colours'][$detail_value] = array('code'=>$detail_value);
-//		} elseif( preg_match('/filtering.autocolour./', $detail_key) ) {
-//			$rc['colours']['filtering_colours'][$detail_value] = array('code'=>$detail_value);
-//		}
-//	}
-
-	//
 	// Return the response, including colour arrays and todays date
 	//
 	return $rc;
-
-
-	//
-	// Currently the same list as private/getSettings, but may be alter in the future
-	// to only contain settings available
-	//
-//	return array('stat'=>'ok', 
-//		'date_today'=>$formatted_date,
-//		'settings'=>array(
-//			'bottling.schedule.start'=>'10:00',
-//			'bottling.schedule.end'=>'20:00',
-//			'bottling.schedule.interval'=>'30',
-//			),
-//		'colours'=>$colours,
-//		);
 }
 ?>
