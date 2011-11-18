@@ -30,12 +30,12 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 	// Check the business is active
 	// Get the ruleset for this module
 	//
-	$strsql = "SELECT ruleset FROM businesses, business_permissions "
+	$strsql = "SELECT ruleset FROM businesses, business_modules "
 		. "WHERE businesses.id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND businesses.status = 1 "
-		. "AND (businesses.modules & 0x200000) = 0x200000 "
-		. "AND businesses.id = business_permissions.business_id "
-		. "AND business_permissions.module = 'wineproduction' "
+		. "AND businesses.status = 1 "														// Business is active
+		. "AND businesses.id = business_modules.business_id "
+		. "AND business_modules.package = 'ciniki' "
+		. "AND business_modules.module = 'wineproduction' "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'module');
