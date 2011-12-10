@@ -73,79 +73,95 @@ function ciniki_wineproduction_add($ciniki) {
 		return $rc;
 	}   
 
-	//
-	// Add the order to the database
-	//
-	$strsql = "INSERT INTO ciniki_wineproductions (business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
-		. "status, rack_colour, filter_colour, order_flags, "
-		. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, bottling_flags, bottle_date, bottling_date, notes, "
-		. "date_added, last_updated) VALUES ("
-		. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['invoice_number']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['wine_type']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['kit_length']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['status']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['rack_colour']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['filter_colour']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['order_flags']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['order_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['sg_reading']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['racking_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['rack_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['filtering_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['filter_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_flags']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['bottle_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_date']) . "', "
-		. "'" . ciniki_core_dbQuote($ciniki, $args['notes']) . "', "
-		. "UTC_TIMESTAMP(), UTC_TIMESTAMP())";
-	$rc = ciniki_core_dbInsert($ciniki, $strsql, 'wineproduction');
-	if( $rc['stat'] != 'ok' ) { 
-		ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
-		return $rc;
-	}
-	if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'363', 'msg'=>'Unable to add order'));
-	}
-	$wineproduction_id = $rc['insert_id'];
 
-	//
-	// Add all the fields to the change log
-	//
+	for($i=0;$i<25;$i++) {
+		$ext = '';
+		if( $i > 0 ) {
+			$ext = '_' . $i;
+			// Check if more than one wine was passed to be added
+			if( !isset($ciniki['request']['args']['product_id' . $ext]) || $ciniki['request']['args']['product_id' . $ext] == '') {
+				break;
+			}
+		}
+		//
+		// Add the order to the database
+		//
+		$strsql = "INSERT INTO ciniki_wineproductions (business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
+			. "status, rack_colour, filter_colour, order_flags, "
+			. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, bottling_flags, bottle_date, bottling_date, notes, "
+			. "date_added, last_updated) VALUES ("
+			. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['invoice_number']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['product_id' . $ext]) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['wine_type' . $ext]) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['kit_length' . $ext]) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['status']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['rack_colour']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['filter_colour']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['order_flags' . $ext]) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['order_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['sg_reading']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['racking_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['rack_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['filtering_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['filter_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_flags']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['bottle_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['notes']) . "', "
+			. "UTC_TIMESTAMP(), UTC_TIMESTAMP())"
+			. "";
+		$rc = ciniki_core_dbInsert($ciniki, $strsql, 'wineproduction');
+		if( $rc['stat'] != 'ok' ) { 
+			ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
+			return $rc;
+		}
+		if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
+			ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'363', 'msg'=>'Unable to add order'));
+		}
+		$wineproduction_id = $rc['insert_id'];
 
-	$changelog_fields = array(
-		'customer_id',
-		'invoice_number',
-		'product_id',
-		'wine_type',
-		'kit_length',
-		'status',
-		'rack_colour',
-		'filter_colour',
-		'order_flags',
-		'order_date',
-		'start_date',
-		'sg_reading',
-		'racking_date',
-		'rack_date',
-		'filtering_date',
-		'filter_date',
-		'bottling_flags',
-		'bottling_date',
-		'bottle_date',
-		'notes',
-		);
-	foreach($changelog_fields as $field) {
-		if( isset($args[$field]) && $args[$field] != '' ) {
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'ciniki_wineproductions', $wineproduction_id, $field, $args[$field]);
+		//
+		// Add all the fields to the change log
+		//
+
+		$changelog_fields = array(
+			'customer_id',
+			'invoice_number',
+			'product_id' . $ext,
+			'wine_type' . $ext,
+			'kit_length' . $ext,
+			'status',
+			'rack_colour',
+			'filter_colour',
+			'order_flags' . $ext,
+			'order_date',
+			'start_date',
+			'sg_reading',
+			'racking_date',
+			'rack_date',
+			'filtering_date',
+			'filter_date',
+			'bottling_duration',
+			'bottling_flags',
+			'bottling_date',
+			'bottle_date',
+			'notes',
+			);
+		foreach($changelog_fields as $field) {
+			$insert_name = $field;
+			if( $ext != '' && preg_match('/^(product_id|wine_type|kit_length|order_flags)/', $field, $matches) ) {
+				$insert_name = $matches[1];
+			}
+			if( isset($ciniki['request']['args'][$field]) && $ciniki['request']['args'][$field] != '' ) {
+				$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
+					'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
+			}
 		}
 	}
-
 	//
 	// Commit the database changes
 	//
