@@ -57,7 +57,7 @@ function ciniki_wineproduction_getOrder($ciniki) {
 		. "DATE_FORMAT(filter_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filter_date, "
 		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') as bottling_date, "
 		. "DATE_FORMAT(bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as bottle_date, "
-		. "bottling_flags, "
+		. "bottling_flags, bottling_duration, "
 		. "ciniki_wineproductions.notes, "
 		. "ciniki_wineproductions.batch_code "
 		. "FROM ciniki_wineproductions "

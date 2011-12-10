@@ -68,7 +68,11 @@ function ciniki_wineproduction_updateSettings($ciniki) {
 		'bottling.schedule.start',
 		'bottling.schedule.end',
 		'bottling.schedule.interval',
-		'bottling.schedule.batchduration',
+		'bottling.schedule.batchduration',		# FIXME: Remove at some point
+		'bottling.schedule.speed.slow',
+		'bottling.schedule.speed.medium',
+		'bottling.schedule.speed.fast',
+		'bottling.schedule.padding',			# The number of days extra to add when scheduling bottling, helps in display calendar
 		'racking.autoschedule.madeonsun',
 		'racking.autoschedule.madeonmon',
 		'racking.autoschedule.madeontue',
