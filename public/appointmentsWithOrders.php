@@ -70,12 +70,15 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') As appointment_date, "
 		. "DATE_FORMAT(bottling_date, '%H:%i') AS appointment_time, "
 		. "DATE_FORMAT(bottling_date, '%l:%i') AS appointment_12hour, "
-		. "UNIX_TIMESTAMP(bottling_date) as bottling_timestamp, bottling_duration AS duration "
+		. "UNIX_TIMESTAMP(bottling_date) as bottling_timestamp, bottling_duration AS duration, "
+		. "ciniki_wineproduction_settings.detail_value AS appointment_colour "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
 		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
 			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+		. "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.business_id = ciniki_wineproduction_settings.business_id "
+			. "AND ciniki_wineproduction_settings.detail_key = CONCAT_WS('.', 'bottling.flags', ciniki_wineproductions.bottling_flags, 'colour')) "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 //		. "AND ciniki_wineproductions.product_id = ciniki_products.id "
 //		. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
@@ -85,7 +88,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'appointment_id', 'name'=>'appointment', 'fields'=>array(
-			'customer_name', 'appointment_date', 'appointment_time', 'appointment_12hour', 'duration', 'invoice_number', 'wine_name'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
+			'customer_name', 'appointment_date', 'appointment_time', 'appointment_12hour', 'duration', 'invoice_number', 'wine_name', 'appointment_colour'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'id', 'name'=>'order', 'fields'=>array('id', 'invoice_number', 'wine_name', 'duration')),
 		));
 	if( $rc['stat'] != 'ok' ) {
