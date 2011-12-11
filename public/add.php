@@ -73,6 +73,24 @@ function ciniki_wineproduction_add($ciniki) {
 		return $rc;
 	}   
 
+	//
+	// Check for duplicate products which will require at A, B C after the invoice number
+	//
+	$pcount = array(); 
+	for($i=0;$i<25;$i++) {
+		$ext = '';
+		if( $i > 0 ) {
+			$ext = '_' . $i;
+		}
+		if( isset($ciniki['request']['args']['product_id' . $ext]) && $ciniki['request']['args']['product_id' . $ext] != '' && $ciniki['request']['args']['product_id' . $ext] != '0' ) {
+			if( !isset($pcount[$ciniki['request']['args']['product_id' . $ext]]) ) {
+				$pcount[$ciniki['request']['args']['product_id' . $ext]] = array('cur'=>0, 'total'=>0);
+			} 
+			$pcount[$ciniki['request']['args']['product_id' . $ext]]['total']++;
+		} else {
+			break;
+		}
+	}
 
 	for($i=0;$i<25;$i++) {
 		$ext = '';
@@ -83,6 +101,11 @@ function ciniki_wineproduction_add($ciniki) {
 				break;
 			}
 		}
+		$invoice_number = $args['invoice_number'];
+		if( $pcount[$ciniki['request']['args']['product_id' . $ext]]['total'] > 1 ) {
+			$invoice_number .= '-' . chr($pcount[$ciniki['request']['args']['product_id' . $ext]]['cur'] + 65);
+			$pcount[$ciniki['request']['args']['product_id' . $ext]]['cur']++;
+		}
 		//
 		// Add the order to the database
 		//
@@ -92,7 +115,7 @@ function ciniki_wineproduction_add($ciniki) {
 			. "date_added, last_updated) VALUES ("
 			. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "', "
-			. "'" . ciniki_core_dbQuote($ciniki, $args['invoice_number']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $invoice_number) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['product_id' . $ext]) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['wine_type' . $ext]) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['kit_length' . $ext]) . "', "
