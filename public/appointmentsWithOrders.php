@@ -90,6 +90,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.business_id = ciniki_wineproduction_settings.business_id "
 			. "AND ciniki_wineproduction_settings.detail_key = CONCAT_WS('.', 'bottling.flags', LOG2(ciniki_wineproductions.bottling_flags)+1, 'colour')) "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND ciniki_wineproductions.status < 100 "
 		. "";
 	if( isset($args['appointment_id']) && $args['appointment_id'] != '' && preg_match('/^([0-9]+)-([0-9]+)$/', $args['appointment_id'], $matches)) {
 		$strsql .= "AND CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) = '" . ciniki_core_dbQuote($ciniki, $args['appointment_id']) . "' ";
