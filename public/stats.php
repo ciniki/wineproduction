@@ -118,7 +118,6 @@ function ciniki_wineproduction_stats($ciniki) {
 		. "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' "
 		. "AND TIME(bottling_date) <> '00:00:00' "
 		. "";
-	error_log($strsql);
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'492', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
@@ -197,7 +196,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status < 60 "
-		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '') "
+		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00') "
 		. "AND (filtering_date > 0 AND filtering_date < NOW()) "
 		. "GROUP BY status "
 		. "";
