@@ -99,7 +99,6 @@ function ciniki_wineproduction_stats($ciniki) {
 			. " OR (status = 20 AND racking_date >= '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' AND racking_date <= '" . ciniki_core_dbQuote($ciniki, $today_plus_four) . "') "
 			. " OR (status = 25) "
 			. " OR (status = 30 AND filtering_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
-			. " OR (status = 40 AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
 			. ") "
 		. "GROUP BY status ";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
@@ -110,6 +109,21 @@ function ciniki_wineproduction_stats($ciniki) {
 		return array('stat'=>'ok', 'stats'=>array());
 	}
 	$todays_stats = $rc['stats'];
+
+	//
+	// Get todays bottling stats
+	//
+	$strsql = "SELECT '40' AS status, COUNT(DISTINCT customer_id, bottling_date) AS count FROM ciniki_wineproductions "
+		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+		. "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' "
+		. "AND TIME(bottling_date) <> '00:00:00' "
+		. "";
+	error_log($strsql);
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
+    if( $rc['stat'] != 'ok' ) { 
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'492', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+    }
+	array_push($todays_stats, $rc['stats'][0]);
 
 	//
 	// Get future stats
@@ -189,7 +203,7 @@ function ciniki_wineproduction_stats($ciniki) {
 		. "";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'473', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'491', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	if( !isset($rc['stats']) ) {
 		return array('stat'=>'ok', 'stats'=>array());
