@@ -26,6 +26,7 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
         'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling duration specified'), 
         'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling date specified'), 
         'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
+        'bottled'=>array('required'=>'no', 'errmsg'=>'No bottled flag specified'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -58,6 +59,12 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
 	}   
 
 	//
+	// FIXME: Add timezone information
+	//
+	date_default_timezone_set('America/Toronto');
+	$todays_date = strftime("%Y-%m-%d");
+
+	//
 	// Add the order to the database
 	//
 	$strsql = "UPDATE ciniki_wineproductions SET last_updated = UTC_TIMESTAMP() ";
@@ -65,6 +72,15 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
 	//
 	// Add all the fields to the change log
 	//
+	if( isset($args['bottled']) && $args['bottled'] == 'yes' ) {
+		$strsql .= ", bottle_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 60 ";
+		foreach($args['wineproduction_ids'] as $wid) {
+			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
+				'ciniki_wineproductions', $wid, 'bottle_date', $todays_date);
+			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
+				'ciniki_wineproductions', $wid, 'status', '60');
+		}
+	}
 
 	$changelog_fields = array(
 		'bottling_duration',
