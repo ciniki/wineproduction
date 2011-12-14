@@ -38,7 +38,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
 
-	$strsql = "SELECT ciniki_wineproductions.id AS wid, "
+	$strsql = "SELECT ciniki_wineproductions.id AS order_id, "
 		. "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
 		. "CONCAT_WS(' ', first, last) AS customer_name, "
 		. "invoice_number, "
@@ -74,7 +74,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
 			'fields'=>array('id', 'start_ts', 'date', 'time', '12hour', 'colour', 'duration', 'wine_name'),
 			'sums'=>array('duration'), 'countlists'=>array('wine_name')),
-		array('container'=>'orders', 'fname'=>'id', 'name'=>'order', 'fields'=>array('id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status')),
+		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
