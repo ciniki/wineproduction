@@ -43,6 +43,9 @@
 # - bottling.flags.6.colour = '#ff0000';
 # - bottling.flags.6.font_colour = '#000000';		- this is used for the font when on the plain white list background
 #
+# - bottling.status.1.name = 'Pulled';
+# - bottling.status.1.colour = '#ffffff';
+#
 #
 # Fields
 # ------

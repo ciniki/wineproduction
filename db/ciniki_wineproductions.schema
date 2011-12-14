@@ -20,6 +20,7 @@
 #						20 - started
 #						30 - racked
 #						40 - filtered
+#						50 - pulled
 #						60 - bottled
 #						100 - other (reason should be stored in notes)
 #
@@ -42,6 +43,9 @@
 # bottling_duration:	The number of minutes it will take to bottle this order.  Typeically this is 30, 45, 60 minutes.
 # bottling_date:		The date and time the customer is scheduled for bottling.
 # bottle_date:			The date and time the customer bottled the wine.
+# bottling_status:		The current status of the wine as it relates to bottling.  Is the wine ready to be bottled. This is stored
+#						as bit flags, and not strict on uniqueness.  These settings are stored in wineproduction_settings.
+#
 # notes:				Any notes for the order.
 # batch_code:			The batch code or product code from the kit.  This field is used to track
 #						the manufacturers product code or batch code.  This is a reference incase there is
@@ -74,6 +78,7 @@ create table ciniki_wineproductions (
 	bottling_flags smallint unsigned not null,
 	bottling_duration int not null,
 	bottling_date datetime not null,
+	bottling_status smallint unsigned not null,
 	bottle_date date not null,
 	notes varchar(1000) not null,
 	batch_code varchar(50) not null,
@@ -83,4 +88,4 @@ create table ciniki_wineproductions (
 	index (business_id, status),
 	index (customer_id, invoice_number, product_id),
 	index (racking_date, filtering_date, bottling_date)
-) ENGINE='InnoDB', COMMENT='v1.05';
+) ENGINE='InnoDB', COMMENT='v1.06';
