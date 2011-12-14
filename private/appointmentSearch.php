@@ -29,7 +29,7 @@ function ciniki_wineproduction__appointmentSearch($ciniki, $business_id, $args) 
 
 	$strsql = "SELECT ciniki_wineproductions.id AS wid, "
 		. "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
-		. "CONCAT_WS(' - ', CONCAT_WS(' ', first, last), invoice_number, ciniki_products.name) AS subject, "
+		. "CONCAT_WS(' - ', CONCAT_WS(' ', first, last), IF(COUNT(invoice_number)>1, CONCAT('(',COUNT(invoice_number),')'), NULL), invoice_number, ciniki_products.name) AS subject, "
 		. "UNIX_TIMESTAMP(bottling_date) AS start_ts, "
 		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') AS date, "
@@ -42,7 +42,8 @@ function ciniki_wineproduction__appointmentSearch($ciniki, $business_id, $args) 
 		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
 			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		. "AND ciniki_wineproductions.status < 100 "
+		// Only search for active orders
+		. "AND ciniki_wineproductions.status < 60 "
 		. "";
 	if( is_numeric($args['start_needle']) ) {
 		$strsql .= "AND invoice_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
