@@ -100,7 +100,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		}
 		$appointments[$anum]['appointment']['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['appointment']['orders'][0]['order']['invoice_number']);
 		$appointments[$anum]['appointment']['subject'] .= ' - ' . $appointment['appointment']['wine_name'];
-		if( $appointments[$anum]['appointment']['bottling_status'] != '' ) {
+		if( isset($appointments[$anum]['appointment']['bottling_status']) && $appointments[$anum]['appointment']['bottling_status'] != '' ) {
 			$appointments[$anum]['appointment']['subject'] .= ' ' . $appointment['appointment']['bottling_status'];
 		}
 		unset($appointments[$anum]['appointment']['wine_name']);
