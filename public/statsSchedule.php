@@ -192,9 +192,9 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status < 60 "
-		. "AND bottling_date >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
-		. "AND bottling_date < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
-		. "GROUP BY bottling_date "
+		. "AND DATE(bottling_date) >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
+		. "AND DATE(bottling_date) < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
+		. "GROUP BY DATE(bottling_date) "
 		. "";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'bottling', 'stat', array('stat'=>'ok', 'bottling'=>array()));
     if( $rc['stat'] != 'ok' ) { 
