@@ -41,6 +41,8 @@ function ciniki_wineproduction_list($ciniki) {
 		'filtered_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No filtered date specified'),
 		'bottled_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No bottled date specified'),
 		'bottling_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No bottling date specified'),
+		'before_bottling_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No bottling date specified'),
+		'after_bottling_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No bottling date specified'),
 		'work_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No rack date specified'),
 		'sorting'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No sorting order specified'),
         )); 
@@ -92,7 +94,7 @@ function ciniki_wineproduction_list($ciniki) {
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuoteIDs.php');
 
 	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
-		. "ciniki_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, colour_tag, rack_colour, filter_colour, "
+		. "ciniki_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, rack_colour, filter_colour, "
 		. "order_flags, "
 		. "DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS order_date, "
 		. "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
@@ -103,6 +105,7 @@ function ciniki_wineproduction_list($ciniki) {
 		. "DATE_FORMAT(filter_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS filter_date, "
 		. "bottling_flags, "
 		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS bottling_date, "
+		. "bottling_status, "
 		. "DATE_FORMAT(bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS bottle_date, "
 		. "DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), DATE_ADD(start_date, INTERVAL kit_length WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS approx_filtering_date "
 	//	. "DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), DATE_ADD(start_date, INTERVAL (kit_length) WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS approx_date "
@@ -160,6 +163,16 @@ function ciniki_wineproduction_list($ciniki) {
 	} elseif( isset($args['after_filtering_date']) && $args['after_filtering_date'] != '' ) {
 		$strsql .= "AND filtering_date > '" . ciniki_core_dbQuote($ciniki, $args['after_filtering_date']) . "' ";
 	}
+	// Bottling_date
+	if( isset($args['before_bottling_date']) && $args['before_bottling_date'] == 'today' ) {
+		$strsql .= "AND bottling_date <= NOW() ";
+	} elseif( isset($args['before_bottling_date']) && $args['before_bottling_date'] != '' ) {
+		$strsql .= "AND DATE(bottling_date) <= '" . ciniki_core_dbQuote($ciniki, $args['before_bottling_date']) . "' ";
+	} elseif( isset($args['after_bottling_date']) && $args['after_bottling_date'] == 'today' ) {
+		$strsql .= "AND bottling_date > NOW() ";
+	} elseif( isset($args['after_bottling_date']) && $args['after_bottling_date'] != '' ) {
+		$strsql .= "AND DATE(bottling_date) > '" . ciniki_core_dbQuote($ciniki, $args['after_bottling_date']) . "' ";
+	}
 	if( isset($args['before_bottle_date']) && $args['before_bottle_date'] == 'today' ) {
 		$strsql .= "AND bottle_date <= NOW() ";
 	} else if( isset($args['before_bottle_date']) && $args['before_bottle_date'] != '' ) {
@@ -202,17 +215,21 @@ function ciniki_wineproduction_list($ciniki) {
 		$strsql .= "AND bottle_date = '" . ciniki_core_dbQuote($ciniki, $args['bottled_date']) . "' ";
 	}
 
-	if( isset($args['bottling_date']) && $args['bottling_date'] == 'late_wine' ) {
-		$strsql .= "AND bottling_date > 0 AND (bottling_date < filtering_date "
-			. "OR (filtering_date = 0 AND bottling_date < DATE_ADD(racking_date, INTERVAL (kit_length-2) WEEK)) "
-			. "OR (racking_date = 0 AND bottling_date < DATE_ADD(start_date, INTERVAL kit_length WEEK)) "
-			. "OR bottling_date < start_date) ";
-	}
-
-	if( isset($args['bottling_date']) && $args['bottling_date'] == 'ctb' ) {
-		$strsql .= "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00' ) "
-			. "AND (filtering_date > 0 AND filtering_date < NOW()) "
-			. " ";
+	if( isset($args['bottling_date']) ) {
+		if( $args['bottling_date'] == 'late_wine' ) {
+			$strsql .= "AND bottling_date > 0 AND (bottling_date < filtering_date "
+				. "OR (filtering_date = 0 AND bottling_date < DATE_ADD(racking_date, INTERVAL (kit_length-2) WEEK)) "
+				. "OR (racking_date = 0 AND bottling_date < DATE_ADD(start_date, INTERVAL kit_length WEEK)) "
+				. "OR bottling_date < start_date) ";
+		}
+		elseif( $args['bottling_date'] == 'ctb' ) {
+			$strsql .= "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00' ) "
+				. "AND (filtering_date > 0 AND filtering_date < NOW()) "
+				. " ";
+		}
+		elseif( $args['bottling_date'] != '' ) {
+			$strsql .= "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['bottling_date']) . "' ";
+		}
 	}
 
 	if( isset($args['schedule_date']) && $args['schedule_date'] == 'today' ) {
@@ -249,6 +266,8 @@ function ciniki_wineproduction_list($ciniki) {
 		$strsql .= "ORDER BY ciniki_wineproductions.racking_date, ciniki_wineproductions.invoice_number ";
 	} else if( $args['sorting'] == 'bottling_date' ) {
 		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date ";
+	} else if( $args['sorting'] == 'appointments' ) {
+		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id ";
 	} else if( $args['status'] == '10' ) {
 		$strsql .= "ORDER BY kit_length, wine_type DESC, order_date ASC ";
 	} else if( $args['status'] == '20' ) {
