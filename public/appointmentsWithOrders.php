@@ -82,7 +82,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "DATE_FORMAT(start_date, '%b %e, %Y') AS start_date, "
 		. "DATE_FORMAT(racking_date, '%b %e, %Y') AS racking_date, "
 		. "DATE_FORMAT(filtering_date, '%b %e, %Y') AS filtering_date, "
-		. "ciniki_wineproductions.status "
+		. "ciniki_wineproductions.status, s2.detail_value AS bottling_status "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
@@ -90,6 +90,8 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
 		. "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.business_id = ciniki_wineproduction_settings.business_id "
 			. "AND ciniki_wineproduction_settings.detail_key = CONCAT_WS('.', 'bottling.flags', LOG2(ciniki_wineproductions.bottling_flags)+1, 'colour')) "
+		. "LEFT JOIN ciniki_wineproduction_settings s2 ON (ciniki_wineproductions.business_id = s2.business_id "
+			. "AND s2.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'name')) "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_wineproductions.status < 100 "
 		. "";
@@ -111,7 +113,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 'fields'=>array('id', 
 			'customer_name', 'date', 'time', '12hour', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',
-			'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status')),
+			'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status', 'bottling_status')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

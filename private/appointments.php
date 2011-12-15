@@ -50,6 +50,8 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		. "bottling_duration AS duration, "
 		. "ciniki_wineproductions.bottling_flags, "
 		. "ciniki_wineproduction_settings.detail_value AS colour, "
+		. "s2.detail_value AS secondary_colour, "
+		. "s3.detail_value AS bottling_status, "
 		. "ciniki_wineproductions.status "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
@@ -58,6 +60,10 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
 		. "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.business_id = ciniki_wineproduction_settings.business_id "
 			. "AND ciniki_wineproduction_settings.detail_key = CONCAT_WS('.', 'bottling.flags', LOG2(ciniki_wineproductions.bottling_flags)+1, 'colour')) "
+		. "LEFT JOIN ciniki_wineproduction_settings s2 ON (ciniki_wineproductions.business_id = s2.business_id "
+			. "AND s2.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'colour')) "
+		. "LEFT JOIN ciniki_wineproduction_settings s3 ON (ciniki_wineproductions.business_id = s3.business_id "
+			. "AND s3.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'name')) "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND ciniki_wineproductions.status < 100 "
 		. "";
@@ -72,9 +78,9 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
-			'fields'=>array('id', 'start_ts', 'date', 'time', '12hour', 'colour', 'duration', 'wine_name'),
+			'fields'=>array('id', 'start_ts', 'date', 'time', '12hour', 'colour', 'secondary_colour', 'duration', 'wine_name'),
 			'sums'=>array('duration'), 'countlists'=>array('wine_name')),
-		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status')),
+		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_status')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -94,8 +100,12 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		}
 		$appointments[$anum]['appointment']['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['appointment']['orders'][0]['order']['invoice_number']);
 		$appointments[$anum]['appointment']['subject'] .= ' - ' . $appointment['appointment']['wine_name'];
+		if( $appointments[$anum]['appointment']['bottling_status'] != '' ) {
+			$appointments[$anum]['appointment']['subject'] .= ' ' . $appointment['appointment']['bottling_status'];
+		}
 		unset($appointments[$anum]['appointment']['wine_name']);
 		unset($appointments[$anum]['appointment']['orders']);
+		unset($appointments[$anum]['appointment']['bottling_status']);
 		$appointments[$anum]['appointment']['calendar'] = 'Bottling Schedule';
 		$appointments[$anum]['appointment']['module'] = 'ciniki.wineproduction';
 	}
