@@ -82,7 +82,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "DATE_FORMAT(start_date, '%b %e, %Y') AS start_date, "
 		. "DATE_FORMAT(racking_date, '%b %e, %Y') AS racking_date, "
 		. "DATE_FORMAT(filtering_date, '%b %e, %Y') AS filtering_date, "
-		. "ciniki_wineproductions.status, s2.detail_value AS bottling_status "
+		. "ciniki_wineproductions.status, IFNULL(s2.detail_value, '') AS bottling_status "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
