@@ -82,6 +82,30 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
 		}
 	}
 
+	//
+	// Update the bottling status if specified
+	//
+	foreach($args['wineproduction_ids'] as $wid) {
+		if( isset($ciniki['request']['args']['order_' . $wid . '_bottling_status']) && $ciniki['request']['args']['order_' . $wid . '_bottling_status'] != '' ) {
+			error_log('test');
+			$strsql_a = "UPDATE ciniki_wineproductions SET "
+				. "bottling_status = '" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['order_' . $wid . '_bottling_status']) . "' "
+				. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "AND id = '" . ciniki_core_dbQuote($ciniki, $wid) . "' ";
+			$rc = ciniki_core_dbUpdate($ciniki, $strsql_a, 'wineproduction');
+			if( $rc['stat'] != 'ok' ) { 
+				ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
+				return $rc;
+			}
+
+			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
+				'ciniki_wineproductions', $wid, 'bottling_status', $ciniki['request']['args']['order_' . $wid . '_bottling_status']);
+		}
+	}
+
+	//
+	// Save change log
+	//
 	$changelog_fields = array(
 		'bottling_duration',
 		'bottling_flags',
