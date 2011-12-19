@@ -109,7 +109,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status < 30 "
 		. "AND racking_date > '0000-00-00' "
-		. "AND racking_date < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
+		. "AND DATE(racking_date) < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
@@ -162,7 +162,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status > 25 AND status < 40 "
 		. "AND filtering_date > '0000-00-00' "
-		. "AND filtering_date < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
+		. "AND DATE(filtering_date) < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
 		. "";
 	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
