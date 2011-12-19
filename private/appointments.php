@@ -95,6 +95,9 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	// Create subject, and remote orders to flatten appointments
 	//
 	foreach($appointments as $anum => $appointment) {
+		if( $appointment['appointment']['time'] == '00:00' ) {
+			$appointments[$anum]['appointment']['allday'] = 'yes';
+		}
 		$appointments[$anum]['appointment']['subject'] = $appointment['appointment']['orders'][0]['order']['customer_name'];
 		if( count($appointment['appointment']['orders']) > 1 ) {
 			$appointments[$anum]['appointment']['subject'] .= ' (' . count($appointment['appointment']['orders']) . ')';

@@ -87,7 +87,6 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
 	//
 	foreach($args['wineproduction_ids'] as $wid) {
 		if( isset($ciniki['request']['args']['order_' . $wid . '_bottling_status']) && $ciniki['request']['args']['order_' . $wid . '_bottling_status'] != '' ) {
-			error_log('test');
 			$strsql_a = "UPDATE ciniki_wineproductions SET "
 				. "bottling_status = '" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['order_' . $wid . '_bottling_status']) . "' "
 				. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "

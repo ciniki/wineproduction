@@ -73,6 +73,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "CONCAT_WS(' ', first, last) AS customer_name, invoice_number, ciniki_products.name AS wine_name, "
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') As date, "
 		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
+		. "IF(STRCMP(DATE_FORMAT(bottling_date, '%H:%i'), '00:00'), 'no', 'yes') AS allday, "
 		. "DATE_FORMAT(bottling_date, '%l:%i') AS 12hour, "
 		. "UNIX_TIMESTAMP(bottling_date) as bottling_timestamp, bottling_duration AS duration, "
 		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') as bottling_date, "
@@ -111,7 +112,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 'fields'=>array('id', 
-			'customer_name', 'date', 'time', '12hour', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
+			'customer_name', 'date', 'time', '12hour', 'allday', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',
 			'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status', 'bottling_status', 'colour')),
 		));
