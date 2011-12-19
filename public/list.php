@@ -141,9 +141,9 @@ function ciniki_wineproduction_list($ciniki) {
 		$strsql .= "AND rack_date <= '" . ciniki_core_dbQuote($ciniki, $args['before_rack_date']) . "' ";
 	}
 	if( isset($args['before_racking_date']) && $args['before_racking_date'] == 'today' ) {
-		$strsql .= "AND racking_date <= NOW() ";
+		$strsql .= "AND racking_date < NOW() ";
 	} elseif( isset($args['before_racking_date']) && $args['before_racking_date'] != '' ) {
-		$strsql .= "AND racking_date <= '" . ciniki_core_dbQuote($ciniki, $args['before_racking_date']) . "' ";
+		$strsql .= "AND racking_date < '" . ciniki_core_dbQuote($ciniki, $args['before_racking_date']) . "' ";
 	} elseif( isset($args['after_racking_date']) && $args['after_racking_date'] == 'today' ) {
 		$strsql .= "AND racking_date > NOW() ";
 	} elseif( isset($args['after_racking_date']) && $args['after_racking_date'] != '' ) {
