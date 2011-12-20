@@ -157,7 +157,7 @@ function ciniki_wineproduction_list($ciniki) {
 	if( isset($args['before_filtering_date']) && $args['before_filtering_date'] == 'today' ) {
 		$strsql .= "AND DATE(filtering_date) <= DATE(NOW()) ";
 	} elseif( isset($args['before_filtering_date']) && $args['before_filtering_date'] != '' ) {
-		$strsql .= "AND filtering_date <= '" . ciniki_core_dbQuote($ciniki, $args['before_filtering_date']) . "' ";
+		$strsql .= "AND filtering_date < '" . ciniki_core_dbQuote($ciniki, $args['before_filtering_date']) . "' ";
 	} elseif( isset($args['after_filtering_date']) && $args['after_filtering_date'] == 'today' ) {
 		$strsql .= "AND filtering_date > NOW() ";
 	} elseif( isset($args['after_filtering_date']) && $args['after_filtering_date'] != '' ) {
