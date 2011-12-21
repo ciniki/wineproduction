@@ -282,7 +282,7 @@ function ciniki_wineproduction_list($ciniki) {
 		$strsql .= "ORDER BY ciniki_wineproductions.invoice_number DESC ";
 	}
 
-	 error_log($strsql);
+	 //error_log($strsql);
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
 	if( $rc != 'ok' ) {
