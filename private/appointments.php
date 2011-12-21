@@ -19,7 +19,6 @@
 //	</appointments>
 //
 function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
-
 	//
 	// Grab the settings for the business from the database
 	//
@@ -50,21 +49,12 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		. "bottling_duration AS duration, "
 		. "ciniki_wineproductions.bottling_flags, "
 		. "ciniki_wineproductions.bottling_status, "
-//		. "ciniki_wineproduction_settings.detail_value AS secondary_colour, "
-//		. "s2.detail_value AS colour, "
-//		. "s3.detail_value AS bottling_status, "
 		. "ciniki_wineproductions.status "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
 		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
 			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
-//		. "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.business_id = ciniki_wineproduction_settings.business_id "
-//			. "AND ciniki_wineproduction_settings.detail_key = CONCAT_WS('.', 'bottling.flags', LOG2(ciniki_wineproductions.bottling_flags)+1, 'colour')) "
-//		. "LEFT JOIN ciniki_wineproduction_settings s2 ON (ciniki_wineproductions.business_id = s2.business_id "
-//			. "AND s2.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'colour')) "
-//		. "LEFT JOIN ciniki_wineproduction_settings s3 ON (ciniki_wineproductions.business_id = s3.business_id "
-//			. "AND s3.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'name')) "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND ciniki_wineproductions.status < 100 "
 		. "";
