@@ -80,7 +80,6 @@ function ciniki_wineproduction__appointmentSearch($ciniki, $business_id, $args) 
 	if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
 		$strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']*5) . " ";	// is_numeric verified
 	}
-	error_log($strsql);
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
