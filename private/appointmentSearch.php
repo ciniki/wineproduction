@@ -58,9 +58,14 @@ function ciniki_wineproduction__appointmentSearch($ciniki, $business_id, $args) 
 		. "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
 			. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
-		// Only search for active orders
-		. "AND ciniki_wineproductions.status < 60 "
 		. "";
+	if( isset($args['full']) && $args['full'] == 'yes' ) {
+		// search for orders including bottled
+		$strsql .= "AND ciniki_wineproductions.status <= 60 ";
+	} else {
+		// Only search for active orders
+		$strsql .= "AND ciniki_wineproductions.status < 60 ";
+	}
 	if( is_numeric($args['start_needle']) ) {
 		$strsql .= "AND invoice_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "";
