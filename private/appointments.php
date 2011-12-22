@@ -96,12 +96,16 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		$appointments[$anum]['appointment']['subject'] .= ' - ' . $appointment['appointment']['wine_name'];
 		$min_status = 255;
 		$min_flags = 255;
+		$min_order_status = 99;
 		foreach($appointments[$anum]['appointment']['orders'] as $onum => $order) {
 			if( $order['order']['bottling_status'] < $min_status ) {
 				$min_status = $order['order']['bottling_status'];
 			}
 			if( $order['order']['bottling_flags'] < $min_flags ) {
 				$min_flags = $order['order']['bottling_flags'];
+			}
+			if( $order['order']['status'] < $min_order_status ) {
+				$min_order_status = $order['order']['status'];
 			}
 		}
 		
@@ -116,6 +120,9 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		if( $min_flags < 255 && isset($settings['bottling.flags.' . (log($min_flags, 2)+1) . '.name']) ) {
 			$appointments[$anum]['appointment']['secondary_text'] .= $scomma . $settings['bottling.flags.' . (log($min_flags, 2)+1) . '.name'];
 			$appointments[$anum]['appointment']['secondary_colour'] = $settings['bottling.flags.' . (log($min_flags, 2)+1) . '.colour'];
+		}
+		if( $min_order_status == 60 ) {
+			$appointments[$anum]['appointment']['colour'] = '#e4d8f9';
 		}
 //		if( isset($appointments[$anum]['appointment']['bottling_status']) && $appointments[$anum]['appointment']['bottling_status'] != '' ) {
 //			$appointments[$anum]['appointment']['subject'] .= ' ' . $appointment['appointment']['bottling_status'];
