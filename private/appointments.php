@@ -36,12 +36,16 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	if( $args['date'] == '' || $args['date'] == 'today' ) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
+	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/datetimeFormat.php');
+	$datetime_format = ciniki_users_datetimeFormat($ciniki);
+
 
 	$strsql = "SELECT ciniki_wineproductions.id AS order_id, "
 		. "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
 		. "CONCAT_WS(' ', first, last) AS customer_name, "
 		. "invoice_number, "
 		. "ciniki_products.name AS wine_name, "
+		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "
 		. "UNIX_TIMESTAMP(bottling_date) AS start_ts, "
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') AS date, "
 		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
@@ -58,18 +62,24 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
 		. "AND ciniki_wineproductions.status < 100 "
 		. "";
-	if( isset($args['date']) && $args['date'] != '' ) {
+	if( isset($args['customer_id']) && $args['customer_id'] != '' ) {
+		$strsql .= "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
+	} elseif( isset($args['date']) && $args['date'] != '' ) {
 		$strsql .= "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' ";
 	} else {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'497', 'msg'=>'No constraints provided'));
 	}
-	$strsql .= ""
-		. "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id "
-		. "";
+
+	if( isset($args['customer_id']) && $args['customer_id'] != '' ) {
+		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date DESC, ciniki_wineproductions.customer_id, wine_name, id ";
+	} else {
+		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id ";
+	}
+	error_log($strsql);
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
-			'fields'=>array('id', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),
+			'fields'=>array('id', 'start_date', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),
 			'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_flags', 'bottling_status')),
 		));
