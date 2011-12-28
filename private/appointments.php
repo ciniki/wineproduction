@@ -70,6 +70,10 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'497', 'msg'=>'No constraints provided'));
 	}
 
+	if( isset($args['status']) && $args['status'] == 'unbottled' ) {
+		$strsql .= "AND ciniki_wineproductions.status < 60 ";
+	}
+
 	if( isset($args['customer_id']) && $args['customer_id'] != '' ) {
 		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date DESC, ciniki_wineproductions.customer_id, wine_name, id ";
 	} else {

@@ -29,6 +29,7 @@ function ciniki_wineproduction_appointments($ciniki) {
 		'enddate'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No end date specified'), 
 		'appointment_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No appointment ID specified'), 
 		'customer_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No customer ID specified'), 
+		'status'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No status specified'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
