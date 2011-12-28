@@ -4,10 +4,6 @@
 // -----------
 // This function will add a new order to the wine production module.
 //
-// Info
-// ----
-// Status: 			defined
-//
 // Arguments
 // ---------
 // user_id: 		The user making the request
@@ -110,10 +106,11 @@ function ciniki_wineproduction_add($ciniki) {
 		//
 		// Add the order to the database
 		//
-		$strsql = "INSERT INTO ciniki_wineproductions (business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
+		$strsql = "INSERT INTO ciniki_wineproductions (uuid, business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
 			. "status, rack_colour, filter_colour, order_flags, "
 			. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, bottling_duration, bottling_flags, bottle_date, bottling_date, notes, "
 			. "date_added, last_updated) VALUES ("
+			. "UUID(), "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $invoice_number) . "', "

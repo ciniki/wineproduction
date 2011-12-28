@@ -1,0 +1,7 @@
+#
+# This file will upgrade the database table wineproductions to version 1.07.
+#
+ALTER TABLE ciniki_wineproductions ADD COLUMN uuid char(36) not null after id;
+UPDATE ciniki_wineproductions SET uuid = uuid();
+CREATE UNIQUE INDEX idx_uuid ON ciniki_wineproductions (uuid);
+ALTER TABLE ciniki_wineproductions COMMENT='v1.07';

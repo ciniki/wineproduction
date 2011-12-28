@@ -6,6 +6,7 @@
 # Fields
 # ------
 # id:					The id of the batch of wine (1 batch is 1 kit = approx 30 x 750 ml bottles)
+# uuid:					The Universal Unique ID.
 # business_id:			The id of the business the order is attached to.
 # customer_id:			The customer from the customers module. 
 # invoice_id:			The id of the invoice this order is attached to in the invoicing module. (future)
@@ -58,6 +59,7 @@
 #
 create table ciniki_wineproductions (
 	id int not null auto_increment,
+	uuid binary(16) not null,
 	business_id int not null,
 	customer_id int not null,
 	invoice_id int not null,
@@ -88,7 +90,8 @@ create table ciniki_wineproductions (
 	date_added datetime not null,
 	last_updated datetime not null,
 	primary key (id),
+	unique index (uuid),
 	index (business_id, status),
 	index (customer_id, invoice_number, product_id),
 	index (racking_date, filtering_date, bottling_date)
-) ENGINE='InnoDB', COMMENT='v1.06';
+) ENGINE='InnoDB', COMMENT='v1.07';
