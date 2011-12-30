@@ -17,16 +17,6 @@
 function ciniki_wineproduction_getRulesets($ciniki) {
 
 	//
-	// Permissions can be in the form of=> 
-	//		- owners, any employee in the group 0x0001 (owner) in business_users.
-	//		- group, any employee in the group 0x4000 (wineproduction) in business_users.
-	//		- employee, any employee in the group 0x0002 (employee) in business_users.
-	//		- employees, customer, customers
-	//
-	// - business_group - 0x4001, (any owners) or (employees in group Bug Tracker)
-	// - business_group - 0x4003, (any owners) or (any employees) or (employees in group Bug Tracker)
-	// - business_group - blank/non-existent, ignored
-	//
 	// business_group rules are OR'd together with customers rules
 	//
 	// - customers - 'any', (any customers of the business)
@@ -61,7 +51,7 @@ function ciniki_wineproduction_getRulesets($ciniki) {
 				'employees'=>'all tasks',
 				'customers'=>'no access.'
 				),
-			'default'=>array('business_group'=>0x4003),
+			'default'=>array('permission_groups'=>array('ciniki.owners', 'ciniki.employees')),
 			'methods'=>array()
 			),
 
@@ -76,7 +66,7 @@ function ciniki_wineproduction_getRulesets($ciniki) {
 				'employees'=>'all tasks',
 				'customers'=>'no access.'
 				),
-			'default'=>array('business_group'=>0x4000),
+			'default'=>array('permission_groups'=>array('ciniki.wineproduction')),
 			'methods'=>array()
 			),
 	);
