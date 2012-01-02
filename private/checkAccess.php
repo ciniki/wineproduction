@@ -91,7 +91,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 			. "";
 		$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'businesses', 'user');
 		if( $rc['stat'] != 'ok' ) {
-			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'514', 'msg'=>'Access denied.', 'err'=>$rc['err']));
+			return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'522', 'msg'=>'Access denied.', 'err'=>$rc['err']));
 		}
 		
 		//
