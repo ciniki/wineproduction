@@ -26,6 +26,7 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
         'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling duration specified'), 
         'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling date specified'), 
         'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
+        'bottling_notes'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling notes specified'), 
         'bottled'=>array('required'=>'no', 'errmsg'=>'No bottled flag specified'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -109,6 +110,7 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
 		'bottling_duration',
 		'bottling_flags',
 		'bottling_date',
+		'bottling_notes',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) ) {

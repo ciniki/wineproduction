@@ -53,6 +53,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		. "bottling_duration AS duration, "
 		. "ciniki_wineproductions.bottling_flags, "
 		. "ciniki_wineproductions.bottling_status, "
+		. "ciniki_wineproductions.bottling_notes, "
 		. "ciniki_wineproductions.status "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
@@ -85,7 +86,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
 			'fields'=>array('id', 'start_date', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),
 			'sums'=>array('duration'), 'countlists'=>array('wine_name')),
-		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_flags', 'bottling_status')),
+		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_flags', 'bottling_status', 'bottling_notes')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -111,6 +112,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		$min_status = 255;
 		$min_flags = 255;
 		$min_order_status = 99;
+		$bottling_notes = '';
 		foreach($appointments[$anum]['appointment']['orders'] as $onum => $order) {
 			if( $order['order']['bottling_status'] < $min_status ) {
 				$min_status = $order['order']['bottling_status'];
@@ -120,6 +122,9 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 			}
 			if( $order['order']['status'] < $min_order_status ) {
 				$min_order_status = $order['order']['status'];
+			}
+			if( $bottling_notes == '' ) {
+				$bottling_notes = $order['order']['bottling_notes'];
 			}
 		}
 		
@@ -137,6 +142,9 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		}
 		if( $min_order_status == 60 ) {
 			$appointments[$anum]['appointment']['colour'] = '#e4d8f9';
+		}
+		if( $bottling_notes != '' ) {
+			$appointments[$anum]['appointment']['secondary_text'] .= $scomma . $bottling_notes;
 		}
 //		if( isset($appointments[$anum]['appointment']['bottling_status']) && $appointments[$anum]['appointment']['bottling_status'] != '' ) {
 //			$appointments[$anum]['appointment']['subject'] .= ' ' . $appointment['appointment']['bottling_status'];

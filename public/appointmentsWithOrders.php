@@ -83,7 +83,8 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "DATE_FORMAT(start_date, '%b %e, %Y') AS start_date, "
 		. "DATE_FORMAT(racking_date, '%b %e, %Y') AS racking_date, "
 		. "DATE_FORMAT(filtering_date, '%b %e, %Y') AS filtering_date, "
-		. "ciniki_wineproductions.status, IFNULL(s2.detail_value, '') AS bottling_status "
+		. "ciniki_wineproductions.status, IFNULL(s2.detail_value, '') AS bottling_status, "
+		. "ciniki_wineproductions.bottling_notes "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
@@ -112,9 +113,9 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 'fields'=>array('id', 
-			'customer_name', 'date', 'time', '12hour', 'allday', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
+			'customer_name', 'date', 'time', '12hour', 'allday', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags', 'bottling_notes'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',
-			'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status', 'bottling_status', 'colour')),
+			'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status', 'bottling_status', 'bottling_notes', 'colour')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
