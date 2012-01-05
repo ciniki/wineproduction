@@ -48,6 +48,9 @@
 # bottle_date:			The date and time the customer bottled the wine.
 # bottling_status:		The current status of the wine as it relates to bottling.  Is the wine ready to be bottled. This is stored
 #						as bit flags, and not strict on uniqueness.  These settings are stored in wineproduction_settings.
+# bottling_notes:		The notes to be attached to an appointment.  Multiple wines for the same appointment time,
+#						should all have the same notes.  This way if a wine is removed to another time, the notes
+#						go with the order.
 #
 # notes:				Any notes for the order.
 # batch_code:			The batch code or product code from the kit.  This field is used to track
@@ -84,6 +87,7 @@ create table ciniki_wineproductions (
 	bottling_duration int not null,
 	bottling_date datetime not null,
 	bottling_status smallint unsigned not null,
+	bottling_notes varchar(1000) not null,
 	bottle_date date not null,
 	notes varchar(1000) not null,
 	batch_code varchar(50) not null,
@@ -94,4 +98,4 @@ create table ciniki_wineproductions (
 	index (business_id, status),
 	index (customer_id, invoice_number, product_id),
 	index (racking_date, filtering_date, bottling_date)
-) ENGINE='InnoDB', COMMENT='v1.07';
+) ENGINE='InnoDB', COMMENT='v1.08';

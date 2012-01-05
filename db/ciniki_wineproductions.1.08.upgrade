@@ -1,0 +1,5 @@
+#
+# This file will upgrade the database table wineproductions to version 1.08.
+#
+ALTER TABLE ciniki_wineproductions ADD COLUMN bottling_notes varchar(1000) not null after bottling_status;
+ALTER TABLE ciniki_wineproductions COMMENT='v1.08';
