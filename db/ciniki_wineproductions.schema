@@ -47,7 +47,17 @@
 # bottling_date:		The date and time the customer is scheduled for bottling.
 # bottle_date:			The date and time the customer bottled the wine.
 # bottling_status:		The current status of the wine as it relates to bottling.  Is the wine ready to be bottled. This is stored
-#						as bit flags, and not strict on uniqueness.  These settings are stored in wineproduction_settings.
+#						as bit flags, and not strict on uniqueness.  
+#
+#						0x01 - Reschedule
+#						0x02 - Rush
+#						0x04 -
+#						0x08 -
+#						0x10 -
+#						0x20 - 
+#						0x40 -
+#						0x80 - Ready
+#
 # bottling_notes:		The notes to be attached to an appointment.  Multiple wines for the same appointment time,
 #						should all have the same notes.  This way if a wine is removed to another time, the notes
 #						go with the order.
