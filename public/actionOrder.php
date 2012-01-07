@@ -185,7 +185,7 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 	// The wine was filtered
 	//
 	elseif( $args['action'] == 'Filtered' ) {
-		$strsql = "UPDATE ciniki_wineproductions SET filter_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 40 "
+		$strsql = "UPDATE ciniki_wineproductions SET filter_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 40, bottling_status = 128 "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
 		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
