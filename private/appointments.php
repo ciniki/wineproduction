@@ -80,7 +80,6 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	} else {
 		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id ";
 	}
-	error_log($strsql);
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
