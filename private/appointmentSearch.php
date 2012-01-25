@@ -104,7 +104,11 @@ function ciniki_wineproduction__appointmentSearch($ciniki, $business_id, $args) 
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
-	$appointments = $rc['appointments'];
+	if( isset($rc['appointments']) ) {
+		$appointments = $rc['appointments'];
+	} else {
+		$appointments = array();
+	}
 
 	//
 	// Create subject, and remote orders to flatten appointments
