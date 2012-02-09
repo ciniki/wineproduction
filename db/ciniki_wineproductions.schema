@@ -62,6 +62,8 @@
 #						should all have the same notes.  This way if a wine is removed to another time, the notes
 #						go with the order.
 #
+#						This field is to be removed in the future, as it's replaced with ciniki_wineproduction_followups.
+#
 # notes:				Any notes for the order.
 # batch_code:			The batch code or product code from the kit.  This field is used to track
 #						the manufacturers product code or batch code.  This is a reference incase there is
