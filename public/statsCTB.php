@@ -61,7 +61,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
 		. "";
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'491', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'584', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
 	if( !isset($rc['stats']) || !isset($rc['stats'][0]['stat'])) {
 		return array('stat'=>'ok', 'ctb'=>'0');
