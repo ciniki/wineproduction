@@ -76,6 +76,8 @@ function ciniki_wineproduction_getOrder($ciniki) {
 	if( !isset($rc['order']) ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'366', 'msg'=>'Invalid order'));
 	}
+
+	$rc['order']['bottling_date'] = preg_replace('/ 12:00 AM/', '', $rc['order']['bottling_date']);
 	return array('stat'=>'ok', 'order'=>$rc['order']);
 }
 ?>

@@ -217,7 +217,7 @@ function ciniki_wineproduction_list($ciniki) {
 
 	if( isset($args['bottling_date']) ) {
 		if( $args['bottling_date'] == 'late_wine' ) {
-			$strsql .= "AND bottling_date > 0 AND (bottling_date < filtering_date "
+			$strsql .= "AND bottling_date > 0 AND TIME(bottling_date) <> '00:00:00' AND (bottling_date < filtering_date "
 				. "OR (filtering_date = 0 AND bottling_date < DATE_ADD(racking_date, INTERVAL (kit_length-2) WEEK)) "
 				. "OR (racking_date = 0 AND bottling_date < DATE_ADD(start_date, INTERVAL kit_length WEEK)) "
 				. "OR bottling_date < start_date) ";
@@ -282,7 +282,7 @@ function ciniki_wineproduction_list($ciniki) {
 		$strsql .= "ORDER BY ciniki_wineproductions.invoice_number DESC ";
 	}
 
-	 //error_log($strsql);
+	// error_log($strsql);
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
 	if( $rc != 'ok' ) {

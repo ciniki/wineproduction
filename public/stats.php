@@ -175,7 +175,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND status < 40 "
-		. "AND bottling_date > 0 AND (bottling_date < filtering_date "
+		. "AND bottling_date > 0 AND TIME(bottling_date) <> '00:00:00' AND (bottling_date < filtering_date "
 			. "OR (filtering_date = 0 AND bottling_date < DATE_ADD(racking_date, INTERVAL (kit_length-2) WEEK)) "
 			. "OR (racking_date = 0 AND bottling_date < DATE_ADD(start_date, INTERVAL kit_length WEEK)) "
 			. "OR bottling_date < start_date) "
