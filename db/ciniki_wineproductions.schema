@@ -43,6 +43,9 @@
 # bottling_flags:		Allows for 16 different flags to be specified for a bottling date.  The flags
 #						are stored in the wineproduction_settings table, which can be different per business.
 #
+# bottling_nocolour_flags:	Allows for 16 different flags to be specified for a bottling date.  These
+#						flags are similar to bottling_flags except there will be no colour associated with them.
+#
 # bottling_duration:	The number of minutes it will take to bottle this order.  Typeically this is 30, 45, 60 minutes.
 # bottling_date:		The date and time the customer is scheduled for bottling.
 # bottle_date:			The date and time the customer bottled the wine.
@@ -96,6 +99,7 @@ create table ciniki_wineproductions (
 	filtering_date date not null,
 	filter_date date not null,
 	bottling_flags smallint unsigned not null,
+	bottling_nocolour_flags smallint unsigned not null,
 	bottling_duration int not null,
 	bottling_date datetime not null,
 	bottling_status smallint unsigned not null,
@@ -110,4 +114,4 @@ create table ciniki_wineproductions (
 	index (business_id, status),
 	index (customer_id, invoice_number, product_id),
 	index (racking_date, filtering_date, bottling_date)
-) ENGINE='InnoDB', COMMENT='v1.08';
+) ENGINE='InnoDB', COMMENT='v1.09';

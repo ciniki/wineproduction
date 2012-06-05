@@ -37,6 +37,7 @@ function ciniki_wineproduction_add($ciniki) {
         'filter_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No filter date specified'), 
         'bottling_duration'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No bottle duration specified'), 
         'bottling_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No bottle flags specified'), 
+        'bottling_nocolour_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No bottle flags specified'), 
         'bottling_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
         'bottle_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No bottle date specified'), 
         'notes'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No notes specified'), 
@@ -108,7 +109,8 @@ function ciniki_wineproduction_add($ciniki) {
 		//
 		$strsql = "INSERT INTO ciniki_wineproductions (uuid, business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
 			. "status, rack_colour, filter_colour, order_flags, "
-			. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, bottling_duration, bottling_flags, bottle_date, bottling_date, notes, "
+			. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, "
+			. "bottling_duration, bottling_flags, bottling_nocolour_flags, bottle_date, bottling_date, notes, "
 			. "date_added, last_updated) VALUES ("
 			. "UUID(), "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
@@ -130,6 +132,7 @@ function ciniki_wineproduction_add($ciniki) {
 			. "'" . ciniki_core_dbQuote($ciniki, $args['filter_date']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_duration']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_flags']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_nocolour_flags']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottle_date']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_date']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['notes']) . "', "
@@ -169,6 +172,7 @@ function ciniki_wineproduction_add($ciniki) {
 			'filter_date',
 			'bottling_duration',
 			'bottling_flags',
+			'bottling_nocolour_flags',
 			'bottling_date',
 			'bottle_date',
 			'notes',

@@ -1,0 +1,5 @@
+#
+# This file will upgrade the database table wineproductions to version 1.09.
+#
+ALTER TABLE ciniki_wineproductions ADD COLUMN bottling_nocolour_flags smallint unsigned not null AFTER bottling_flags;
+ALTER TABLE ciniki_wineproductions COMMENT='v1.09';
