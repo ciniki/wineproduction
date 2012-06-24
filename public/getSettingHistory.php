@@ -48,6 +48,6 @@ function ciniki_wineproduction_getSettingHistory($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproduction_settings', $args['field'], 'detail_value', 'wineproduction');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproduction_settings', $args['field'], 'detail_value');
 }
 ?>
