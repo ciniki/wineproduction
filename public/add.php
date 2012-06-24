@@ -65,7 +65,7 @@ function ciniki_wineproduction_add($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbInsert.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddChangeLog.php');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'wineproduction');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -183,8 +183,8 @@ function ciniki_wineproduction_add($ciniki) {
 				$insert_name = $matches[1];
 			}
 			if( isset($ciniki['request']['args'][$field]) && $ciniki['request']['args'][$field] != '' ) {
-				$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-					'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
+				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+					1, 'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
 			}
 		}
 	}

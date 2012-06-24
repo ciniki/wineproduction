@@ -49,11 +49,11 @@ function ciniki_wineproduction_getHistory($ciniki) {
 	}
 
 	if( $args['field'] == 'customer_id' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogFkId.php');
-		return ciniki_core_dbGetChangeLogFkId($ciniki, $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'ciniki_customers', 'id', "CONCAT_WS(' ', ciniki_customers.first, ciniki_customers.last)");
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryFkId.php');
+		return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'ciniki_customers', 'id', "CONCAT_WS(' ', ciniki_customers.first, ciniki_customers.last)");
 	} elseif( $args['field'] == 'product_id' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogFkId.php');
-		return ciniki_core_dbGetChangeLogFkId($ciniki, $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'ciniki_products', 'id', "ciniki_products.name");
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryFkId.php');
+		return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'ciniki_products', 'id', "ciniki_products.name");
 	} elseif( $args['field'] == 'order_date' 
 		|| $args['field'] == 'start_date' 
 		|| $args['field'] == 'racking_date' 
@@ -62,14 +62,14 @@ function ciniki_wineproduction_getHistory($ciniki) {
 		|| $args['field'] == 'filter_date' 
 		|| $args['field'] == 'bottle_date' 
 		) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogReformat.php');
-		return ciniki_core_dbGetChangeLogReformat($ciniki, $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'date');
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'date');
 	} elseif( $args['field'] == 'bottling_date' ) {
-		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLogReformat.php');
-		return ciniki_core_dbGetChangeLogReformat($ciniki, $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'datetime');
+		require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistoryReformat.php');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction', 'datetime');
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetChangeLog.php');
-	return ciniki_core_dbGetChangeLog($ciniki, $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'wineproduction');
 }
 ?>

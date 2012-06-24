@@ -79,7 +79,7 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbTransactionCommit.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbUpdate.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddChangeLog.php');
+	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbAddModuleHistory.php');
 	$rc = ciniki_core_dbTransactionStart($ciniki, 'wineproduction');
 	if( $rc['stat'] != 'ok' ) { 
 		return $rc;
@@ -100,25 +100,27 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 			$racking_date = new DateTime($todays_date);
 			$racking_date->modify('+' . $settings[$racking_autoschedule] . ' days');
 			$strsql .= "racking_date = '" . ciniki_core_dbQuote($ciniki, date_format($racking_date, 'Y-m-d')) . "', ";
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'ciniki_wineproductions', $args['wineproduction_id'], 'racking_date', date_format($racking_date, 'Y-m-d'));
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+				2, 'ciniki_wineproductions', $args['wineproduction_id'], 'racking_date', date_format($racking_date, 'Y-m-d'));
 			$rack_week = ((date_format($racking_date, 'U') - 1468800)/604800)%3;
 			// $rack_week = (date_format($racking_date, 'W'))%3;
 			$rack_dayofweek = strtolower(date_format($racking_date, 'D'));
 			$racking_autocolour = "racking.autocolour.week" . $rack_week . $rack_dayofweek;
 			if( isset($settings[$racking_autocolour]) && $settings[$racking_autocolour] != '' ) {
 				$strsql .= "rack_colour = '" . ciniki_core_dbQuote($ciniki, $settings[$racking_autocolour]) . "', ";
-				$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-					'ciniki_wineproductions', $args['wineproduction_id'], 'rack_colour', $settings[$racking_autocolour]);
+				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+					2, 'ciniki_wineproductions', $args['wineproduction_id'], 'rack_colour', $settings[$racking_autocolour]);
 			}
 		}
 		$strsql .= "status = 20 "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'start_date', $todays_date);
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'status', '20');
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'start_date', $todays_date);
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '20');
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'batch_code', $args['batch_code']);
 	} 
 
 	//
@@ -131,19 +133,18 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 				. ", last_updated = UTC_TIMESTAMP() "
 				. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 				. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'ciniki_wineproductions', $args['wineproduction_id'], 'status', '25');
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'ciniki_wineproductions', $args['wineproduction_id'], 'sg_reading', $args['sg_reading']);
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+				2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '25');
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+				2, 'ciniki_wineproductions', $args['wineproduction_id'], 'sg_reading', $args['sg_reading']);
 		} else {
 			$strsql = "UPDATE ciniki_wineproductions SET "
 				. "sg_reading = '" . ciniki_core_dbQuote($ciniki, $args['sg_reading']) . "' "
 				. ", last_updated = UTC_TIMESTAMP() "
 				. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 				. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'ciniki_wineproductions', $args['wineproduction_id'], 'sg_reading', $args['sg_reading']);
-
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+				2, 'ciniki_wineproductions', $args['wineproduction_id'], 'sg_reading', $args['sg_reading']);
 		}
 	}
 
@@ -160,25 +161,25 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 			$filtering_date = new DateTime($todays_date);
 			$filtering_date->modify('+' . ($args['kit_length'] - 2) . ' weeks');
 			$strsql .= "filtering_date = '" . ciniki_core_dbQuote($ciniki, date_format($filtering_date, 'Y-m-d')) . "', ";
-			$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-				'ciniki_wineproductions', $args['wineproduction_id'], 'filtering_date', date_format($filtering_date, 'Y-m-d'));
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+				2, 'ciniki_wineproductions', $args['wineproduction_id'], 'filtering_date', date_format($filtering_date, 'Y-m-d'));
 			$filter_week = ((date_format($filtering_date, 'U') - 1468800)/604800)%7;
 			// $filter_week = date_format($filtering_date, 'W')%7;
 			$filter_dayofweek = strtolower(date_format($filtering_date, 'D'));
 			$filtering_autocolour = "filtering.autocolour.week" . $filter_week . $filter_dayofweek;
 			if( isset($settings[$filtering_autocolour]) && $settings[$filtering_autocolour] != '' ) {
 				$strsql .= "filter_colour = '" . ciniki_core_dbQuote($ciniki, $settings[$filtering_autocolour]) . "', ";
-				$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-					'ciniki_wineproductions', $args['wineproduction_id'], 'filter_colour', $settings[$filtering_autocolour]);
+				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+					2, 'ciniki_wineproductions', $args['wineproduction_id'], 'filter_colour', $settings[$filtering_autocolour]);
 			}
 		}
 		$strsql .= "status = 30 "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'rack_date', $todays_date);
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'status', '30');
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'rack_date', $todays_date);
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '30');
 	} 
 
 	//
@@ -188,10 +189,10 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 		$strsql = "UPDATE ciniki_wineproductions SET filter_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 40, bottling_status = 128 "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'filter_date', $todays_date);
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'status', '40');
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'filter_date', $todays_date);
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '40');
 	} 
 
 	//
@@ -201,8 +202,8 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 		$strsql = "UPDATE ciniki_wineproductions SET filtering_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'filtering_date', $todays_date);
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'filtering_date', $todays_date);
 	}
 
 	//
@@ -212,10 +213,10 @@ function ciniki_wineproduction_actionOrder($ciniki) {
 		$strsql = "UPDATE ciniki_wineproductions SET bottle_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 60 "
 			. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'bottle_date', $todays_date);
-		$rc = ciniki_core_dbAddChangeLog($ciniki, 'wineproduction', $args['business_id'], 
-			'ciniki_wineproductions', $args['wineproduction_id'], 'status', '60');
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'bottle_date', $todays_date);
+		$rc = ciniki_core_dbAddModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '60');
 	}
 
 	if( $strsql != "" ) {
