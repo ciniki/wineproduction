@@ -11,8 +11,6 @@
 # customer_id:			The customer from the customers module. 
 # invoice_id:			The id of the invoice this order is attached to in the invoicing module. (future)
 # invoice_number:		The invoice number of the which is in another system.
-# batch_item_number:	If there is more than one wine per order, than this is the item number > 0.
-#						If there is only a single wine, this should be 0 to indicate no other items.
 # product_id:			The id of the production in production from the products module. 
 # wine_type:			The type of wine, red, white, special, etc...
 # kit_length:			The length of time in weeks the kit takes from start to finish.
@@ -30,6 +28,10 @@
 # colour_tag:			The current colour assigned to the order.  This aids in the finding of a batch.
 #						The strings stored should be yellow, red, orange, etc...  They will be translated
 #						into a HTML colour by a hard coded list in the interface.
+#
+# rack_colour:			The colour which is assigned to the wine when it is started.
+#
+# filter_colour:		The colour which is assigned to the wine after it is racked.
 #
 # order_flags:			Allows for 16 different flags to be set on an order.  List of flags and colours associated
 #						with them are in the wineproduction_settings table.
@@ -72,8 +74,8 @@
 #						the manufacturers product code or batch code.  This is a reference incase there is
 #						a problem with the finished product.
 # 
-# date_added:			The date and time the record was added.
-# last_updated:			The date and time the record was last updated.
+# date_added:			The UTC date and time the record was added.
+# last_updated:			The UTC date and time the record was last updated.
 #
 create table ciniki_wineproductions (
 	id int not null auto_increment,
@@ -82,7 +84,6 @@ create table ciniki_wineproductions (
 	customer_id int not null,
 	invoice_id int not null,
 	invoice_number varchar(100) not null,
-# ??	batch_item_number tinyint unsigned not null,
 	product_id int not null,
 	wine_type varchar(20) not null,
 	kit_length varchar(20) not null,
