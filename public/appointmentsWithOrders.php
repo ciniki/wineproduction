@@ -43,7 +43,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
-	$rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.appointments');
+	$rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.appointmentsWithOrders');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

@@ -38,7 +38,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
     // check permission to run this function for this business
     //  
     require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.stats'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.statsCTB'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
