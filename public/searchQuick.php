@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// Search active orders and last updated at the top.
+// This method will search unbottled orders.
 //
 // Info
 // ----
@@ -10,8 +10,11 @@
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
-// search_str:		The search string provided by the user.
+// api_key:
+// auth_token:
+// business_id:		The ID of the business to search the order of.
+// start_needle:	The string to search the invoice_numbers, customer names or product names.
+// limit:			The maximum number of results to return.
 // 
 // Returns
 // -------
@@ -77,6 +80,6 @@ function ciniki_wineproduction_searchQuick($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	return ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
+	return ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
 }
 ?>

@@ -9,7 +9,6 @@
 // api_key:
 // auth_token:
 // business_id:			The ID of the business to get the details for.
-// date:				The date to get the schedule for.
 //
 // Returns
 // -------

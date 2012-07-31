@@ -2,17 +2,15 @@
 //
 // Description
 // -----------
-// This function will return the stats of how many order orders
-// are in which states
-//
-// Info
-// ----
-// Status: 			defined
+// This method will return the number of wineproduction orders
+// that need to have a bottling date specified, or the bottling
+// date is in the past and the order status is not bottled.
 //
 // Arguments
 // ---------
-// 
-// user_id: 		The user making the request
+// api_key:
+// auth_token:
+// business_id:		The ID of the business to get the wineproduction statistics for.
 // 
 // Returns
 // -------
@@ -59,7 +57,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
 		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00') "
 		. "AND (filtering_date > 0 AND filtering_date < NOW()) "
 		. "";
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'584', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }

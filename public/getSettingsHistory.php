@@ -13,7 +13,7 @@
 // api_key:
 // auth_token:
 // business_id:			The ID of the business to get the details for.
-// field:					The detail key to get the history for.
+// fields:				The list of fields to get the history for.
 //
 // Returns
 // -------
@@ -50,6 +50,6 @@ function ciniki_wineproduction_getSettingsHistory($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproduction_settings', $args['fields'], 'detail_value', 'wineproduction');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproduction_settings', $args['fields'], 'detail_value', 'wineproduction');
 }
 ?>

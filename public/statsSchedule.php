@@ -2,19 +2,12 @@
 //
 // Description
 // -----------
-// This function will return the stats information for the schedule
-//
-// Info
-// ----
-// Status: 			defined
-//
-// Arguments
-// ---------
-// 
-// user_id: 		The user making the request
+// This method will return the stats information for the production schedule.
 //
 // API Arguments
 // -------------
+// api_key:
+// auth_token:
 // business_id:		The ID of the business to get the stats schedule for.
 // start_date:		The first date to get the stats from.
 // days:			The number of days to collect stats for.
@@ -91,7 +84,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND racking_date < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
 		. "GROUP BY racking_date "
 		. "";
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'racking', 'stat', array('stat'=>'ok', 'racking'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'racking', 'stat', array('stat'=>'ok', 'racking'=>array()));
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'428', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -111,7 +104,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND racking_date > '0000-00-00' "
 		. "AND DATE(racking_date) < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'racking');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'429', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -122,7 +115,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND status < 30 "
 		. "AND racking_date >= DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'racking');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'431', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -144,7 +137,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND filtering_date < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
 		. "GROUP BY filtering_date "
 		. "";
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'filtering', 'stat', array('stat'=>'ok', 'filtering'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'filtering', 'stat', array('stat'=>'ok', 'filtering'=>array()));
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'430', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -164,7 +157,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND filtering_date > '0000-00-00' "
 		. "AND DATE(filtering_date) < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'filtering');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'418', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -175,7 +168,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND status < 40 "
 		. "AND filtering_date >= DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'filtering');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'417', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -196,7 +189,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND DATE(bottling_date) < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
 		. "GROUP BY DATE(bottling_date) "
 		. "";
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'bottling', 'stat', array('stat'=>'ok', 'bottling'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'bottling', 'stat', array('stat'=>'ok', 'bottling'=>array()));
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'507', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -216,7 +209,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 //		. "AND bottling_date > '0000-00-00' "
 		. "AND bottling_date < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'bottling');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'bottling');
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'508', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
@@ -227,7 +220,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
 		. "AND status < 60 "
 		. "AND bottling_date >= DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'bottling');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'bottling');
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'509', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }

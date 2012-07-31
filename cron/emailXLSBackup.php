@@ -11,7 +11,8 @@
 //
 // Arguments
 // ---------
-// business_id:			The business ID 
+// ciniki:
+// cronjob:			The cronjob structure.
 //
 // Returns
 // -------
@@ -31,7 +32,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	// Get the settings for the business to apply the flags and colours
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $cronjob['business_id'], 'wineproduction', 'settings', '');
+	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $cronjob['business_id'], 'ciniki.wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -80,7 +81,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuery.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
-	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'toolbox');
+	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.wineproduction');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

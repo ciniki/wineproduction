@@ -11,7 +11,8 @@
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
+// ciniki:
+// business_id:		The ID of the business to get the colours for.
 // 
 // Returns
 // -------

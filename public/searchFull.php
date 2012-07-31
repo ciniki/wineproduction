@@ -2,16 +2,17 @@
 //
 // Description
 // -----------
-// The search return a list of results, with the most probable at the top.
-//
-// Info
-// ----
-// Status: 			defined
+// This method will search all wineproduction orders that are in 
+// any status, bottled or not.
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
-// search_str:		The search string provided by the user.
+// api_key:
+// auth_token:
+// business_id:		The ID of the business to search the orders of.
+// search_str:		The string to search the orders for.
+// limit:			(optional) The limit of results to return.
+// finished:		(optional) If specified 'no' only returned unbottled orders.
 // 
 // Returns
 // -------
@@ -82,6 +83,6 @@ function ciniki_wineproduction_searchFull($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	return ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
+	return ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
 }
 ?>

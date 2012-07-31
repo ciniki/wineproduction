@@ -52,7 +52,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 	// Grab the settings for the business from the database
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'wineproduction', 'settings', '');
+	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -111,7 +111,7 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 		. "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 'fields'=>array('id', 
 			'customer_name', 'date', 'time', '12hour', 'allday', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags', 'bottling_notes'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',

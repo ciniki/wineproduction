@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This function will get the history of a field from the ciniki_core_change_logs table.
+// This method will get the history of a field from the ciniki_wineproduction_history table.
 // This allows the user to view what has happened to a data element, and if they
 // choose, revert to a previous version.
 //
@@ -11,7 +11,7 @@
 // api_key:
 // auth_token:
 // business_id:			The ID of the business to get the details for.
-// key:					The detail key to get the history for.
+// field:				The field to get this settings history for.
 //
 // Returns
 // -------
@@ -48,6 +48,6 @@ function ciniki_wineproduction_getSettingHistory($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbGetModuleHistory.php');
-	return ciniki_core_dbGetModuleHistory($ciniki, 'wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproduction_settings', $args['field'], 'detail_value');
+	return ciniki_core_dbGetModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproduction_settings', $args['field'], 'detail_value');
 }
 ?>

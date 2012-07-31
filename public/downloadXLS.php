@@ -10,7 +10,9 @@
 //
 // Arguments
 // ---------
-// business_id:			The business ID 
+// api_key:
+// auth_token:
+// business_id:			The ID of the business to export all open orders for.
 //
 // Returns
 // -------
@@ -41,7 +43,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
 	// Get the settings for the business to apply the flags and colours
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'wineproduction', 'settings', '');
+	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -90,7 +92,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
 	
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuery.php');
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
-	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'toolbox');
+	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.wineproduction');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

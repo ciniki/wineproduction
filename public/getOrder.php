@@ -2,15 +2,14 @@
 //
 // Description
 // -----------
-// This function will return a list of orders
-//
-// Info
-// ----
-// Status: 			started
+// This method will return the detail for a wineproduction order.
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
+// api_key:
+// auth_token:
+// business_id:			The ID of the business to get the wineproduction order for.
+// wineproduction_id:	The ID of the wineproduction order to get.
 // 
 // Returns
 // -------
@@ -69,7 +68,7 @@ function ciniki_wineproduction_getOrder($ciniki) {
 		. "AND ciniki_wineproductions.id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'wineproduction', 'order');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'order');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

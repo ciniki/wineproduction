@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// The search return a list of results, with the most probable at the top.
+// This method will search the wineproduction order products.
 //
 // Info
 // ----
@@ -10,8 +10,13 @@
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
-// search_str:		The search string provided by the user.
+// api_key:
+// auth_token:
+// business_id:		The ID of the business to search the products for.
+// start_needle:	The string to search the product names for.
+// limit:			The number to limit the results.
+// customer_id:		(optional) The ID of customer to search for orders.  If specified,
+//					the search will be restricted to orders attached to this order.
 // 
 // Returns
 // -------
@@ -86,6 +91,6 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 	}
 
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	return ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'names', 'name', array('stat'=>'ok', 'names'=>array()));
+	return ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'names', 'name', array('stat'=>'ok', 'names'=>array()));
 }
 ?>

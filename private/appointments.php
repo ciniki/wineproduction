@@ -7,10 +7,9 @@
 //
 // Arguments
 // ---------
-// api_key:
-// auth_token:
-// business_id:			The ID of the business to get the details for.
-// date:				The date to get the schedule for.
+// ciniki:
+// business_id:			The ID of the business to get the appointments for.
+// args:				The args passed from the API.
 //
 // Returns
 // -------
@@ -23,7 +22,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	// Grab the settings for the business from the database
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $business_id, 'wineproduction', 'settings', '');
+	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $business_id, 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -82,7 +81,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id ";
 	}
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
-	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'wineproduction', array(
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
 			'fields'=>array('id', 'start_date', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),
 			'sums'=>array('duration'), 'countlists'=>array('wine_name')),

@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This function will return the list of available colours for this business.
+// This method will return the wineproduction settings for a business.
 //
 // Info
 // ----
@@ -10,7 +10,9 @@
 //
 // Arguments
 // ---------
-// user_id: 		The user making the request
+// api_key:
+// auth_token:
+// business_id:		The ID of the business to get the settings for.
 // 
 // Returns
 // -------
@@ -51,7 +53,7 @@ function ciniki_wineproduction_getSettings($ciniki) {
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQuery.php');
 	$strsql = "SELECT DATE_FORMAT(FROM_UNIXTIME('" . time() . "'), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as formatted_date ";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'core', 'date');
+	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.core', 'date');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -64,7 +66,7 @@ function ciniki_wineproduction_getSettings($ciniki) {
 	// Grab the settings for the business from the database
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'wineproduction', 'settings', '');
+	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}

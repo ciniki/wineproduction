@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This function will return a list of orders
+// This method will return a list of orders for a business.
 //
 // Info
 // ----
@@ -284,7 +284,7 @@ function ciniki_wineproduction_list($ciniki) {
 
 	// error_log($strsql);
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
 	if( $rc != 'ok' ) {
 		return $rc;
 	}

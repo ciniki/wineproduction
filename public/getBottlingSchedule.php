@@ -48,7 +48,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	// Grab the settings for the business from the database
 	//
     require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
-	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'wineproduction', 'settings', '');
+	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -79,7 +79,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 		. "ORDER BY bottling_date, bottling_time, customer_name, invoice_number "
 		. "";
 	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'wineproduction', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
+	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
@@ -106,23 +106,5 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	$rc['interval'] = 1800;
 	$rc['end_timestamp'] = strtotime($args['date'] . " 20:00");
 	return $rc;
-
-//	$start_ts = strtotime($args['date'] . " 10:00");
-//	$end_ts = strtotime($args['date'] . " 20:00");
-//	$interval = 1800;		// 30 minutes
-//	
-//	$schedule = array();
-//	if( $rc['num_rows'] > 0 ) {
-//
-//	} else {
-//		for($cur_ts = $start_ts; $cur_ts< $end_ts; $cur_ts+=$interval) {
-//			array_push($schedule, 
-//				array('interval'=>array('date'=>strftime("%Y-%m-%d %H:%M", $cur_ts)))
-//			);
-//		}
-//	}
-
-
-//	return array('stat'=>'ok', 'schedule'=>$schedule);
 }
 ?>
