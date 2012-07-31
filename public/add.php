@@ -138,7 +138,7 @@ function ciniki_wineproduction_add($ciniki) {
 			. "'" . ciniki_core_dbQuote($ciniki, $args['notes']) . "', "
 			. "UTC_TIMESTAMP(), UTC_TIMESTAMP())"
 			. "";
-		$rc = ciniki_core_dbInsert($ciniki, $strsql, 'wineproduction');
+		$rc = ciniki_core_dbInsert($ciniki, $strsql, 'ciniki.wineproduction');
 		if( $rc['stat'] != 'ok' ) { 
 			ciniki_core_dbTransactionRollback($ciniki, 'wineproduction');
 			return $rc;
