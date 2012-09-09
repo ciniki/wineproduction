@@ -31,14 +31,14 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	//
 	// Get the settings for the business to apply the flags and colours
 	//
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
+    require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
 	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $cronjob['business_id'], 'ciniki.wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 	$settings = $rc['settings'];
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
+	require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/users/private/dateFormat.php');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	//
@@ -49,7 +49,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	//
 	// Open Excel parsing library
 	//
-	require($ciniki['config']['core']['lib_dir'] . '/PHPExcel/PHPExcel.php');
+	require($ciniki['config']['ciniki.core']['lib_dir'] . '/PHPExcel/PHPExcel.php');
 	$objPHPExcel = new PHPExcel();
 
 	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
@@ -79,8 +79,8 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		. "ORDER BY ciniki_wineproductions.status, ciniki_wineproductions.invoice_number "
 		. "";
 	
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuery.php');
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
+	require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/core/private/dbQuery.php');
+	require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
 	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.wineproduction');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -251,7 +251,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	// Create email message with XLS attached
 	//
 	if( $cronjob['args']['email_address'] != '' 
-		&& isset($ciniki['config']['core']['system.email']) && $ciniki['config']['core']['system.email'] != '' ) {
+		&& isset($ciniki['config']['ciniki.core']['system.email']) && $ciniki['config']['ciniki.core']['system.email'] != '' ) {
 		$subject = "Ciniki - Wineproduction Backup";
 		$msg = "Here is your wineproduction backup.\n"
 			. "\n"
@@ -259,8 +259,8 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		//
 		// The from address can be set in the config file.
 		//
-		$headers = 'From: "' . $ciniki['config']['core']['system.email.name'] . '" <' . $ciniki['config']['core']['system.email'] . ">\r\n" .
-				'Reply-To: "' . $ciniki['config']['core']['system.email.name'] . '" <' . $ciniki['config']['core']['system.email'] . ">\r\n" .
+		$headers = 'From: "' . $ciniki['config']['ciniki.core']['system.email.name'] . '" <' . $ciniki['config']['ciniki.core']['system.email'] . ">\r\n" .
+				'Reply-To: "' . $ciniki['config']['ciniki.core']['system.email.name'] . '" <' . $ciniki['config']['ciniki.core']['system.email'] . ">\r\n" .
 				'X-Mailer: PHP/' . phpversion();
 
 
@@ -291,7 +291,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 
 		$msg .= "--{$mime_boundary}--";
 
-		mail($cronjob['args']['email_address'], $subject, $msg, $headers, '-f' . $ciniki['config']['core']['system.email']);
+		mail($cronjob['args']['email_address'], $subject, $msg, $headers, '-f' . $ciniki['config']['ciniki.core']['system.email']);
 	}
 	
 	// 
