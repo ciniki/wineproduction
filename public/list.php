@@ -19,7 +19,7 @@ function ciniki_wineproduction_list($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		'customer_id'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No customer specified'),
@@ -55,7 +55,7 @@ function ciniki_wineproduction_list($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
     $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.list'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -67,7 +67,7 @@ function ciniki_wineproduction_list($ciniki) {
 	date_default_timezone_set('America/Toronto');
 	$todays_date = strftime("%Y-%m-%d");
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/dateFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	// ARGS:
@@ -90,8 +90,8 @@ function ciniki_wineproduction_list($ciniki) {
 	// status_list: 10,20,30,40
 	//    list all wines that are not in a completed stage
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuote.php');
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbQuoteIDs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 
 	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
 		. "ciniki_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, rack_colour, filter_colour, "
@@ -283,7 +283,7 @@ function ciniki_wineproduction_list($ciniki) {
 	}
 
 	// error_log($strsql);
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
 	if( $rc != 'ok' ) {
 		return $rc;

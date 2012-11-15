@@ -21,7 +21,7 @@ function ciniki_wineproduction_stats($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
         )); 
@@ -34,7 +34,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
     $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.stats'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -50,7 +50,7 @@ function ciniki_wineproduction_stats($ciniki) {
 	//
 	// Get the complete count information
 	//
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
 		. "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "GROUP BY status ";

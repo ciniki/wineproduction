@@ -22,7 +22,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
         )); 
@@ -35,7 +35,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
     $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.statsCTB'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -57,6 +57,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
 		. "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00') "
 		. "AND (filtering_date > 0 AND filtering_date < NOW()) "
 		. "";
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'584', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));

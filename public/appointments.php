@@ -20,7 +20,7 @@ function ciniki_wineproduction_appointments($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'errmsg'=>'No date specified'), 
@@ -45,13 +45,13 @@ function ciniki_wineproduction_appointments($ciniki) {
 	//
 	// Check access to business_id as owner, or sys admin
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
 	$rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.appointments');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/appointments.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'appointments');
 	return ciniki_wineproduction__appointments($ciniki, $args['business_id'], $args);
 }
 ?>

@@ -21,7 +21,7 @@ function ciniki_wineproduction_getColours($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
         )); 
@@ -34,7 +34,7 @@ function ciniki_wineproduction_getColours($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
     $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.getColours'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -56,7 +56,7 @@ function ciniki_wineproduction_getColours($ciniki) {
 //		array('colour'=>array('id'=>'brightpink', 'name'=>'Bright Pink', 'code'=>'f660ab')),
 //		));
 
-    require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/getColours.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'getColours');
 	$colours = ciniki_wineproduction__getColours($ciniki, $args['business_id']);
 	return array('stat'=>'ok', 'colours'=>$colours);
 }

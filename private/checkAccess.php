@@ -21,7 +21,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 	//
 	// Check if the business is active and the module is enabled
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/businesses/private/checkModuleAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'checkModuleAccess');
 	$rc = ciniki_businesses_checkModuleAccess($ciniki, $business_id, 'ciniki', 'wineproduction');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -35,7 +35,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
 	//
 	// Load the rulesets for this module
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/getRulesets.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'getRulesets');
 	$rulesets = ciniki_wineproduction_getRuleSets($ciniki);
 
 	//

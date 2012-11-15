@@ -24,6 +24,6 @@ function ciniki_wineproduction__getSettings($ciniki, $business_id) {
 	//
 	// Grab the settings for the business from the database
 	//
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
 	return ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
 }

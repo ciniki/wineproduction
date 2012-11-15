@@ -21,7 +21,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	//
 	// Grab the settings for the business from the database
 	//
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
 	$rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $business_id, 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -35,7 +35,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	if( $args['date'] == '' || $args['date'] == 'today' ) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
-	require_once($ciniki['config']['core']['modules_dir'] . '/users/private/datetimeFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
 	$datetime_format = ciniki_users_datetimeFormat($ciniki);
 
 
@@ -80,7 +80,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	} else {
 		$strsql .= "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id ";
 	}
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbHashQueryTree.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
 			'fields'=>array('id', 'start_date', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),

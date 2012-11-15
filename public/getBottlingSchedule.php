@@ -25,7 +25,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	//
 	// Find all the required and optional arguments
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
 		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
 		'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'errmsg'=>'No date specified'), 
@@ -38,7 +38,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	//
 	// Check access to business_id as owner, or sys admin
 	//
-	require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
 	$rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.getBottlingSchedule');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -47,7 +47,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	//
 	// Grab the settings for the business from the database
 	//
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
 	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -78,7 +78,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 		. "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' "
 		. "ORDER BY bottling_date, bottling_time, customer_name, invoice_number "
 		. "";
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'events', 'event', array('stat'=>'ok', 'events'=>array()));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

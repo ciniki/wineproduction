@@ -25,7 +25,7 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/core/private/prepareArgs.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
         'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'errmsg'=>'No search specified'), 
@@ -42,7 +42,7 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-    require_once($ciniki['config']['core']['modules_dir'] . '/wineproduction/private/checkAccess.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
     $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.searchProductNames'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -90,7 +90,7 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 		$strsql .= "LIMIT 25";
 	}
 
-	require_once($ciniki['config']['core']['modules_dir'] . '/core/private/dbRspQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 	return ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'names', 'name', array('stat'=>'ok', 'names'=>array()));
 }
 ?>
