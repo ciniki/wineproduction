@@ -31,14 +31,15 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 	//
 	// Get the settings for the business to apply the flags and colours
 	//
-    require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/core/private/dbDetailsQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
 	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $cronjob['business_id'], 'ciniki.wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 	$settings = $rc['settings'];
 
-	require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/users/private/dateFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	//
@@ -78,9 +79,10 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
 		. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
 		. "ORDER BY ciniki_wineproductions.status, ciniki_wineproductions.invoice_number "
 		. "";
+
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuery');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbFetchHashRow');
 	
-	require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/core/private/dbQuery.php');
-	require_once($ciniki['config']['ciniki.core']['modules_dir'] . '/core/private/dbFetchHashRow.php');
 	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.wineproduction');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
