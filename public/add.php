@@ -73,6 +73,7 @@ function ciniki_wineproduction_add($ciniki) {
 
 	//
 	// Check for duplicate products which will require at A, B C after the invoice number
+	// FIXME: No longer needed
 	//
 	$pcount = array(); 
 	for($i=0;$i<25;$i++) {
