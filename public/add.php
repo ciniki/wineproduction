@@ -12,7 +12,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_wineproduction_add($ciniki) {
+function ciniki_wineproduction_add(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -105,6 +105,17 @@ function ciniki_wineproduction_add($ciniki) {
 			$invoice_number .= '-' . chr($pcount[$ciniki['request']['args']['product_id' . $ext]]['cur'] + 65);
 			$pcount[$ciniki['request']['args']['product_id' . $ext]]['cur']++;
 		}
+	
+		//
+		// Get a new UUID
+		//
+		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+		$rc = ciniki_core_dbUUID($ciniki, 'ciniki.services');
+		if( $rc['stat'] != 'ok' ) {
+			return $rc;
+		}
+		$args['uuid'] = $rc['uuid'];
+
 		//
 		// Add the order to the database
 		//
@@ -113,7 +124,7 @@ function ciniki_wineproduction_add($ciniki) {
 			. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, "
 			. "bottling_duration, bottling_flags, bottling_nocolour_flags, bottle_date, bottling_date, notes, "
 			. "date_added, last_updated) VALUES ("
-			. "UUID(), "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $invoice_number) . "', "
@@ -155,6 +166,7 @@ function ciniki_wineproduction_add($ciniki) {
 		//
 
 		$changelog_fields = array(
+			'uuid',
 			'customer_id',
 			'invoice_number',
 			'product_id' . $ext,
@@ -188,6 +200,8 @@ function ciniki_wineproduction_add($ciniki) {
 					1, 'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
 			}
 		}
+		$ciniki['syncqueue'][] = array('push'=>'ciniki.wineproduction.order',
+			'args'=>array('id'=>$wineproduction_id));
 	}
 	//
 	// Commit the database changes

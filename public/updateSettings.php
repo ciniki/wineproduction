@@ -15,7 +15,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_wineproduction_updateSettings($ciniki) {
+function ciniki_wineproduction_updateSettings(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -300,6 +300,8 @@ function ciniki_wineproduction_updateSettings($ciniki) {
 			}
 			ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
 				2, 'ciniki_wineproduction_settings', $field, 'detail_value', $ciniki['request']['args'][$field]);
+			$ciniki['syncqueue'][] = array('push'=>'ciniki.wineproduction.setting',
+				'args'=>array('id'=>$field));
 		}
 	}
 

@@ -14,7 +14,7 @@
 // -------
 // <rsp stat='ok' id='34' />
 //
-function ciniki_wineproduction_updateAppointment($ciniki) {
+function ciniki_wineproduction_updateAppointment(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -148,6 +148,11 @@ function ciniki_wineproduction_updateAppointment($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
 	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'wineproduction');
+
+	foreach($args['wineproduction_ids'] as $wid) {
+		$ciniki['syncqueue'][] = array('push'=>'ciniki.wineproduction.order',
+			'args'=>array('id'=>$wid));
+	}
 
 	return array('stat'=>'ok');
 }
