@@ -21,30 +21,31 @@ function ciniki_wineproduction_list($ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'customer_id'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No customer specified'),
-		'status_list'=>array('required'=>'no', 'type'=>'idlist', 'default'=>'', 'errmsg'=>'No status_list specified'),
-		'status'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No status specified'),
-		'before_start_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No start date specified'),
-		'before_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'after_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'before_rack_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'before_filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No filter date specified'),
-		'after_filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No filter date specified'),
-		'before_filter_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No filter date specified'),
-		'before_bottle_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No bottle date specified'),
-		'order_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'started_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No racking date specified'),
-		'racked_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No filtering date specified'),
-		'filtered_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No filtered date specified'),
-		'bottled_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No bottled date specified'),
-		'bottling_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No bottling date specified'),
-		'before_bottling_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No bottling date specified'),
-		'after_bottling_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'errmsg'=>'No bottling date specified'),
-		'work_date'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No rack date specified'),
-		'sorting'=>array('required'=>'no', 'default'=>'', 'errmsg'=>'No sorting order specified'),
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'customer_id'=>array('required'=>'no', 'default'=>'', 'name'=>'Customer'),
+		'product_id'=>array('required'=>'no', 'default'=>'', 'name'=>'Product'),
+		'status_list'=>array('required'=>'no', 'type'=>'idlist', 'default'=>'', 'name'=>'Status List'),
+		'status'=>array('required'=>'no', 'default'=>'', 'name'=>'Status'),
+		'before_start_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Start Date'),
+		'before_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
+		'after_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
+		'before_rack_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
+		'before_filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filter Date'),
+		'after_filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filter Date'),
+		'before_filter_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filter Date'),
+		'before_bottle_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Bottle Date'),
+		'order_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
+		'started_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
+		'racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Racking Date'),
+		'racked_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
+		'filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filtering Date'),
+		'filtered_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Filtering Date'),
+		'bottled_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Bottling Date'),
+		'bottling_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Bottling Date'),
+		'before_bottling_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Bottling Date'),
+		'after_bottling_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Bottling Date'),
+		'work_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
+		'sorting'=>array('required'=>'no', 'default'=>'', 'name'=>'Sorting Order'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'450', 'msg'=>'Unable to understand request', 'err'=>$rc['err']));
@@ -122,6 +123,9 @@ function ciniki_wineproduction_list($ciniki) {
 		. "";
 	if( isset($args['customer_id']) && $args['customer_id'] > 0 ) {
 		$strsql .= "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
+	}
+	if( isset($args['product_id']) && $args['product_id'] > 0 ) {
+		$strsql .= "AND ciniki_wineproductions.product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' ";
 	}
 
 	if( isset($args['status_list']) && is_array($args['status_list']) && count($args['status_list']) ) {
@@ -277,6 +281,8 @@ function ciniki_wineproduction_list($ciniki) {
 	} else if( $args['status'] == '40' ) {
 		$strsql .= "ORDER BY kit_length, wine_type DESC, filter_date ASC ";
 	} else if( $args['customer_id'] > 0 ) {
+		$strsql .= "ORDER BY status, order_date ASC ";
+	} else if( $args['product_id'] > 0 ) {
 		$strsql .= "ORDER BY status, order_date ASC ";
 	} else {
 		$strsql .= "ORDER BY ciniki_wineproductions.invoice_number DESC ";
