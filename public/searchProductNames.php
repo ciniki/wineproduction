@@ -27,11 +27,11 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'errmsg'=>'No search specified'), 
-        'limit'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No limit specified'), 
-        'customer_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No customer specified'), 
-		'category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'errmsg'=>'No product category specified'),
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'start_needle'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Search'), 
+        'limit'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Limit'), 
+        'customer_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer'), 
+		'category_id'=>array('required'=>'no', 'default'=>'0', 'blank'=>'yes', 'name'=>'Category'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -52,7 +52,8 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 	// If a customer is specified, search through past orders to find preferences for customer
 	//
 	if( $args['start_needle'] == '' && isset($args['customer_id']) && $args['customer_id'] > 0 ) {
-		$strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, wine_type, kit_length, order_flags "
+		$strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, "
+			. "wine_type, kit_length, order_flags "
 			. "FROM ciniki_wineproductions, ciniki_products "
 			. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' "
@@ -66,12 +67,15 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 	// matching names
 	//
 	else if( $args['start_needle'] != '' ) {
-		$strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, IFNULL(d1.detail_value, '') AS wine_type, IFNULL(d2.detail_value, '') AS kit_length, 0 AS order_flags "
+		$strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, "
+			. "IFNULL(d1.detail_value, '') AS wine_type, "
+			. "IFNULL(d2.detail_value, '') AS kit_length, "
+			. "0 AS order_flags "
 			. "FROM ciniki_products "
 			. "LEFT JOIN ciniki_product_details AS d1 ON (ciniki_products.id = d1.product_id AND d1.detail_key = 'wine_type') "
 			. "LEFT JOIN ciniki_product_details AS d2 ON (ciniki_products.id = d2.product_id AND d2.detail_key = 'kit_length') "
-			. "LEFT JOIN ciniki_wineproductions ON (ciniki_products.id = ciniki_wineproductions.product_id "
-				. "AND ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+//			. "LEFT JOIN ciniki_wineproductions ON (ciniki_products.id = ciniki_wineproductions.product_id "
+//				. "AND ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
 			. "WHERE ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "	
 				. "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "	
@@ -82,7 +86,8 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 	}
 
 	$strsql .= "GROUP BY ciniki_products.id "
-		. "ORDER BY COUNT(ciniki_wineproductions.id) DESC "
+		. "ORDER BY ciniki_products.name "
+//		. "ORDER BY COUNT(ciniki_wineproductions.id) DESC "
 		. "";
 	if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
 		$strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";	// is_numeric verified
