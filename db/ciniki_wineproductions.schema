@@ -115,5 +115,5 @@ create table ciniki_wineproductions (
 	index (business_id, status),
 	index (customer_id, invoice_number, product_id),
 	index (racking_date, filtering_date, bottling_date),
-	index uuid (business_id, uuid, last_updated)
+	index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.10';
