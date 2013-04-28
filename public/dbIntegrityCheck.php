@@ -28,7 +28,7 @@ function ciniki_wineproduction_dbIntegrityCheck($ciniki) {
 	// Check access to business_id as owner, or sys admin
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-	$rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.historyFix', 0);
+	$rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.dbIntegrityCheck', 0);
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
