@@ -18,29 +18,30 @@ function ciniki_wineproduction_add(&$ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'customer_id'=>array('required'=>'yes', 'default'=>'0', 'blank'=>'', 'errmsg'=>'No customer specified'), 
-        'invoice_number'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No invoice specified'), 
-        'product_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No wine specified'), 
-        'wine_type'=>array('required'=>'no', 'blank'=>'no', 'errmsg'=>'No wine specified'), 
-        'kit_length'=>array('required'=>'no', 'blank'=>'no', 'errmsg'=>'No wine specified'), 
-        'status'=>array('required'=>'yes', 'default'=>'10', 'blank'=>'no', 'errmsg'=>'No status specified'), 
-        'rack_colour'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No colour specified'), 
-        'filter_colour'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No colour specified'), 
-        'order_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No order date specified'), 
-        'order_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No order date specified'), 
-        'start_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No start date specified'), 
-        'sg_reading'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No SG reading specified'), 
-        'racking_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No racking date specified'), 
-        'rack_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No racking date specified'), 
-        'filtering_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No filter date specified'), 
-        'filter_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No filter date specified'), 
-        'bottling_duration'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No bottle duration specified'), 
-        'bottling_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No bottle flags specified'), 
-        'bottling_nocolour_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'errmsg'=>'No bottle flags specified'), 
-        'bottling_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
-        'bottle_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No bottle date specified'), 
-        'notes'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'errmsg'=>'No notes specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'customer_id'=>array('required'=>'yes', 'default'=>'0', 'blank'=>'', 'name'=>'Customer'), 
+        'invoice_number'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Invoice Number'), 
+        'product_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Wine'), 
+        'batch_count'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Batch Count'), 
+        'wine_type'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Wine Type'), 
+        'kit_length'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Kit Length'), 
+        'status'=>array('required'=>'yes', 'default'=>'10', 'blank'=>'no', 'name'=>'Status'), 
+        'rack_colour'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Rack Colour'), 
+        'filter_colour'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Filter Colour'), 
+        'order_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Order Flags'), 
+        'order_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Order Date'), 
+        'start_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
+        'sg_reading'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'SG Reading'), 
+        'racking_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Racking Date'), 
+        'rack_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Rack Date'), 
+        'filtering_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Filtering Date'), 
+        'filter_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Filter Date'), 
+        'bottling_duration'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Duration'), 
+        'bottling_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Flags'), 
+        'bottling_nocolour_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Colour Flags'), 
+        'bottling_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bttling Date'), 
+        'bottle_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Bottle Date'), 
+        'notes'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Notes'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -115,6 +116,10 @@ function ciniki_wineproduction_add(&$ciniki) {
 			return $rc;
 		}
 		$args['uuid'] = $rc['uuid'];
+
+		if( isset($args['batch_count']) && $args['batch_count'] > 0 ) {
+			$invoice_number .= '-' . chr($args['batch_count'] + 64);
+		}
 
 		//
 		// Add the order to the database
