@@ -42,14 +42,14 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
 	//
 	// Get the settings for the business to apply the flags and colours
 	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
 	$rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
 	$settings = $rc['settings'];
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 
 	//
@@ -90,8 +90,8 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
 		. "ORDER BY ciniki_wineproductions.status, ciniki_wineproductions.invoice_number "
 		. "";
 	
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuery.php');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbFetchHashRow.php');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuery');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbFetchHashRow');
 	$rc = ciniki_core_dbQuery($ciniki, $strsql, 'ciniki.wineproduction');
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
@@ -110,7 +110,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
 	$sheets[20]['sheet'] = $objPHPExcel->createSheet();
 	$sheets[20]['sheet']->setTitle('Started');
 	$sheets[25]['sheet'] = $objPHPExcel->createSheet();
-	$sheets[25]['sheet']->setTitle('SG REad');
+	$sheets[25]['sheet']->setTitle('SG Read');
 	$sheets[30]['sheet'] = $objPHPExcel->createSheet();
 	$sheets[30]['sheet']->setTitle('Racked');
 	$sheets[40]['sheet'] = $objPHPExcel->createSheet();
