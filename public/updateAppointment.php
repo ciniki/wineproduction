@@ -20,14 +20,14 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'wineproduction_ids'=>array('required'=>'yes', 'type'=>'idlist', 'blank'=>'no', 'errmsg'=>'No order specified'), 
-        'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling duration specified'), 
-        'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling flags specified'), 
-        'bottling_nocolour_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling flags specified'), 
-        'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
-        'bottling_notes'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling notes specified'), 
-        'bottled'=>array('required'=>'no', 'errmsg'=>'No bottled flag specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'wineproduction_ids'=>array('required'=>'yes', 'type'=>'idlist', 'blank'=>'no', 'name'=>'Order'), 
+        'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Duration'), 
+        'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Flags'), 
+        'bottling_nocolour_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Colour Flags'), 
+        'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bottling Date'), 
+        'bottling_notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling notes'), 
+        'bottled'=>array('required'=>'no', 'name'=>'Bottled Flag'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

@@ -30,9 +30,9 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'start_date'=>array('required'=>'yes', 'type'=>'date', 'blank'=>'no', 'errmsg'=>'No start date specified'), 
-        'days'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'start_date'=>array('required'=>'yes', 'type'=>'date', 'blank'=>'no', 'name'=>'Start Date'), 
+        'days'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Days'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

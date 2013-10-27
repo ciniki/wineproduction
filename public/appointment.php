@@ -32,8 +32,8 @@ function ciniki_wineproduction_appointment($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'appointment_id'=>array('required'=>'yes', 'blank'=>'yes', 'errmsg'=>'No appointment ID specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'appointment_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Appointment'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

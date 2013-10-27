@@ -20,8 +20,8 @@ function ciniki_wineproduction_getOrder($ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No order specified'),
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

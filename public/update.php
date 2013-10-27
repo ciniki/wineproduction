@@ -21,33 +21,33 @@ function ciniki_wineproduction_update(&$ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No order specified'), 
-        'customer_id'=>array('required'=>'no', 'blank'=>'no', 'errmsg'=>'No customer specified'), 
-        'invoice_number'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No invoice specified'), 
-        'product_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No wine specified'), 
-        'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No type specified'), 
-        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No racking length specified'), 
-        'status'=>array('required'=>'no', 'blank'=>'no', 'errmsg'=>'No status specified'), 
-        'colour_tag'=>array('required'=>'no', 'blank'=>'yes', 'null'=>'', 'errmsg'=>'No colour tag specified'), 
-        'rack_colour'=>array('required'=>'no', 'blank'=>'yes', 'null'=>'', 'errmsg'=>'No colour specified'), 
-        'filter_colour'=>array('required'=>'no', 'blank'=>'yes', 'null'=>'', 'errmsg'=>'No colour specified'), 
-        'order_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No order date specified'), 
-        'order_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No order date specified'), 
-        'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No start date specified'), 
-        'sg_reading'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No SG reading specified'), 
-        'racking_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No racking date specified'), 
-        'rack_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No racking date specified'), 
-        'filtering_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No filter date specified'), 
-        'filter_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No filter date specified'), 
-        'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling duration specified'), 
-        'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling flags specified'), 
-        'bottling_nocolour_flags'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling flags specified'), 
-        'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'errmsg'=>'No bottling date specified'), 
-        'bottling_status'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No bottling status specified'), 
-        'bottle_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'errmsg'=>'No bottle date specified'), 
-        'notes'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No notes specified'), 
-        'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No batch code specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'), 
+        'customer_id'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Customer'), 
+        'invoice_number'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Invoice'), 
+        'product_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine'), 
+        'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Type'), 
+        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Kit Racking Length'), 
+        'status'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Status'), 
+        'colour_tag'=>array('required'=>'no', 'blank'=>'yes', 'null'=>'', 'name'=>'Colour Tag'), 
+        'rack_colour'=>array('required'=>'no', 'blank'=>'yes', 'null'=>'', 'name'=>'Rack Colour'), 
+        'filter_colour'=>array('required'=>'no', 'blank'=>'yes', 'null'=>'', 'name'=>'Filter Colour'), 
+        'order_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Order Date Flags'), 
+        'order_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Order Date'), 
+        'start_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Start Date'), 
+        'sg_reading'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'SG Reading'), 
+        'racking_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Racking Date'), 
+        'rack_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Rack Date'), 
+        'filtering_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Filtering Date'), 
+        'filter_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Filter Date'), 
+        'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Duration'), 
+        'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Flags'), 
+        'bottling_nocolour_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Colour Flags'), 
+        'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bottling Date'), 
+        'bottling_status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Status'), 
+        'bottle_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Bottle Date'), 
+        'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'), 
+        'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Batch Code'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -64,93 +64,11 @@ function ciniki_wineproduction_update(&$ciniki) {
         return $rc;
     }   
 
-	//  
-	// Turn off autocommit
-	//  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionStart');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionRollback');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbTransactionCommit');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUpdate');
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbAddModuleHistory');
-	$rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.wineproduction');
-	if( $rc['stat'] != 'ok' ) { 
-		return $rc;
-	}   
-
 	//
-	// Add the order to the database
+	// Update the order
 	//
-	$strsql = "UPDATE ciniki_wineproductions SET last_updated = UTC_TIMESTAMP()";
-
-	//
-	// Add all the fields to the change log
-	//
-
-	$changelog_fields = array(
-		'customer_id',
-		'invoice_number',
-		'product_id',
-		'wine_type',
-		'kit_length',
-		'status',
-		'colour_tag',
-		'rack_colour',
-		'filter_colour',
-		'order_flags',
-		'order_date',
-		'start_date',
-		'sg_reading',
-		'racking_date',
-		'rack_date',
-		'filtering_date',
-		'filter_date',
-		'bottling_duration',
-		'bottling_flags',
-		'bottling_nocolour_flags',
-		'bottling_date',
-		'bottling_status',
-		'bottle_date',
-		'notes',
-		'batch_code',
-		);
-	foreach($changelog_fields as $field) {
-		if( isset($args[$field]) ) {
-			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
-				2, 'ciniki_wineproductions', $args['wineproduction_id'], $field, $args[$field]);
-		}
-	}
-	$strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' ";
-	$rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.wineproduction');
-	if( $rc['stat'] != 'ok' ) { 
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
-		return $rc;
-	}
-	if( !isset($rc['num_affected_rows']) || $rc['num_affected_rows'] != 1 ) {
-		ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'367', 'msg'=>'Unable to add order'));
-	}
-
-	//
-	// Commit the database changes
-	//
-    $rc = ciniki_core_dbTransactionCommit($ciniki, 'ciniki.wineproduction');
-	if( $rc['stat'] != 'ok' ) {
-		return $rc;
-	}
-
-	//
-	// Update the last_change date in the business modules
-	// Ignore the result, as we don't want to stop user updates if this fails.
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-	ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'wineproduction');
-
-	$ciniki['syncqueue'][] = array('push'=>'ciniki.wineproduction.order',
-		'args'=>array('id'=>$args['wineproduction_id']));
-
-	return array('stat'=>'ok');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.wineproduction.order', 
+		$args['wineproduction_id'], $args, 0x07);
 }
 ?>

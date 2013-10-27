@@ -33,12 +33,12 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No order specified'), 
-        'action'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No action specified'), 
-        'sg_reading'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No SG Reading specified'), 
-        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No racking length specified'), 
-        'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'errmsg'=>'No batch code specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'), 
+        'action'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Action'), 
+        'sg_reading'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'SG Reading'), 
+        'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Racking Length'), 
+        'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'default'=>'', 'name'=>'Batch Code'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

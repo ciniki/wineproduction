@@ -23,10 +23,10 @@ function ciniki_wineproduction_searchFull($ciniki) {
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-        'search_str'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No search specified'), 
-        'limit'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No limit specified'), 
-        'finished'=>array('required'=>'no', 'default'=>'yes', 'blank'=>'yes', 'errmsg'=>'No finished flag specified'), 
+        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'search_str'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Search'), 
+        'limit'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Limit'), 
+        'finished'=>array('required'=>'no', 'default'=>'yes', 'blank'=>'yes', 'name'=>'Finished Flag'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;

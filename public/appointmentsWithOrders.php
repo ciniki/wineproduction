@@ -27,12 +27,12 @@ function ciniki_wineproduction_appointmentsWithOrders($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'errmsg'=>'No date specified'), 
-		'startdate'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No start date specified'), 
-		'enddate'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No end date specified'), 
-		'appointment_id'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No appointment ID specified'), 
-		'calendars'=>array('required'=>'no', 'blank'=>'yes', 'errmsg'=>'No calendars specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'name'=>'Date'), 
+		'startdate'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Start Date'), 
+		'enddate'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'End Date'), 
+		'appointment_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Appointment'), 
+		'calendars'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Calendars'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

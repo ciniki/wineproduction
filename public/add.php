@@ -106,7 +106,7 @@ function ciniki_wineproduction_add(&$ciniki) {
 			$invoice_number .= '-' . chr($pcount[$ciniki['request']['args']['product_id' . $ext]]['cur'] + 65);
 			$pcount[$ciniki['request']['args']['product_id' . $ext]]['cur']++;
 		}
-	
+
 		//
 		// Get a new UUID
 		//

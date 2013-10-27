@@ -27,8 +27,8 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'errmsg'=>'No date specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'name'=>'Date'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;

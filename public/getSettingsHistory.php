@@ -32,8 +32,8 @@ function ciniki_wineproduction_getSettingsHistory($ciniki) {
 	//
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
 	$rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'errmsg'=>'No business specified'), 
-		'fields'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'list', 'errmsg'=>'No user specified'), 
+		'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+		'fields'=>array('required'=>'yes', 'blank'=>'no', 'type'=>'list', 'name'=>'User'), 
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
