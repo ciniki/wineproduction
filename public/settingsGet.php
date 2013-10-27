@@ -17,7 +17,7 @@
 // Returns
 // -------
 //
-function ciniki_wineproduction_getSettings($ciniki) {
+function ciniki_wineproduction_settingsGet($ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -35,7 +35,7 @@ function ciniki_wineproduction_getSettings($ciniki) {
     // check permission to run this function for this business
     //  
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.getSettings'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.settingsGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
