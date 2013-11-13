@@ -41,6 +41,7 @@ function ciniki_wineproduction_add(&$ciniki) {
         'bottling_nocolour_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Colour Flags'), 
         'bottling_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bttling Date'), 
         'bottle_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Bottle Date'), 
+		'bottling_status'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Status'),
         'notes'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Notes'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -124,10 +125,11 @@ function ciniki_wineproduction_add(&$ciniki) {
 		//
 		// Add the order to the database
 		//
-		$strsql = "INSERT INTO ciniki_wineproductions (uuid, business_id, customer_id, invoice_number, product_id, wine_type, kit_length, "
+		$strsql = "INSERT INTO ciniki_wineproductions (uuid, business_id, customer_id, invoice_number, "
+			. "product_id, wine_type, kit_length, "
 			. "status, rack_colour, filter_colour, order_flags, "
 			. "order_date, start_date, sg_reading, racking_date, rack_date, filtering_date, filter_date, "
-			. "bottling_duration, bottling_flags, bottling_nocolour_flags, bottle_date, bottling_date, notes, "
+			. "bottling_duration, bottling_flags, bottling_nocolour_flags, bottle_date, bottling_date, bottling_status, notes, "
 			. "date_added, last_updated) VALUES ("
 			. "'" . ciniki_core_dbQuote($ciniki, $args['uuid']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "', "
@@ -152,6 +154,7 @@ function ciniki_wineproduction_add(&$ciniki) {
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_nocolour_flags']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottle_date']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_date']) . "', "
+			. "'" . ciniki_core_dbQuote($ciniki, $args['bottling_status']) . "', "
 			. "'" . ciniki_core_dbQuote($ciniki, $args['notes']) . "', "
 			. "UTC_TIMESTAMP(), UTC_TIMESTAMP())"
 			. "";
@@ -167,20 +170,15 @@ function ciniki_wineproduction_add(&$ciniki) {
 		$wineproduction_id = $rc['insert_id'];
 
 		//
-		// Add all the fields to the change log
+		// Add the base fields which are the same for all orders to the history
 		//
-
 		$changelog_fields = array(
 			'uuid',
 			'customer_id',
 			'invoice_number',
-			'product_id' . $ext,
-			'wine_type' . $ext,
-			'kit_length' . $ext,
 			'status',
 			'rack_colour',
 			'filter_colour',
-			'order_flags' . $ext,
 			'order_date',
 			'start_date',
 			'sg_reading',
@@ -192,8 +190,26 @@ function ciniki_wineproduction_add(&$ciniki) {
 			'bottling_flags',
 			'bottling_nocolour_flags',
 			'bottling_date',
+			'bottling_status',
 			'bottle_date',
 			'notes',
+			);
+		foreach($changelog_fields as $field) {
+			$insert_name = $field;
+			if( isset($args[$field]) && $args[$field] != '' ) {
+				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', 
+					$args['business_id'], 1, 'ciniki_wineproductions', $wineproduction_id, $insert_name, $args[$field]);
+			}
+		}
+
+		//
+		// Add the order specific fields to the orders history
+		//
+		$changelog_fields = array(
+			'product_id' . $ext,
+			'wine_type' . $ext,
+			'kit_length' . $ext,
+			'order_flags' . $ext,
 			);
 		foreach($changelog_fields as $field) {
 			$insert_name = $field;
@@ -201,10 +217,13 @@ function ciniki_wineproduction_add(&$ciniki) {
 				$insert_name = $matches[1];
 			}
 			if( isset($ciniki['request']['args'][$field]) && $ciniki['request']['args'][$field] != '' ) {
-				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
-					1, 'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
+				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', 
+					$args['business_id'], 1, 'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
 			}
 		}
+		//
+		// Add the order to the sync queue
+		//
 		$ciniki['syncqueue'][] = array('push'=>'ciniki.wineproduction.order',
 			'args'=>array('id'=>$wineproduction_id));
 	}
