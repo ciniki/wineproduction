@@ -41,7 +41,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 
 	$strsql = "SELECT ciniki_wineproductions.id AS order_id, "
 		. "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
-		. "CONCAT_WS(' ', first, last) AS customer_name, "
+		. "ciniki_customers.display_name AS customer_name, "
 		. "invoice_number, "
 		. "ciniki_products.name AS wine_name, "
 		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "

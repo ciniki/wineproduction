@@ -51,7 +51,7 @@ function ciniki_wineproduction_getHistory($ciniki) {
 
 	if( $args['field'] == 'customer_id' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryFkId');
-		return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'ciniki_customers', 'id', "CONCAT_WS(' ', ciniki_customers.first, ciniki_customers.last)");
+		return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'ciniki_customers', 'id', "ciniki_customers.display_name");
 	} elseif( $args['field'] == 'product_id' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryFkId');
 		return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'ciniki_products', 'id', "ciniki_products.name");

@@ -69,7 +69,7 @@ function ciniki_wineproduction_appointment($ciniki) {
 
 	$strsql = "SELECT ciniki_wineproductions.id AS order_id, ciniki_wineproductions.customer_id, "
 		. "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
-		. "CONCAT_WS(' ', first, last) AS customer_name, invoice_number, ciniki_products.name AS wine_name, "
+		. "ciniki_customers.display_name AS customer_name, invoice_number, ciniki_products.name AS wine_name, "
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') As date, "
 		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
 		. "IF(STRCMP(DATE_FORMAT(bottling_date, '%H:%i'), '00:00'), 'no', 'yes') AS allday, "
@@ -105,15 +105,58 @@ function ciniki_wineproduction_appointment($ciniki) {
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
-		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 'fields'=>array('id', 
-			'customer_name', 'date', 'time', '12hour', 'allday', 'bottling_date', 'duration', 'invoice_number', 'wine_name', 'colour', 'bottling_flags', 'bottling_nocolour_flags', 'bottling_notes'), 'sums'=>array('duration'), 'countlists'=>array('wine_name')),
+		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
+			'fields'=>array('id', 'customer_id', 'customer_name', 
+				'date', 'time', '12hour', 'allday', 'bottling_date', 'duration', 
+				'invoice_number', 'wine_name', 'colour', 
+				'bottling_flags', 'bottling_nocolour_flags', 'bottling_notes'), 
+			'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',
 			'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status', 'bottling_status', 'bottling_notes', 'colour')),
 		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
+	if( !isset($rc['appointments']) ) {
+		return $rc;
+	}
+	$appointments = $rc['appointments'];
 
-	return $rc;
+	//
+	// Lookup customer records
+	//
+	if( isset($appointments[0]['appointment']['customer_id']) 
+		&& $appointments[0]['appointment']['customer_id'] > 0 ) {
+		$appointments[0]['appointment']['customer'] = array();
+		if( $appointments[0]['appointment']['customer_id'] > 0 ) {
+			$strsql = "SELECT ciniki_customers.id, type, "
+				. "ciniki_customers.display_name, "
+				. "phone_home, phone_work, phone_fax, phone_cell, "
+				. "ciniki_customers.company, "
+				. "ciniki_customer_emails.email AS emails "
+				. "FROM ciniki_customers "
+				. "LEFT JOIN ciniki_customer_emails ON (ciniki_customers.id = ciniki_customer_emails.customer_id "
+					. "AND ciniki_customer_emails.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+					. ") "
+				. "WHERE ciniki_customers.id = '" . ciniki_core_dbQuote($ciniki, $appointments[0]['appointment']['customer_id']) . "' "
+				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+				. "";
+			$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.customers', array(
+				array('container'=>'customers', 'fname'=>'id', 'name'=>'customer',
+					'fields'=>array('id', 'type', 'display_name',
+						'phone_home', 'phone_work', 'phone_cell', 'phone_fax', 'emails'),
+					'lists'=>array('emails'),
+					),
+				));
+			if( $rc['stat'] != 'ok' ) {
+				return $rc;
+			}
+			if( isset($rc['customers']) && isset($rc['customers'][0]['customer']) ) {
+				$appointments[0]['appointment']['customer'] = $rc['customers'][0]['customer'];
+			}
+		}
+	}
+
+	return array('stat'=>'ok', 'appointments'=>$appointments);
 }
 ?>

@@ -62,7 +62,8 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
 
-	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, ciniki_products.name AS wine_name, "
+	$strsql = "SELECT ciniki_wineproductions.id, ciniki_customers.display_name AS customer_name, "
+		. "invoice_number, ciniki_products.name AS wine_name, "
 		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') as bottling_date, "
 		. "DATE_FORMAT(bottling_date, '%H:%i') as bottling_time, "
 		. "DATE_FORMAT(bottling_date, '%l:%i') as bottling_12hour, "

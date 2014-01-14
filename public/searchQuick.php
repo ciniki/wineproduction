@@ -48,7 +48,8 @@ function ciniki_wineproduction_searchQuick($ciniki) {
 	// Get the number of orders in each status for the business, 
 	// if no rows found, then return empty array
 	//
-	$strsql = "SELECT ciniki_wineproductions.id, ciniki_wineproductions.customer_id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
+	$strsql = "SELECT ciniki_wineproductions.id, ciniki_wineproductions.customer_id, "
+		. "ciniki_customers.display_name AS customer_name, invoice_number, "
 		. "ciniki_products.name AS wine_name, ciniki_wineproductions.status, ciniki_wineproductions.wine_type, ciniki_wineproductions.kit_length, "
 		. "DATE_FORMAT(order_date, '%b %e, %Y') AS order_date, "
 		. "DATE_FORMAT(start_date, '%b %e, %Y') AS start_date, "
@@ -69,6 +70,9 @@ function ciniki_wineproduction_searchQuick($ciniki) {
 		$strsql .= "AND ( ciniki_customers.first LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR ciniki_customers.first LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR ciniki_customers.last LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_customers.last LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_customers.company LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+			. "OR ciniki_customers.company LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
 			. "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ) "
 			. "";

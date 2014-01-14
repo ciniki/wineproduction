@@ -28,6 +28,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
         'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bottling Date'), 
         'bottling_notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling notes'), 
         'bottled'=>array('required'=>'no', 'name'=>'Bottled Flag'), 
+        'customer_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -76,9 +77,11 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
 	if( isset($args['bottled']) && $args['bottled'] == 'yes' ) {
 		$strsql .= ", bottle_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 60 ";
 		foreach($args['wineproduction_ids'] as $wid) {
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 
+				'ciniki_wineproduction_history', $args['business_id'], 
 				2, 'ciniki_wineproductions', $wid, 'bottle_date', $todays_date);
-			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+			$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 
+				'ciniki_wineproduction_history', $args['business_id'], 
 				2, 'ciniki_wineproductions', $wid, 'status', '60');
 		}
 	}
@@ -112,12 +115,14 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
 		'bottling_nocolour_flags',
 		'bottling_date',
 		'bottling_notes',
+		'customer_id',
 		);
 	foreach($changelog_fields as $field) {
 		if( isset($args[$field]) ) {
 			$strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
 			foreach($args['wineproduction_ids'] as $wid) {
-				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+				$rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 
+					'ciniki_wineproduction_history', $args['business_id'], 
 					2, 'ciniki_wineproductions', $wid, $field, $args[$field]);
 			}
 		}

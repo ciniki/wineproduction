@@ -46,7 +46,7 @@ function ciniki_wineproduction_searchFull($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
 	
-	$strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
+	$strsql = "SELECT ciniki_wineproductions.id, ciniki_customers.display_name AS customer_name, invoice_number, "
 		. "ciniki_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, rack_colour, filter_colour, "
 		. "DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as order_date, "
 		. "DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as start_date, "
@@ -69,6 +69,7 @@ function ciniki_wineproduction_searchFull($ciniki) {
 	} else {
 		$strsql .= "AND ( ciniki_customers.first LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
 			. "OR ciniki_customers.last LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
+			. "OR ciniki_customers.company LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' "
 			. "OR ciniki_products.name LIKE '%" . ciniki_core_dbQuote($ciniki, $args['search_str']) . "%' ) "
 			. "";
 	}
