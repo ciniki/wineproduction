@@ -778,7 +778,9 @@ function ciniki_wineproduction_main() {
 			return this.data[s];
 		};
 		this.appointment.cellClass = function(s, i, col, d) {
-			if( s == 'wines' && col <= 1 ) {
+			if( s == 'customer' ) {
+				return this.sections[s].cellClasses[col];
+			} else if( s == 'wines' && col <= 1 ) {
 				return 'multiline';
 			} else if( s == 'wines' && col > 1 && col < 7 ) {
 				return 'multiline aligncenter';
