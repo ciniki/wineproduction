@@ -53,13 +53,17 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 	//
 	if( $args['start_needle'] == '' && isset($args['customer_id']) && $args['customer_id'] > 0 ) {
 		$strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, "
-			. "wine_type, kit_length, order_flags "
+			. "IFNULL(d1.detail_value, '') AS wine_type, "
+			. "IFNULL(d2.detail_value, '') AS kit_length, "
+			. "order_flags "
 			. "FROM ciniki_wineproductions, ciniki_products "
+			. "LEFT JOIN ciniki_product_details AS d1 ON (ciniki_products.id = d1.product_id AND d1.detail_key = 'wine_type') "
+			. "LEFT JOIN ciniki_product_details AS d2 ON (ciniki_products.id = d2.product_id AND d2.detail_key = 'kit_length') "
 			. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 			. "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' "
 			. "AND ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-			. "AND ciniki_products.status = 1 ";
+			. "AND ciniki_products.status = 10 ";
 	} 
 
 	//
@@ -80,7 +84,7 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
 			. "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "	
 				. "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "	
 				. ") "
-			. "AND ciniki_products.status = 1 ";
+			. "AND ciniki_products.status = 10 ";
 	} else {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'372', 'msg'=>'No search specified'));
 	}

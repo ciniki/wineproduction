@@ -590,6 +590,7 @@ function ciniki_wineproduction_main() {
 		this.order.data = {};
 		this.order.sections = {
 			'customer':{'label':'Customer', 'aside':'yes', 'type':'simplegrid', 'num_cols':2,
+				'history':'no', 
 				'cellClasses':['label',''],
 				'addTxt':'Edit',
 				'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showOrder();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateOrderCustomer\',\'customer_id\':M.ciniki_wineproduction_main.order.data.customer_id});',
@@ -721,6 +722,9 @@ function ciniki_wineproduction_main() {
 			return {'method':'ciniki.wineproduction.getHistory', 'args':{'business_id':M.curBusinessID, 
 				'wineproduction_id':this.order_id, 'field':i}};
 		}
+		this.order.rowFn = function(s, i, d) {
+			return '';
+		};
 		this.order.appointmentEventText = this.add.appointmentEventText;
 		this.order.appointmentColour = this.add.appointmentColour;
 		this.order.liveAppointmentDayEvents = this.add.liveAppointmentDayEvents;
@@ -1686,8 +1690,10 @@ function ciniki_wineproduction_main() {
 				var wine_name = M.gE(this.add.panelUID + '_product_id_' + i + '_fkidstr').value;
 				var wine_type = M.gE(this.add.panelUID + '_wine_type_' + i).value;
 				var kit_length = M.gE(this.add.panelUID + '_kit_length_' + i).value;
-				var rsp = M.api.getJSON('ciniki.products.addWineKit', {'business_id':M.curBusinessID, 
+				var rsp = M.api.getJSON('ciniki.products.productAdd', {'business_id':M.curBusinessID, 
 					'name':encodeURIComponent(wine_name),
+					'status':10,
+					'webflags':1,
 					'wine_type':encodeURIComponent(wine_type),
 					'kit_length':encodeURIComponent(kit_length)
 					});
@@ -2035,7 +2041,7 @@ function ciniki_wineproduction_main() {
 			var wine_name = M.gE(this.order.panelUID + '_product_id_fkidstr').value;
 			var wine_type = M.gE(this.order.panelUID + '_wine_type').value;
 			var kit_length = M.gE(this.order.panelUID + '_kit_length').value;
-			var rsp = M.api.getJSON('ciniki.products.addWineKit', {'business_id':M.curBusinessID, 
+			var rsp = M.api.getJSON('ciniki.products.productAdd', {'business_id':M.curBusinessID, 
 				'name':encodeURIComponent(wine_name),
 				'wine_type':encodeURIComponent(wine_type),
 				'kit_length':encodeURIComponent(kit_length),

@@ -64,10 +64,10 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 
 	$strsql = "SELECT ciniki_wineproductions.id, ciniki_customers.display_name AS customer_name, "
 		. "invoice_number, ciniki_products.name AS wine_name, "
-		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') as bottling_date, "
-		. "DATE_FORMAT(bottling_date, '%H:%i') as bottling_time, "
-		. "DATE_FORMAT(bottling_date, '%l:%i') as bottling_12hour, "
-		. "UNIX_TIMESTAMP(bottling_date) as bottling_timestamp "
+		. "DATE_FORMAT(ciniki_wineproductions.bottling_date, '%Y-%m-%d') as bottling_date, "
+		. "DATE_FORMAT(ciniki_wineproductions.bottling_date, '%H:%i') as bottling_time, "
+		. "DATE_FORMAT(ciniki_wineproductions.bottling_date, '%l:%i') as bottling_12hour, "
+		. "UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date) as bottling_timestamp "
 		. "FROM ciniki_wineproductions "
 		. "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
 			. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
@@ -76,7 +76,7 @@ function ciniki_wineproduction_getBottlingSchedule($ciniki) {
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_wineproductions.product_id = ciniki_products.id "
 		. "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-		. "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' "
+		. "AND DATE(ciniki_wineproductions.bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' "
 		. "ORDER BY bottling_date, bottling_time, customer_name, invoice_number "
 		. "";
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
