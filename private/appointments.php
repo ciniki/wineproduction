@@ -32,7 +32,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
 	// FIXME: Add timezone information
 	//
 	date_default_timezone_set('America/Toronto');
-	if( $args['date'] == '' || $args['date'] == 'today' ) {
+	if( isset($args['date']) && ($args['date'] == '' || $args['date'] == 'today') ) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
