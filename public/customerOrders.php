@@ -60,6 +60,20 @@ function ciniki_wineproduction_customerOrders($ciniki) {
 	$date_format = ciniki_users_dateFormat($ciniki);
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 
+	//
+	// Get the customer details
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'customerDetails');
+	$rc = ciniki_customers__customerDetails($ciniki, $args['business_id'], $args['customer_id'], 
+		array('emails'=>'yes', 'addresses'=>'no', 'subscriptions'=>'no'));
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$customer = $rc['details'];
+
+	//
+	// Get the wine production orders for a customer
+	//
 	$strsql = "SELECT ciniki_wineproductions.id, "
 		. "invoice_number, "
 		. "ciniki_products.name AS wine_name, wine_type, kit_length, "
@@ -84,7 +98,6 @@ function ciniki_wineproduction_customerOrders($ciniki) {
 	}
 
 	$strsql .= "ORDER BY ciniki_wineproductions.order_date DESC ";
-
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
 		array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
@@ -102,6 +115,6 @@ function ciniki_wineproduction_customerOrders($ciniki) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'361', 'msg'=>'Unable to find any orders'));
 	}
 
-	return array('stat'=>'ok', 'orders'=>$rc['orders']);
+	return array('stat'=>'ok', 'customer'=>$customer, 'orders'=>$rc['orders']);
 }
 ?>

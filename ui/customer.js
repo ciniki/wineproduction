@@ -33,12 +33,15 @@ function ciniki_wineproduction_customer() {
 //				'55':{'label':'Refunded', 'fn':'M.ciniki_sapos_customerinvoices.showInvoices(null,null,null,null,55);'},
 //				'60':{'label':'Void', 'fn':'M.ciniki_sapos_customerinvoices.showInvoices(null,null,null,null,60);'},
 //				}},
-			'orders':{'label':'', 'type':'simplegrid', 'num_cols':4,
+			'customer':{'label':'Customer', 'type':'simplegrid', 'num_cols':2,
+				'cellClasses':['label',''],
+				},
+			'orders':{'label':'Orders', 'type':'simplegrid', 'num_cols':5,
 				'sortable':'yes',
-				'headerValues':['INV#', 'Wine', 'Ordered', 'Bottled'],
-				'cellClasses':['multiline', '', 'multiline', 'multiline', 'multiline', 'multiline', 'multiline'],
-				'sortTypes':['number', 'text', 'date', 'date', 'date', 'date', 'date'],
-				'dataMaps':['invoice_number', 'wine_name', 'order_date', 'bottling_date'],
+				'headerValues':['INV#', 'Status', 'Wine', 'Ordered', 'Bottled'],
+				'cellClasses':['', '', '', '', ''],
+				'sortTypes':['number', 'altnumber', 'text', 'date', 'date'],
+				'dataMaps':['invoice_number', 'status_text', 'wine_name', 'order_date', 'bottling_date'],
 				'noData':'No orders found',
 				},
 		};
@@ -48,28 +51,20 @@ function ciniki_wineproduction_customer() {
 		this.orders.noData = function(s) {
 			return this.sections[s].noData;
 		};
+		this.orders.cellSortValue = function(s, i, j, d) {
+			return d.order.status;
+		};
 		this.orders.cellValue = function(s, i, j, d) {
-			if( s == 'orders' ) {
-				if( j == 0 ) {
-					return '<span class="maintext">' + d.order.invoice_number + '</span><span class="subtext">' + d.order.status_text + '</span>';
-//				} else if( j == 1 ) {
-//					return d.order.wine_name;
-//				} else if( j > 1 && j < 7 ) {
-//					var dt = d.order[this.sections[s].dataMaps[j]];
-//					// Check for missing filter date, and try to take a guess
-//					if( dt == null && j == 6 ) {
-//						var dt = d.order.approx_filtering_date;
-//						if( dt != null ) {	
-//							return dt.replace(/(...)\s([0-9]+),\s([0-9][0-9][0-9][0-9])/, "<span class='maintext'>$1<\/span><span class='subtext'>~$2<\/span>");
-//						}
-//						return '';
-//					}
-//					if( dt != null && dt != '' ) {
-//						return dt.replace(/(...)\s([0-9]+),\s([0-9][0-9][0-9][0-9])/, "<span class='maintext'>$1<\/span><span class='subtext'>$2<\/span>");
-//					} else {
-//						return '';
-//					}
+			if( s == 'customer' ) {
+				switch(j) {
+					case 0: return d.detail.label;
+					case 1: return d.detail.value.replace(/\n/, '<br/>');
 				}
+			}
+			if( s == 'orders' ) {
+//				if( j == 0 ) {
+//					return '<span class="maintext">' + d.order.invoice_number + '</span><span class="subtext">' + d.order.status_text + '</span>';
+//				}
 				return d.order[this.sections[s].dataMaps[j]];
 			}
 		};
@@ -105,7 +100,7 @@ function ciniki_wineproduction_customer() {
 	this.showOrders = function(cb, cid) {
 		if( cid != null ) { this.orders.customer_id = cid; }
 		M.api.getJSONCb('ciniki.wineproduction.customerOrders', {'business_id':M.curBusinessID,
-			'customer_id':this.orders.customer_id, 'status':'60'}, function(rsp) {
+			'customer_id':this.orders.customer_id}, function(rsp) {
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
 					return false;
