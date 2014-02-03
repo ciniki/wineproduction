@@ -2,7 +2,7 @@ function ciniki_wineproduction_customer() {
 	this.init = function() {
 		this.orders = new M.panel('Customer Orders',
 			'ciniki_wineproduction_customer', 'orders',
-			'mc', 'medium', 'sectioned', 'ciniki.wineproduction.customer.orders');
+			'mc', 'mediumflex', 'sectioned', 'ciniki.wineproduction.customer.orders');
 		this.orders.customer_id = 0;
 		this.orders.year = null;
 		this.orders.month = 0;
@@ -62,9 +62,6 @@ function ciniki_wineproduction_customer() {
 				}
 			}
 			if( s == 'orders' ) {
-//				if( j == 0 ) {
-//					return '<span class="maintext">' + d.order.invoice_number + '</span><span class="subtext">' + d.order.status_text + '</span>';
-//				}
 				return d.order[this.sections[s].dataMaps[j]];
 			}
 		};
