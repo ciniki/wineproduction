@@ -26,7 +26,7 @@ function ciniki_wineproduction_customerOrders($ciniki) {
 		'status'=>array('required'=>'no', 'default'=>'', 'name'=>'Status'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'450', 'msg'=>'Unable to understand request', 'err'=>$rc['err']));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1512', 'msg'=>'Unable to understand request', 'err'=>$rc['err']));
     }   
     $args = $rc['args'];
     
@@ -112,7 +112,7 @@ function ciniki_wineproduction_customerOrders($ciniki) {
 	}
 
 	if( !isset($rc['orders']) ) {
-		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'361', 'msg'=>'Unable to find any orders'));
+		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'1513', 'msg'=>'Unable to find any orders'));
 	}
 
 	return array('stat'=>'ok', 'customer'=>$customer, 'orders'=>$rc['orders']);
