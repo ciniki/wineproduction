@@ -130,31 +130,38 @@ function ciniki_wineproduction_appointment($ciniki) {
 		&& $appointments[0]['appointment']['customer_id'] > 0 ) {
 		$appointments[0]['appointment']['customer'] = array();
 		if( $appointments[0]['appointment']['customer_id'] > 0 ) {
-			$strsql = "SELECT ciniki_customers.id, type, "
-				. "ciniki_customers.display_name, "
-				. "phone_home, phone_work, phone_fax, phone_cell, "
-				. "ciniki_customers.company, "
-				. "ciniki_customer_emails.email AS emails "
-				. "FROM ciniki_customers "
-				. "LEFT JOIN ciniki_customer_emails ON (ciniki_customers.id = ciniki_customer_emails.customer_id "
-					. "AND ciniki_customer_emails.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-					. ") "
-				. "WHERE ciniki_customers.id = '" . ciniki_core_dbQuote($ciniki, $appointments[0]['appointment']['customer_id']) . "' "
-				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
-				. "";
-			$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.customers', array(
-				array('container'=>'customers', 'fname'=>'id', 'name'=>'customer',
-					'fields'=>array('id', 'type', 'display_name',
-						'phone_home', 'phone_work', 'phone_cell', 'phone_fax', 'emails'),
-					'lists'=>array('emails'),
-					),
-				));
+			ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'customerDetails');
+			$rc = ciniki_customers__customerDetails($ciniki, $args['business_id'], 
+				$appointments[0]['appointment']['customer_id'], 
+				array('phones'=>'yes', 'emails'=>'yes', 'addresses'=>'no', 'subscriptions'=>'no'));
 			if( $rc['stat'] != 'ok' ) {
 				return $rc;
 			}
-			if( isset($rc['customers']) && isset($rc['customers'][0]['customer']) ) {
-				$appointments[0]['appointment']['customer'] = $rc['customers'][0]['customer'];
-			}
+			$appointments[0]['appointment']['customer'] = $rc['details'];
+//			$strsql = "SELECT ciniki_customers.id, type, "
+//				. "ciniki_customers.display_name, "
+//				. "ciniki_customers.company, "
+//				. "ciniki_customer_emails.email AS emails "
+//				. "FROM ciniki_customers "
+//				. "LEFT JOIN ciniki_customer_emails ON (ciniki_customers.id = ciniki_customer_emails.customer_id "
+//					. "AND ciniki_customer_emails.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+//					. ") "
+//				. "WHERE ciniki_customers.id = '" . ciniki_core_dbQuote($ciniki, $appointments[0]['appointment']['customer_id']) . "' "
+//				. "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+//				. "";
+//			$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.customers', array(
+//				array('container'=>'customers', 'fname'=>'id', 'name'=>'customer',
+//					'fields'=>array('id', 'type', 'display_name',
+//						'emails'),
+//					'lists'=>array('emails'),
+//					),
+//				));
+//			if( $rc['stat'] != 'ok' ) {
+//				return $rc;
+//			}
+//			if( isset($rc['customers']) && isset($rc['customers'][0]['customer']) ) {
+//				$appointments[0]['appointment']['customer'] = $rc['customers'][0]['customer'];
+//			}
 		}
 	}
 
