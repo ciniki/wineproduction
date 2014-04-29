@@ -199,7 +199,7 @@ function ciniki_wineproduction_main() {
 		this.add.sections = {
 			'info':{'label':'', 'fields':{
 				'order_date':{'label':'Ordered', 'type':'date', 'caloffset':0},
-				'invoice_number':{'label':'Invoice #', 'type':'text', 'size':'small'},
+				'invoice_number':{'label':'Invoice #', 'autofocus':'yes', 'type':'text', 'size':'small'},
 				'customer_id':{'label':'Customer', 'type':'fkid','size':'medium', 'livesearch':'yes'},
 			}},
 			'wines':{'label':'Wines', 'multi':'yes', 'multiinsert':'first', 'livesearchempty':'yes', 'fields':{
@@ -314,7 +314,7 @@ function ciniki_wineproduction_main() {
 		//
 		this.list = new M.panel('Wine List',
 			'ciniki_wineproduction_main', 'list',
-			'mc', 'wide', 'sectioned', 'ciniki.wineproduction.main.list');
+			'mc', 'xlarge', 'sectioned', 'ciniki.wineproduction.main.list');
 		this.list.gridSorting = {};
 		this.list.sections = {
 			'pending':{'label':'', 'num_cols':1, 'headerValues':[], 'sortable':'yes', 'searchable':'yes', 'savesort':'M.ciniki_wineproduction_main.list.saveSortOrder', 'type':'simplegrid'},
@@ -530,7 +530,7 @@ function ciniki_wineproduction_main() {
 		//
 		this.workdone = new M.panel('Work Completed',
 			'ciniki_wineproduction_main', 'workdone',
-			'mc', 'wide', 'sectioned', 'ciniki.wineproduction.main.workdone');
+			'mc', 'xlarge', 'sectioned', 'ciniki.wineproduction.main.workdone');
 		this.workdone.workdate = 'today';
 		this.workdone.worklist = 'all';
 		this.workdone.datePickerValue = function(s, d) { return this.workdate; }
@@ -740,7 +740,7 @@ function ciniki_wineproduction_main() {
 		this.appointment.data = null;
 		this.appointment.cb = null;
 		this.appointment.sections = {
-			'customer':{'label':'Customer', 'aside':'no', 'type':'simplegrid', 'num_cols':2,
+			'customer':{'label':'Customer', 'type':'simplegrid', 'num_cols':2,
 				'cellClasses':['label',''],
 				'addTxt':'Edit',
 				'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});',
@@ -869,7 +869,7 @@ function ciniki_wineproduction_main() {
 		//
 		this.search = new M.panel('Search Results',
 			'ciniki_wineproduction_main', 'search',
-			'mc', 'wide', 'sectioned', 'ciniki.wineproduction.main.search');
+			'mc', 'xlarge', 'sectioned', 'ciniki.wineproduction.main.search');
 		this.search.sections = {
 			'main':{'label':'', 'headerValues':[], 'num_cols':5, 'type':'simplegrid', 'sortable':'yes'},
 		};
@@ -890,7 +890,7 @@ function ciniki_wineproduction_main() {
 		//
 		this.schedule = new M.panel('Schedule',
 			'ciniki_wineproduction_main', 'schedule',
-			'mc', 'wide', 'sectioned', 'ciniki.wineproduction.main.schedule');
+			'mc', 'xlarge', 'sectioned', 'ciniki.wineproduction.main.schedule');
 		this.schedule.sections = {
 			'stats':{'label':'', 'num_cols':17, 'type':'simplegrid', 'sortable':'no'},
 			'orders':{'label':'Orders', 'num_cols':5, 'type':'simplegrid', 'sortable':'yes', 'headerValues':[]},
