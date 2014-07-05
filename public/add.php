@@ -15,7 +15,7 @@
 function ciniki_wineproduction_add(&$ciniki) {
     //  
     // Find all the required and optional arguments
-    //  
+    //
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 

@@ -1720,6 +1720,7 @@ function ciniki_wineproduction_main() {
 				sc += '&batch_count=' + wines[pid]['cur'];
 				wines[pid]['cur'] += 1;
 			}
+			console.log(content + sc);
 			var rsp = M.api.postJSON('ciniki.wineproduction.add', {'business_id':M.curBusinessID, 'status':10}, content + sc);
 			if( rsp.stat != 'ok' ) {
 				M.api.err(rsp);
