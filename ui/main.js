@@ -1692,10 +1692,11 @@ function ciniki_wineproduction_main() {
 				var kit_length = M.gE(this.add.panelUID + '_kit_length_' + i).value;
 				var rsp = M.api.getJSON('ciniki.products.productAdd', {'business_id':M.curBusinessID, 
 					'name':encodeURIComponent(wine_name),
+					'type_name_s':'Wine Kit',
 					'status':10,
 					'webflags':1,
-					'wine_type':encodeURIComponent(wine_type),
-					'kit_length':encodeURIComponent(kit_length)
+					'detail01':encodeURIComponent(wine_type),
+					'detail02':encodeURIComponent(kit_length)
 					});
 				if( rsp.stat != 'ok' ) {
 					M.api.err(rsp);
