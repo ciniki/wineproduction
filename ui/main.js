@@ -1694,7 +1694,7 @@ function ciniki_wineproduction_main() {
 					'name':encodeURIComponent(wine_name),
 					'type_name_s':'Wine Kit',
 					'status':10,
-					'webflags':1,
+					'webflags':0,
 					'detail01':encodeURIComponent(wine_type),
 					'detail02':encodeURIComponent(kit_length)
 					});
