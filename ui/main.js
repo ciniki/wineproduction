@@ -2092,8 +2092,7 @@ function ciniki_wineproduction_main() {
 	}
 
 	this.downloadXLS = function() {
-		window.open(M.api.getUploadURL('ciniki.wineproduction.downloadXLS',
-			{'business_id':M.curBusinessID}));
+		M.api.openFile('ciniki.wineproduction.downloadXLS', {'business_id':M.curBusinessID});
 	}
 
 	this.showAppointment = function(cb, aid) {
