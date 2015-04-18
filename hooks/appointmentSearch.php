@@ -17,7 +17,7 @@
 //		<appointment calendar="Appointments" customer_name="" invoice_number="" wine_name="" />
 //	</appointments>
 //
-function ciniki_wineproduction__appointmentSearch($ciniki, $business_id, $args) {
+function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $args) {
 	//
 	// Grab the settings for the business from the database
 	//
