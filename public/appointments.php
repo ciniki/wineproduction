@@ -51,7 +51,7 @@ function ciniki_wineproduction_appointments($ciniki) {
 		return $rc;
 	}
 
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'appointments');
-	return ciniki_wineproduction__appointments($ciniki, $args['business_id'], $args);
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'hooks', 'appointments');
+	return ciniki_wineproduction_hooks_appointments($ciniki, $args['business_id'], $args);
 }
 ?>

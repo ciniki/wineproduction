@@ -291,19 +291,16 @@ function ciniki_wineproduction_main() {
 			if( i == 'bottling_date' ) {
 				if( day == '--' ) { day = 'today'; }
 				M.api.getJSONCb('ciniki.calendars.appointments', {'business_id':M.curBusinessID, 'date':day}, cb);
-//				if( rsp.stat == 'ok' ) {
-//					return rsp.appointments;
-//				}
 			}
-//			return {};
 		};
-		this.add.appointmentEventText = function(ev) { return ev.subject; };
-		this.add.appointmentColour = function(ev) {
-			if( ev != null && ev.colour != null && ev.colour != '' ) {
-				return ev.colour;
-			}
-			return '#aaddff';
-		};
+// Move into ciniki_panels
+//		this.add.appointmentEventText = function(ev) { return ev.subject; };
+//		this.add.appointmentColour = function(ev) {
+//			if( ev != null && ev.colour != null && ev.colour != '' ) {
+//				return ev.colour;
+//			}
+//			return '#aaddff';
+//		};
 		// this.add.addLeftButton('cancel', 'Cancel', 'M.ciniki_wineproduction_main.showMain();');
 		this.add.addButton('save', 'Save', 'M.ciniki_wineproduction_main.addOrder();');
 		this.add.addClose('cancel');
