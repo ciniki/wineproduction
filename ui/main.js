@@ -625,7 +625,7 @@ function ciniki_wineproduction_main() {
 				'filtering_date':{'label':'FD', 'type':'date', 'caloffset':0, 'colourize':'bg'},
 				'filter_date':{'label':'Filtered', 'type':'date', 'caloffset':0},
 				'bottle_date':{'label':'Bottled', 'type':'date', 'caloffset':0},
-				'batch_code':{'label':'Batch Code', 'type':'text', 'size':'small'},
+				'batch_code':{'label':'Batch Code', 'type':'text'},
 				}},
 			'_notes':{'label':'Notes', 'fields':{
 				'notes':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'small'},
