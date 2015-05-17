@@ -32,8 +32,18 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $a
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'499', 'msg'=>'No search specified'));
 	}
 
+	//
+	// Load timezone info
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
-	$datetime_format = ciniki_users_datetimeFormat($ciniki);
+	$datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
 	$strsql = "SELECT ciniki_wineproductions.id AS order_id, "
 		. "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
@@ -41,11 +51,16 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $a
 		. "invoice_number, "
 		. "ciniki_products.name AS wine_name, "
 		//. "CONCAT_WS(' - ', CONCAT_WS(' ', first, last), IF(COUNT(invoice_number)>1, CONCAT('(',COUNT(invoice_number),')'), NULL), invoice_number, ciniki_products.name) AS subject, "
-		. "UNIX_TIMESTAMP(bottling_date) AS start_ts, "
-		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "
-		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') AS date, "
-		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
-		. "DATE_FORMAT(bottling_date, '%l:%i') AS 12hour, "
+		. "bottling_date AS start_date, "
+		. "bottling_date AS start_ts, "
+		. "bottling_date AS date, "
+		. "bottling_date AS time, "
+		. "bottling_date AS 12hour, "
+//		. "UNIX_TIMESTAMP(bottling_date) AS start_ts, "
+//		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "
+//		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') AS date, "
+//		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
+//		. "DATE_FORMAT(bottling_date, '%l:%i') AS 12hour, "
 		. "'ciniki.wineproduction' AS module, "
 		. "ciniki_wineproductions.bottling_flags, "
 		. "ciniki_wineproductions.bottling_nocolour_flags, "
@@ -101,7 +116,12 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $a
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
 			'fields'=>array('id', 'module', 'start_ts', 'start_date', 'date', 'time', '12hour', 'duration', 'wine_name'),
-				'sums'=>array('duration'), 'countlists'=>array('wine_name'), 'limit'=>$args['limit']),
+			'utctotz'=>array('start_ts'=>array('timezone'=>$intl_timezone, 'format'=>'U'),
+				'start_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format),
+				'date'=>array('timezone'=>$intl_timezone, 'format'=>'Y-m-d'),
+				'time'=>array('timezone'=>$intl_timezone, 'format'=>'H:i'),
+				'12hour'=>array('timezone'=>$intl_timezone, 'format'=>'g:i')),
+			'sums'=>array('duration'), 'countlists'=>array('wine_name'), 'limit'=>$args['limit']),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_notes')),
 		));
 	if( $rc['stat'] != 'ok' ) {

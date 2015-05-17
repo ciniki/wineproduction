@@ -29,7 +29,7 @@ function ciniki_wineproduction_list($ciniki) {
 		'before_start_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Start Date'),
 		'before_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
 		'after_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
-		'before_rack_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
+		'before_rack_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
 		'before_filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filter Date'),
 		'after_filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filter Date'),
 		'before_filter_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filter Date'),
@@ -63,13 +63,24 @@ function ciniki_wineproduction_list($ciniki) {
     }   
 
 	//
+	// Load timezone info
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+
+	//
 	// FIXME: Add timezone information from business settings
 	//
-	date_default_timezone_set('America/Toronto');
+//	date_default_timezone_set('America/Toronto');
 	$todays_date = strftime("%Y-%m-%d");
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	$date_format = ciniki_users_dateFormat($ciniki);
+	$php_date_format = ciniki_users_dateFormat($ciniki, 'php');
 
 	// ARGS:
 	// - status_list (10, 20, 40) or (10,20,30,40,50)
@@ -94,6 +105,7 @@ function ciniki_wineproduction_list($ciniki) {
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuoteIDs');
 
+
 	$strsql = "SELECT ciniki_wineproductions.id, "
 		. "ciniki_customers.display_name AS customer_name, "
 		. "invoice_number, "
@@ -110,7 +122,8 @@ function ciniki_wineproduction_list($ciniki) {
 		. "DATE_FORMAT(filtering_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS filtering_date, "
 		. "DATE_FORMAT(filter_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS filter_date, "
 		. "bottling_flags, "
-		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS bottling_date, "
+//		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS bottling_date, "
+		. "bottling_date, "
 		. "bottling_status, "
 		. "DATE_FORMAT(bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS bottle_date, "
 		. "DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), "
@@ -295,8 +308,16 @@ function ciniki_wineproduction_list($ciniki) {
 	}
 
 	// error_log($strsql);
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
-	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
+//	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
+//	$rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+		array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
+			'fields'=>array('id', 'customer_name', 'invoice_number', 'wine_name', 'wine_type', 'kit_length', 'status', 'status_text',
+				'rack_colour', 'filter_colour', 'order_flags', 'order_date', 'start_date', 'racking_date', 'rack_date',
+				'sg_reading', 'filtering_date', 'filter_date', 'bottling_date', 'bottling_status', 'bottle_date', 'approx_filtering_date', 'notes', 'appointment_id'),
+			'utctotz'=>array('bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$php_date_format))),
+		));
 	if( $rc != 'ok' ) {
 		return $rc;
 	}

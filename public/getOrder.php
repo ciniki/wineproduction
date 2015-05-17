@@ -38,13 +38,26 @@ function ciniki_wineproduction_getOrder($ciniki) {
         return $rc;
     }   
 
+	//
+	// Load timezone info
+	//
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQuery');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQuote');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
+
 	$date_format = ciniki_users_dateFormat($ciniki);
+	$php_date_format = ciniki_users_dateFormat($ciniki, 'php');
 	$datetime_format = ciniki_users_datetimeFormat($ciniki);
+	$php_datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
 	$strsql = "SELECT ciniki_wineproductions.id, ciniki_wineproductions.customer_id, "
 		. "invoice_number, "
@@ -57,7 +70,8 @@ function ciniki_wineproduction_getOrder($ciniki) {
 		. "sg_reading, "
 		. "DATE_FORMAT(ciniki_wineproductions.filtering_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filtering_date, "
 		. "DATE_FORMAT(ciniki_wineproductions.filter_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filter_date, "
-		. "DATE_FORMAT(ciniki_wineproductions.bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') as bottling_date, "
+//		. "DATE_FORMAT(ciniki_wineproductions.bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') as bottling_date, "
+		. "bottling_date, "
 		. "DATE_FORMAT(ciniki_wineproductions.bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as bottle_date, "
 		. "bottling_flags, bottling_nocolour_flags, bottling_status, bottling_duration, "
 		. "ciniki_wineproductions.notes, "
@@ -70,14 +84,21 @@ function ciniki_wineproduction_getOrder($ciniki) {
 		. "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
 		. "AND ciniki_wineproductions.id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' "
 		. "";
-	$rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'order');
+	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+		array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
+			'fields'=>array('id', 'customer_id', 'invoice_number', 'product_id', 'wine_name', 'wine_type', 'kit_length', 'status', 'colour_tag', 'order_flags',
+				'rack_colour', 'order_flags', 'rack_colour', 'filter_colour', 
+				'order_date', 'start_date', 'racking_date', 'rack_date', 'filtering_date', 'filter_date', 'bottling_date', 'bottle_date',
+				),
+			'utctotz'=>array('bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$php_datetime_format))),
+		));
 	if( $rc['stat'] != 'ok' ) {
 		return $rc;
 	}
-	if( !isset($rc['order']) ) {
+	if( !isset($rc['orders'][0]['order']) ) {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'366', 'msg'=>'Invalid order'));
 	}
-	$order = $rc['order'];
+	$order = $rc['orders'][0]['order'];
 
 	//
 	// Get the customer details

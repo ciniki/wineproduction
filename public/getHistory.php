@@ -67,7 +67,7 @@ function ciniki_wineproduction_getHistory($ciniki) {
 		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'date');
 	} elseif( $args['field'] == 'bottling_date' ) {
 		ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryReformat');
-		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'datetime');
+		return ciniki_core_dbGetModuleHistoryReformat($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'utcdatetime');
 	}
 
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistory');

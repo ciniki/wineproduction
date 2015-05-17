@@ -39,7 +39,7 @@ function ciniki_wineproduction_add(&$ciniki) {
         'bottling_duration'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Duration'), 
         'bottling_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Flags'), 
         'bottling_nocolour_flags'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Colour Flags'), 
-        'bottling_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bttling Date'), 
+        'bottling_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'datetimetoutc', 'name'=>'Bttling Date'), 
         'bottle_date'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'type'=>'date', 'name'=>'Bottle Date'), 
 		'bottling_status'=>array('required'=>'no', 'default'=>'0', 'blank'=>'no', 'name'=>'Bottling Status'),
         'notes'=>array('required'=>'no', 'default'=>'', 'blank'=>'yes', 'name'=>'Notes'), 

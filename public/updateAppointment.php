@@ -25,7 +25,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
         'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Duration'), 
         'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Flags'), 
         'bottling_nocolour_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Colour Flags'), 
-        'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetime', 'name'=>'Bottling Date'), 
+        'bottling_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetimetoutc', 'name'=>'Bottling Date'), 
         'bottling_notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling notes'), 
         'bottled'=>array('required'=>'no', 'name'=>'Bottled Flag'), 
         'customer_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Customer'), 

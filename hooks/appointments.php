@@ -28,15 +28,25 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $business_id, $args) 
     }   
 	$settings = $rc['settings'];
 
+//	//
+//	// FIXME: Add timezone information
+//	//
+//	date_default_timezone_set('America/Toronto');
 	//
-	// FIXME: Add timezone information
+	// Load timezone info
 	//
-	date_default_timezone_set('America/Toronto');
+	ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
+	$rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+	if( $rc['stat'] != 'ok' ) {
+		return $rc;
+	}
+	$intl_timezone = $rc['settings']['intl-default-timezone'];
+
 	if( isset($args['date']) && ($args['date'] == '' || $args['date'] == 'today') ) {
 		$args['date'] = strftime("%Y-%m-%d");
 	}
 	ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
-	$datetime_format = ciniki_users_datetimeFormat($ciniki);
+	$datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
 
 	$strsql = "SELECT ciniki_wineproductions.id AS order_id, "
@@ -44,11 +54,16 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $business_id, $args) 
 		. "ciniki_customers.display_name AS customer_name, "
 		. "invoice_number, "
 		. "ciniki_products.name AS wine_name, "
-		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "
-		. "UNIX_TIMESTAMP(bottling_date) AS start_ts, "
-		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') AS date, "
-		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
-		. "DATE_FORMAT(bottling_date, '%l:%i') AS 12hour, "
+		. "bottling_date AS start_date, "
+		. "bottling_date AS start_ts, "
+		. "bottling_date AS date, "
+		. "bottling_date AS time, "
+		. "bottling_date AS 12hour, "
+//		. "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS start_date, "
+//		. "UNIX_TIMESTAMP(bottling_date) AS start_ts, "
+//		. "DATE_FORMAT(bottling_date, '%Y-%m-%d') AS date, "
+//		. "DATE_FORMAT(bottling_date, '%H:%i') AS time, "
+//		. "DATE_FORMAT(bottling_date, '%l:%i') AS 12hour, "
 		. "bottling_duration AS duration, "
 		. "ciniki_wineproductions.bottling_flags, "
 		. "ciniki_wineproductions.bottling_nocolour_flags, "
@@ -67,6 +82,10 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $business_id, $args) 
 		$strsql .= "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' ";
 	} elseif( isset($args['date']) && $args['date'] != '' ) {
 		$strsql .= "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' ";
+	} elseif( isset($args['start_date']) && $args['start_date'] != '' 
+		&&isset($args['end_date']) && $args['end_date'] != '' ) {
+		$strsql .= "AND DATE(bottling_date) >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']->format('Y-m-d') . ' 00:00:00') . "' "
+			. "AND DATE(bottling_date) <= '" . ciniki_core_dbQuote($ciniki, $args['end_date']->format('Y-m-d') . ' 23:59:59') . "' ";
 	} else {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'497', 'msg'=>'No constraints provided'));
 	}
@@ -84,6 +103,11 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $business_id, $args) 
 	$rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
 		array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
 			'fields'=>array('id', 'start_date', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),
+			'utctotz'=>array('start_ts'=>array('timezone'=>$intl_timezone, 'format'=>'U'),
+				'start_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format),
+				'date'=>array('timezone'=>$intl_timezone, 'format'=>'Y-m-d'),
+				'time'=>array('timezone'=>$intl_timezone, 'format'=>'H:i'),
+				'12hour'=>array('timezone'=>$intl_timezone, 'format'=>'g:i')),
 			'sums'=>array('duration'), 'countlists'=>array('wine_name')),
 		array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_notes')),
 		));
