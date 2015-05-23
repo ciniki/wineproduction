@@ -84,8 +84,8 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $business_id, $args) 
 		$strsql .= "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' ";
 	} elseif( isset($args['start_date']) && $args['start_date'] != '' 
 		&&isset($args['end_date']) && $args['end_date'] != '' ) {
-		$strsql .= "AND DATE(bottling_date) >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']->format('Y-m-d') . ' 00:00:00') . "' "
-			. "AND DATE(bottling_date) <= '" . ciniki_core_dbQuote($ciniki, $args['end_date']->format('Y-m-d') . ' 23:59:59') . "' ";
+		$strsql .= "AND DATE(bottling_date) >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
+			. "AND DATE(bottling_date) <= '" . ciniki_core_dbQuote($ciniki, $args['end_date']) . "' ";
 	} else {
 		return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'497', 'msg'=>'No constraints provided'));
 	}
@@ -136,6 +136,7 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $business_id, $args) 
 		$min_flags = 255;
 		$min_order_status = 99;
 		$bottling_notes = '';
+		$appointments[$anum]['appointment']['abbr_secondary_text'] = '';
 		$appointments[$anum]['appointment']['secondary_text'] = '';
 		$appointments[$anum]['appointment']['secondary_colour'] = '#ffffff';
 		$appointments[$anum]['appointment']['secondary_colour_text'] = '';
