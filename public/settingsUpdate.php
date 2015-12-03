@@ -278,6 +278,18 @@ function ciniki_wineproduction_settingsUpdate(&$ciniki) {
 		'order.flags.8.name',
 		'order.flags.8.colour',
 		'order.flags.8.fontcolour',
+		'order.flags.9.name',
+		'order.flags.9.colour',
+		'order.flags.9.fontcolour',
+		'order.flags.10.name',
+		'order.flags.10.colour',
+		'order.flags.10.fontcolour',
+		'order.flags.11.name',
+		'order.flags.11.colour',
+		'order.flags.11.fontcolour',
+		'order.flags.12.name',
+		'order.flags.12.colour',
+		'order.flags.12.fontcolour',
 		);
 	//
 	// Check each valid setting and see if a new value was passed in the arguments for it.

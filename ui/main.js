@@ -63,7 +63,7 @@ function ciniki_wineproduction_main() {
 				}
 				o.dateToday = rsp.date_today;
 
-				for(i=1;i<9;i++) {
+				for(i=1;i<12;i++) {
 					if( rsp.settings['order.flags.' + i + '.name'] != null && rsp.settings['order.flags.' + i + '.name'] != '' ) {
 						o.orderFlags[i] = {'name':rsp.settings['order.flags.' + i + '.name'],
 							'bgcolour':rsp.settings['order.flags.' + i + '.colour'],

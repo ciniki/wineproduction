@@ -44,7 +44,7 @@ function ciniki_wineproduction_settings() {
 //					{'id':'order.colourtags.colour7','label':'','type':'colour'},
 //				]],
 //			},
-			'order.flags':{'label':'Order Flags', 'type':'gridform', 'rows':8, 'cols':3,
+			'order.flags':{'label':'Order Flags', 'type':'gridform', 'rows':12, 'cols':3,
 				'header':['Flag Name','Background','Font'],
 				'rowhistory':'yes', 'fields':[
 				[	{'id':'order.flags.1.name', 'label':'Name', 'type':'text'},
@@ -78,6 +78,22 @@ function ciniki_wineproduction_settings() {
 					{'id':'order.flags.8.name', 'label':'Name', 'type':'text'},
 					{'id':'order.flags.8.colour', 'label':'Background Colour', 'type':'colour'},
 					{'id':'order.flags.8.fontcolour', 'label':'Font Colour', 'type':'colour'},
+				],[
+					{'id':'order.flags.9.name', 'label':'Name', 'type':'text'},
+					{'id':'order.flags.9.colour', 'label':'Background Colour', 'type':'colour'},
+					{'id':'order.flags.9.fontcolour', 'label':'Font Colour', 'type':'colour'},
+				],[
+					{'id':'order.flags.10.name', 'label':'Name', 'type':'text'},
+					{'id':'order.flags.10.colour', 'label':'Background Colour', 'type':'colour'},
+					{'id':'order.flags.10.fontcolour', 'label':'Font Colour', 'type':'colour'},
+				],[
+					{'id':'order.flags.11.name', 'label':'Name', 'type':'text'},
+					{'id':'order.flags.11.colour', 'label':'Background Colour', 'type':'colour'},
+					{'id':'order.flags.11.fontcolour', 'label':'Font Colour', 'type':'colour'},
+				],[
+					{'id':'order.flags.12.name', 'label':'Name', 'type':'text'},
+					{'id':'order.flags.12.colour', 'label':'Background Colour', 'type':'colour'},
+					{'id':'order.flags.12.fontcolour', 'label':'Font Colour', 'type':'colour'},
 				]],
 			},
 			'bottling.flags':{'label':'Bottling Flags', 'type':'gridform', 'rows':9, 'cols':3,
