@@ -88,7 +88,7 @@ function ciniki_wineproduction_getOrder($ciniki) {
 		array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
 			'fields'=>array('id', 'customer_id', 'invoice_number', 'product_id', 'wine_name', 'wine_type', 'kit_length', 'status', 'colour_tag', 'order_flags',
 				'rack_colour', 'order_flags', 'rack_colour', 'filter_colour', 
-				'order_date', 'start_date', 'racking_date', 'rack_date', 'filtering_date', 'filter_date', 'bottling_date', 'bottle_date',
+				'order_date', 'start_date', 'racking_date', 'rack_date', 'sg_reading', 'filtering_date', 'filter_date', 'bottling_date', 'bottle_date',
 				'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_duration', 'notes', 'batch_code', 
 				),
 			'utctotz'=>array('bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$php_datetime_format))),
