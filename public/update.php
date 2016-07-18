@@ -6,7 +6,7 @@
 //
 // Info
 // ----
-// Status: 			defined
+// Status:          defined
 //
 // Arguments
 // ---------
@@ -19,7 +19,7 @@ function ciniki_wineproduction_update(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
         'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'), 
@@ -58,17 +58,17 @@ function ciniki_wineproduction_update(&$ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this business
     //  
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
     $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.update'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
 
-	//
-	// Update the order
-	//
-	ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-	return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.wineproduction.order', 
-		$args['wineproduction_id'], $args, 0x07);
+    //
+    // Update the order
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+    return ciniki_core_objectUpdate($ciniki, $args['business_id'], 'ciniki.wineproduction.order', 
+        $args['wineproduction_id'], $args, 0x07);
 }
 ?>

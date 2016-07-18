@@ -5,115 +5,115 @@
 #
 # Fields
 # ------
-# id:					The id of the batch of wine (1 batch is 1 kit = approx 30 x 750 ml bottles)
-# uuid:					The Universal Unique ID.
-# business_id:			The id of the business the order is attached to.
-# customer_id:			The customer from the customers module. 
-# invoice_id:			The id of the invoice this order is attached to in the invoicing module. (future)
-# invoice_number:		The invoice number of the which is in another system.
-# product_id:			The id of the production in production from the products module. 
-# wine_type:			The type of wine, red, white, special, etc...
-# kit_length:			The length of time in weeks the kit takes from start to finish.
-# status:				The current stage the production is at.
+# id:                   The id of the batch of wine (1 batch is 1 kit = approx 30 x 750 ml bottles)
+# uuid:                 The Universal Unique ID.
+# business_id:          The id of the business the order is attached to.
+# customer_id:          The customer from the customers module. 
+# invoice_id:           The id of the invoice this order is attached to in the invoicing module. (future)
+# invoice_number:       The invoice number of the which is in another system.
+# product_id:           The id of the production in production from the products module. 
+# wine_type:            The type of wine, red, white, special, etc...
+# kit_length:           The length of time in weeks the kit takes from start to finish.
+# status:               The current stage the production is at.
 #
-#						0 - unknown
-#						10 - entered
-#						20 - started
-#						30 - racked
-#						40 - filtered
-#						50 - pulled
-#						60 - bottled
-#						100 - other (reason should be stored in notes)
+#                       0 - unknown
+#                       10 - entered
+#                       20 - started
+#                       30 - racked
+#                       40 - filtered
+#                       50 - pulled
+#                       60 - bottled
+#                       100 - other (reason should be stored in notes)
 #
-# colour_tag:			The current colour assigned to the order.  This aids in the finding of a batch.
-#						The strings stored should be yellow, red, orange, etc...  They will be translated
-#						into a HTML colour by a hard coded list in the interface.
+# colour_tag:           The current colour assigned to the order.  This aids in the finding of a batch.
+#                       The strings stored should be yellow, red, orange, etc...  They will be translated
+#                       into a HTML colour by a hard coded list in the interface.
 #
-# rack_colour:			The colour which is assigned to the wine when it is started.
+# rack_colour:          The colour which is assigned to the wine when it is started.
 #
-# filter_colour:		The colour which is assigned to the wine after it is racked.
+# filter_colour:        The colour which is assigned to the wine after it is racked.
 #
-# order_flags:			Allows for 16 different flags to be set on an order.  List of flags and colours associated
-#						with them are in the wineproduction_settings table.
-# order_date:			The date and time the wine was ordered. (typically current date when adding an order)
-# start_date:			The date and time the wine was started.
-# sg_reading:			The current Specific Gravity reading, the history is contained in the change log.
-# racking_date:			The date the wine is scheduled to be racked.
-# rack_date:			The date the wine was racked.
-# filtering_date:		The date the wine is scheduled to be filtered.
-# filter_date:			The date the wine was filtered.
-# bottling_flags:		Allows for 16 different flags to be specified for a bottling date.  The flags
-#						are stored in the wineproduction_settings table, which can be different per business.
+# order_flags:          Allows for 16 different flags to be set on an order.  List of flags and colours associated
+#                       with them are in the wineproduction_settings table.
+# order_date:           The date and time the wine was ordered. (typically current date when adding an order)
+# start_date:           The date and time the wine was started.
+# sg_reading:           The current Specific Gravity reading, the history is contained in the change log.
+# racking_date:         The date the wine is scheduled to be racked.
+# rack_date:            The date the wine was racked.
+# filtering_date:       The date the wine is scheduled to be filtered.
+# filter_date:          The date the wine was filtered.
+# bottling_flags:       Allows for 16 different flags to be specified for a bottling date.  The flags
+#                       are stored in the wineproduction_settings table, which can be different per business.
 #
-# bottling_nocolour_flags:	Allows for 16 different flags to be specified for a bottling date.  These
-#						flags are similar to bottling_flags except there will be no colour associated with them.
+# bottling_nocolour_flags:  Allows for 16 different flags to be specified for a bottling date.  These
+#                       flags are similar to bottling_flags except there will be no colour associated with them.
 #
-# bottling_duration:	The number of minutes it will take to bottle this order.  Typeically this is 30, 45, 60 minutes.
-# bottling_date:		The UTC date and time the customer is scheduled for bottling.
-# bottle_date:			The date and time the customer bottled the wine.
-# bottling_status:		The current status of the wine as it relates to bottling.  Is the wine ready to be bottled. This is stored
-#						as bit flags, and not strict on uniqueness.  
+# bottling_duration:    The number of minutes it will take to bottle this order.  Typeically this is 30, 45, 60 minutes.
+# bottling_date:        The UTC date and time the customer is scheduled for bottling.
+# bottle_date:          The date and time the customer bottled the wine.
+# bottling_status:      The current status of the wine as it relates to bottling.  Is the wine ready to be bottled. This is stored
+#                       as bit flags, and not strict on uniqueness.  
 #
-#						0x01 - Reschedule
-#						0x02 - Rush
-#						0x04 -
-#						0x08 -
-#						0x10 -
-#						0x20 - 
-#						0x40 -
-#						0x80 - Ready
+#                       0x01 - Reschedule
+#                       0x02 - Rush
+#                       0x04 -
+#                       0x08 -
+#                       0x10 -
+#                       0x20 - 
+#                       0x40 -
+#                       0x80 - Ready
 #
-# bottling_notes:		The notes to be attached to an appointment.  Multiple wines for the same appointment time,
-#						should all have the same notes.  This way if a wine is removed to another time, the notes
-#						go with the order.
+# bottling_notes:       The notes to be attached to an appointment.  Multiple wines for the same appointment time,
+#                       should all have the same notes.  This way if a wine is removed to another time, the notes
+#                       go with the order.
 #
-#						This field is to be removed in the future, as it's replaced with ciniki_wineproduction_followups.
+#                       This field is to be removed in the future, as it's replaced with ciniki_wineproduction_followups.
 #
-# notes:				Any notes for the order.
-# batch_code:			The batch code or product code from the kit.  This field is used to track
-#						the manufacturers product code or batch code.  This is a reference incase there is
-#						a problem with the finished product.
+# notes:                Any notes for the order.
+# batch_code:           The batch code or product code from the kit.  This field is used to track
+#                       the manufacturers product code or batch code.  This is a reference incase there is
+#                       a problem with the finished product.
 # 
-# date_added:			The UTC date and time the record was added.
-# last_updated:			The UTC date and time the record was last updated.
+# date_added:           The UTC date and time the record was added.
+# last_updated:         The UTC date and time the record was last updated.
 #
 create table ciniki_wineproductions (
-	id int not null auto_increment,
-	uuid char(36) not null,
-	business_id int not null,
-	customer_id int not null,
-	invoice_id int not null,
-	invoice_number varchar(100) not null,
-	product_id int not null,
-	wine_type varchar(20) not null,
-	kit_length varchar(20) not null,
-	status tinyint unsigned not null,
-	colour_tag varchar(20) not null,
-	rack_colour varchar(20) not null,
-	filter_colour varchar(20) not null,
-	order_flags smallint unsigned not null,
-	order_date date not null,
-	start_date date not null,
-	sg_reading varchar(10) not null,
-	racking_date date not null,
-	rack_date date not null,
-	filtering_date date not null,
-	filter_date date not null,
-	bottling_flags smallint unsigned not null,
-	bottling_nocolour_flags smallint unsigned not null,
-	bottling_duration int not null,
-	bottling_date datetime not null,
-	bottling_status smallint unsigned not null,
-	bottling_notes varchar(1000) not null,
-	bottle_date date not null,
-	notes varchar(1000) not null,
-	batch_code varchar(50) not null,
-	date_added datetime not null,
-	last_updated datetime not null,
-	primary key (id),
-	unique index (uuid),
-	index (business_id, status),
-	index (customer_id, invoice_number, product_id),
-	index (racking_date, filtering_date, bottling_date),
-	index business_uuid (business_id, uuid, last_updated)
+    id int not null auto_increment,
+    uuid char(36) not null,
+    business_id int not null,
+    customer_id int not null,
+    invoice_id int not null,
+    invoice_number varchar(100) not null,
+    product_id int not null,
+    wine_type varchar(20) not null,
+    kit_length varchar(20) not null,
+    status tinyint unsigned not null,
+    colour_tag varchar(20) not null,
+    rack_colour varchar(20) not null,
+    filter_colour varchar(20) not null,
+    order_flags smallint unsigned not null,
+    order_date date not null,
+    start_date date not null,
+    sg_reading varchar(10) not null,
+    racking_date date not null,
+    rack_date date not null,
+    filtering_date date not null,
+    filter_date date not null,
+    bottling_flags smallint unsigned not null,
+    bottling_nocolour_flags smallint unsigned not null,
+    bottling_duration int not null,
+    bottling_date datetime not null,
+    bottling_status smallint unsigned not null,
+    bottling_notes varchar(1000) not null,
+    bottle_date date not null,
+    notes varchar(1000) not null,
+    batch_code varchar(50) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index (business_id, status),
+    index (customer_id, invoice_number, product_id),
+    index (racking_date, filtering_date, bottling_date),
+    index business_uuid (business_id, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.10';

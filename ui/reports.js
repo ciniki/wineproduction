@@ -1,15 +1,15 @@
 //
 function ciniki_wineproduction_reports() {
-	//
-	// Panels
-	//
-	this.init = function() {
-		//
-		// The yearly panel, which lists the customers and the years they made wine, along with percentage increase or decrease between years
-		//
-		this.yearly = new M.panel('Customers Yearly Production',
-			'ciniki_wineproduction_reports', 'yearly',
-			'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.yearly');
+    //
+    // Panels
+    //
+    this.init = function() {
+        //
+        // The yearly panel, which lists the customers and the years they made wine, along with percentage increase or decrease between years
+        //
+        this.yearly = new M.panel('Customers Yearly Production',
+            'ciniki_wineproduction_reports', 'yearly',
+            'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.yearly');
         this.yearly.sections = {
             'customers':{},
         };
@@ -40,32 +40,32 @@ function ciniki_wineproduction_reports() {
         this.yearly.rowFn = function(s, i, d) {
             return 'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_reports.show();\',\'mc\',{\'customer_id\':\'' + d.customer_id + '\'});';
         }
-		this.yearly.addClose('Back');
-	}
+        this.yearly.addClose('Back');
+    }
 
-	//
-	// Arguments:
-	// aG - The arguments to be parsed into args
-	//
-	this.start = function(cb, appPrefix, aG) {
-		args = {};
-		if( aG != null ) { args = eval(aG); }
+    //
+    // Arguments:
+    // aG - The arguments to be parsed into args
+    //
+    this.start = function(cb, appPrefix, aG) {
+        args = {};
+        if( aG != null ) { args = eval(aG); }
 
-		//
-		// Create the app container if it doesn't exist, and clear it out
-		// if it does exist.
-		//
-		var appContainer = M.createContainer(appPrefix, 'ciniki_wineproduction_reports', 'yes');
-		if( appContainer == null ) {
-			alert('App Error');
-			return false;
-		} 
+        //
+        // Create the app container if it doesn't exist, and clear it out
+        // if it does exist.
+        //
+        var appContainer = M.createContainer(appPrefix, 'ciniki_wineproduction_reports', 'yes');
+        if( appContainer == null ) {
+            alert('App Error');
+            return false;
+        } 
 
         this.yearlyShow(cb);
-	};
+    };
 
     this.yearlyShow = function(cb) {
-		M.api.getJSONCb('ciniki.wineproduction.reportCustomersYearly', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.wineproduction.reportCustomersYearly', {'business_id':M.curBusinessID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -91,5 +91,5 @@ function ciniki_wineproduction_reports() {
             p.refresh();
             p.show(cb);
         });
-	};
+    };
 }
