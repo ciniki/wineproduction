@@ -17,7 +17,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Setup the default response
     //
-    $rsp = array('stat'=>'ok', 'menu_items'=>array());
+    $rsp = array('stat'=>'ok', 'menu_items'=>array(), 'settings_menu_items'=>array());
 
     //
     // Check if wineproduction flag is set, and if the user has permissions
@@ -76,6 +76,15 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
             );
         $rsp['menu_items'][] = $menu_item;
     } 
+
+    if( isset($ciniki['business']['modules']['ciniki.wineproduction'])
+        && (isset($args['permissions']['owners'])
+            || isset($args['permissions']['resellers'])
+            || ($ciniki['session']['user']['perms']&0x01) == 0x01
+            )
+        ) {
+        $rsp['settings_menu_items'][] = array('priority'=>3900, 'label'=>'Wine Production', 'edit'=>array('app'=>'ciniki.wineproduction.settings'));
+    }
 
     return $rsp;
 }
