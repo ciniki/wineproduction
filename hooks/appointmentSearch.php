@@ -29,7 +29,7 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $a
     $settings = $rc['settings'];
 
     if( !isset($args['start_needle']) || $args['start_needle'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'499', 'msg'=>'No search specified'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.4', 'msg'=>'No search specified'));
     }
 
     //

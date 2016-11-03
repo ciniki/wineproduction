@@ -86,7 +86,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'racking', 'stat', array('stat'=>'ok', 'racking'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'428', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.29', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     if( !isset($rc['racking']) ) {
         return array('stat'=>'ok', 'stats'=>$stats);
@@ -106,7 +106,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'429', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.30', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     $stats['racking']['past'] = $rc['racking']['count'];
 
@@ -117,7 +117,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'racking');
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'431', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.31', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     $stats['racking']['future'] = $rc['racking']['count'];
     
@@ -139,7 +139,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'filtering', 'stat', array('stat'=>'ok', 'filtering'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'430', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.32', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     if( !isset($rc['filtering']) ) {
         return array('stat'=>'ok', 'stats'=>$stats);
@@ -159,7 +159,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'418', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.33', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     $stats['filtering']['past'] = $rc['filtering']['count'];
 
@@ -170,7 +170,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'filtering');
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'417', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.34', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     $stats['filtering']['future'] = $rc['filtering']['count'];
 
@@ -191,7 +191,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'bottling', 'stat', array('stat'=>'ok', 'bottling'=>array()));
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'507', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.35', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     if( !isset($rc['bottling']) ) {
         return array('stat'=>'ok', 'stats'=>$stats);
@@ -211,7 +211,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'bottling');
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'508', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.36', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     $stats['bottling']['past'] = $rc['bottling']['count'];
 
@@ -222,7 +222,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'bottling');
     if( $rc['stat'] != 'ok' ) { 
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'509', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.37', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
     }
     $stats['bottling']['future'] = $rc['bottling']['count'];
 

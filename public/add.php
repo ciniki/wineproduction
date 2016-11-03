@@ -165,7 +165,7 @@ function ciniki_wineproduction_add(&$ciniki) {
         }
         if( !isset($rc['insert_id']) || $rc['insert_id'] < 1 ) {
             ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'363', 'msg'=>'Unable to add order'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.12', 'msg'=>'Unable to add order'));
         }
         $wineproduction_id = $rc['insert_id'];
 

@@ -39,7 +39,7 @@ function ciniki_wineproduction_appointments($ciniki) {
     // Check that date or customer_id is specified
     //
     if( !isset($args['date']) || !isset($args['customer_id']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'501', 'msg'=>'No customer or date specified'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.13', 'msg'=>'No customer or date specified'));
     }
     
     //

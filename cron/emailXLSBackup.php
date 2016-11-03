@@ -22,10 +22,10 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
     // Check the arguments
     //
     if( !isset($cronjob['business_id']) || $cronjob['business_id'] < 1 ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'451', 'msg'=>'No email address specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.1', 'msg'=>'No email address specified.'));
     }
     if( !isset($cronjob['args']) || !isset($cronjob['args']['email_address']) || $cronjob['args']['email_address'] == '' ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'449', 'msg'=>'No email address specified.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.2', 'msg'=>'No email address specified.'));
     }
     
     //

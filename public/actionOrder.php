@@ -228,7 +228,7 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
 
 //  if( $rc['num_affected_rows'] != 1 ) {
 //      ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
-//      return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'364', 'msg'=>'Invalid order'));
+//      return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.11', 'msg'=>'Invalid order'));
 //  }
 
     //

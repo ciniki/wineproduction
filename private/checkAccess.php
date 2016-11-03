@@ -28,7 +28,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
     }
 
     if( !isset($rc['ruleset']) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'357', 'msg'=>'No permissions granted'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.6', 'msg'=>'No permissions granted'));
     }
     $modules = $rc['modules'];
 
@@ -49,7 +49,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
     // Check to see if the ruleset is valid
     //
     if( !isset($rulesets[$rc['ruleset']]) ) {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'358', 'msg'=>'Access denied.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.7', 'msg'=>'Access denied.'));
     }
     $ruleset = $rc['ruleset'];
 
@@ -62,7 +62,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
     } elseif( isset($rulesets[$ruleset]['default']) ) {
         $rules = $rulesets[$ruleset]['default'];
     } else {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'359', 'msg'=>'Access denied.'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.8', 'msg'=>'Access denied.'));
     }
 
     //
@@ -84,7 +84,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'522', 'msg'=>'Access denied.', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.9', 'msg'=>'Access denied.', 'err'=>$rc['err']));
         }
         
         //
@@ -99,6 +99,6 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
     //
     // If all tests passed, then return ok
     //
-    return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'360', 'msg'=>'Access denied.'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.10', 'msg'=>'Access denied.'));
 }
 ?>

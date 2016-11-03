@@ -68,7 +68,7 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
     } elseif( isset($args['date']) && $args['date'] != '' ) {
         $strsql .= "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $args['date']) . "' ";
     } else {
-        return array('stat'=>'fail', 'err'=>array('pkg'=>'ciniki', 'code'=>'497', 'msg'=>'No constraints provided'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.3', 'msg'=>'No constraints provided'));
     }
 
     if( isset($args['status']) && $args['status'] == 'unbottled' ) {
