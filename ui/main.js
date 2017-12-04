@@ -11,7 +11,7 @@ function ciniki_wineproduction_main() {
 
     //
     // FIXME: Add code to grab the list of colours and status codes from API 
-    //        which are specific to this business
+    //        which are specific to this tenant
     //
     this.statusOptions = {
         '10':'Ordered',
@@ -32,7 +32,7 @@ function ciniki_wineproduction_main() {
     
     this.initStart = function() {
         var rsp = M.api.getJSONCb('ciniki.wineproduction.settingsGet', 
-            {'business_id':M.curBusinessID}, function(rsp) {
+            {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -140,7 +140,7 @@ function ciniki_wineproduction_main() {
         // FIXME: Also resides in core/js/menu.js
         this.main.liveSearchCb = function(s, i, value) {
             if( s == 'search' && value != '' ) {
-                M.api.getJSONBgCb('ciniki.wineproduction.searchQuick', {'business_id':M.curBusinessID, 'start_needle':value, 'limit':'10'}, 
+                M.api.getJSONBgCb('ciniki.wineproduction.searchQuick', {'tnid':M.curTenantID, 'start_needle':value, 'limit':'10'}, 
                     function(rsp) { 
                         M.ciniki_wineproduction_main.main.liveSearchShow('search', null, M.gE(M.ciniki_wineproduction_main.main.panelUID + '_' + s), rsp.orders); 
                     });
@@ -247,14 +247,14 @@ function ciniki_wineproduction_main() {
                 var cv = this.formValue('customer_id');
                 if( value != '' || cv > 0 ) {
                     var rsp = M.api.getJSONBgCb('ciniki.wineproduction.searchProductNames', 
-                        {'business_id':M.curBusinessID, 'customer_id':cv, 'start_needle':value, 'limit':11},
+                        {'tnid':M.curTenantID, 'customer_id':cv, 'start_needle':value, 'limit':11},
                         function(rsp) { 
                             M.ciniki_wineproduction_main.add.liveSearchShow(s, i, M.gE(M.ciniki_wineproduction_main.add.panelUID + '_' + i), rsp.names); 
                         });
                 }
             }
             if( i == 'customer_id' && value != '' ) {
-                var rsp = M.api.getJSONBgCb('ciniki.customers.searchQuick', {'business_id':M.curBusinessID, 'start_needle':value, 'limit':25},
+                var rsp = M.api.getJSONBgCb('ciniki.customers.searchQuick', {'tnid':M.curTenantID, 'start_needle':value, 'limit':25},
                     function(rsp) { 
                         M.ciniki_wineproduction_main.add.liveSearchShow(s, i, M.gE(M.ciniki_wineproduction_main.add.panelUID + '_' + i), rsp.customers); 
                     });
@@ -291,7 +291,7 @@ function ciniki_wineproduction_main() {
             // Search for events on the specified day
             if( i == 'bottling_date' ) {
                 if( day == '--' ) { day = 'today'; }
-                M.api.getJSONCb('ciniki.calendars.appointments', {'business_id':M.curBusinessID, 'date':day}, cb);
+                M.api.getJSONCb('ciniki.calendars.appointments', {'tnid':M.curTenantID, 'date':day}, cb);
             }
         };
 // Move into ciniki_panels
@@ -683,13 +683,13 @@ function ciniki_wineproduction_main() {
             if( i == 'product_id' ) {
                 var cv = this.data.customer_id;
                 var rsp = M.api.getJSONBgCb('ciniki.wineproduction.searchProductNames', 
-                    {'business_id':M.curBusinessID, 'customer_id':cv, 'start_needle':value, 'limit':11},
+                    {'tnid':M.curTenantID, 'customer_id':cv, 'start_needle':value, 'limit':11},
                     function(rsp) { 
                         M.ciniki_wineproduction_main.order.liveSearchShow(s, i, M.gE(M.ciniki_wineproduction_main.order.panelUID + '_' + i), rsp['names']); 
                     });
             }
 //          if( i == 'customer_id' && value != '' ) {
-//              var rsp = M.api.getJSONBgCb('ciniki.customers.searchQuick', {'business_id':M.curBusinessID, 'start_needle':value, 'limit':25},
+//              var rsp = M.api.getJSONBgCb('ciniki.customers.searchQuick', {'tnid':M.curTenantID, 'start_needle':value, 'limit':25},
 //                  function(rsp) { 
 //                      M.ciniki_wineproduction_main.order.liveSearchShow(s, i, M.gE(M.ciniki_wineproduction_main.order.panelUID + '_' + i), rsp['customers']); 
 //                  });
@@ -717,7 +717,7 @@ function ciniki_wineproduction_main() {
             this.removeLiveSearch(s, 'product_id');
         };
         this.order.fieldHistoryArgs = function(s, i) {
-            return {'method':'ciniki.wineproduction.getHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.wineproduction.getHistory', 'args':{'tnid':M.curTenantID, 
                 'wineproduction_id':this.order_id, 'field':i}};
         }
         this.order.rowFn = function(s, i, d) {
@@ -852,7 +852,7 @@ function ciniki_wineproduction_main() {
         };
         this.appointment.fieldHistoryArgs = function(s, i) {
             // Grab the order_id from the first order listed for the bottling appointment.
-            return {'method':'ciniki.wineproduction.getHistory', 'args':{'business_id':M.curBusinessID, 
+            return {'method':'ciniki.wineproduction.getHistory', 'args':{'tnid':M.curTenantID, 
                 'wineproduction_id':this.data.orders[0].order.order_id, 'field':i}};
         }
         this.appointment.appointmentEventText = this.add.appointmentEventText;
@@ -1169,11 +1169,11 @@ function ciniki_wineproduction_main() {
     }
 
     //
-    // Grab the stats for the business from the database and present the list of orders.
+    // Grab the stats for the tenant from the database and present the list of orders.
     //
     this.showMain = function(cb) {
         var rsp = M.api.getJSONCb('ciniki.wineproduction.stats', 
-            {'business_id':M.curBusinessID}, function(rsp) { M.ciniki_wineproduction_main.showMainFinish(cb, rsp); });
+            {'tnid':M.curTenantID}, function(rsp) { M.ciniki_wineproduction_main.showMainFinish(cb, rsp); });
     };
     
     this.showMainFinish = function(cb, rsp) {
@@ -1322,16 +1322,16 @@ function ciniki_wineproduction_main() {
         var pieces = this.workdone.workdate.split('-');
         var dr = new Date(pieces[0], Number(pieces[1])-1, pieces[2]);       // Date requested
         // If date requested is in the future, request the schedule
-        var args = {'business_id':M.curBusinessID};
+        var args = {'tnid':M.curTenantID};
         if( dr > td ) {
             if( this.workdone.worklist == 'ordered' ) {
                 this.workdone.title = 'Order Schedule';
                 args.order_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'order_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'order_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'started' ) {
                 this.workdone.title = 'Start Schedule';
                 args.started_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'started_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'started_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'racked' ) {
                 this.workdone.title = 'Rack Schedule';
                 this.workdone.sections['racked'].num_cols = 10;
@@ -1339,7 +1339,7 @@ function ciniki_wineproduction_main() {
                 this.workdone.sections['racked'].sortTypes = ['colour', 'number', 'text', 'text', 'text', 'date', 'date', 'date', 'none'];
                 this.workdone.dataMaps['racked'] = ['rack_colour', 'invoice_number', 'wine_name', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
                 args.racking_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'racking_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'racking_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'filtered' ) {
                 this.workdone.title = 'Filter Schedule';
                 this.workdone.sections['filtered'].num_cols = 9;
@@ -1347,46 +1347,46 @@ function ciniki_wineproduction_main() {
                 this.workdone.sections['filtered'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
                 this.workdone.dataMaps['filtered'] = ['filter_colour', 'invoice_number', 'wine_name', 'wine_type_and_length', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
                 args.filtering_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'filtering_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'filtering_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'bottled' ) {
                 this.workdone.title = 'Bottle Schedule';
                 args.filtering_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'bottling_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'bottling_date':this.workdone.workdate});
             } else {
                 this.workdone.title = 'Schedule';
                 args.schedule_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'schedule_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'schedule_date':this.workdone.workdate});
             }
         } else {
             if( this.workdone.worklist == 'ordered' ) {
                 this.workdone.title = 'Ordered';
                 args.order_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'order_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'order_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'started' ) {
                 this.workdone.title = 'Started';
                 args.started_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'started_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'started_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'racked' ) {
                 this.workdone.title = 'Racked';
                 args.racked_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'racked_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'racked_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'filtered' ) {
                 this.workdone.title = 'Filtered';
                 args.filtered_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'filtered_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'filtered_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'bottled' ) {
                 this.workdone.title = 'Bottled';
                 args.bottled_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'bottled_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'bottled_date':this.workdone.workdate});
             } else {
                 this.workdone.title = 'Work Completed';
                 args.work_date = this.workdone.workdate;
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'work_date':this.workdone.workdate});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'work_date':this.workdone.workdate});
             }
         }
 
         var rsp = M.api.getJSONCb('ciniki.wineproduction.list', 
-            {'business_id':M.curBusinessID, 'work_date':this.workdone.workdate}, function(rsp) {
+            {'tnid':M.curTenantID, 'work_date':this.workdone.workdate}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1451,11 +1451,11 @@ function ciniki_wineproduction_main() {
             this.list.sections['completed'].num_cols = 7;
             this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'none'];
             this.list.dataMaps['completed'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'bottling_date_and_flags', 'notes'];
-            args = {'business_id':M.curBusinessID, 'status':'10', 'sorting':'invoice_number'};
-//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'10', 'sorting':'invoice_number'});
+            args = {'tnid':M.curTenantID, 'status':'10', 'sorting':'invoice_number'};
+//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'10', 'sorting':'invoice_number'});
             if( ordertype == 'start' ) {
-                args2 = {'business_id':M.curBusinessID, 'status':'20', 'started_date':'today', 'sorting':'invoice_number'};
-//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'20', 'started_date':'today', 'sorting':'invoice_number'});
+                args2 = {'tnid':M.curTenantID, 'status':'20', 'started_date':'today', 'sorting':'invoice_number'};
+//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'20', 'started_date':'today', 'sorting':'invoice_number'});
             }
         } 
         
@@ -1474,10 +1474,10 @@ function ciniki_wineproduction_main() {
             this.list.sections['completed'].num_cols = 6;
             this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', ''];
             this.list.dataMaps['completed'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
-            args = {'business_id':M.curBusinessID, 'status':'20', 'before_racking_date':encodeURIComponent('today+4days'), 'sorting':'racking_date,invoice_number'};
-            args2 = {'business_id':M.curBusinessID, 'status':'25', 'sorting':'invoice_number'};
-//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'20', 'before_racking_date':encodeURIComponent('today+4days'), 'sorting':'racking_date,invoice_number'});
-//          rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'25', 'sorting':'invoice_number'});
+            args = {'tnid':M.curTenantID, 'status':'20', 'before_racking_date':encodeURIComponent('today+4days'), 'sorting':'racking_date,invoice_number'};
+            args2 = {'tnid':M.curTenantID, 'status':'25', 'sorting':'invoice_number'};
+//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'20', 'before_racking_date':encodeURIComponent('today+4days'), 'sorting':'racking_date,invoice_number'});
+//          rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'25', 'sorting':'invoice_number'});
         
         }
         
@@ -1487,28 +1487,28 @@ function ciniki_wineproduction_main() {
                 this.list.title = 'Started';
                 this.list.sections['completed'].label = '';
                 this.list.sections['completed'].visible = 'no';
-                args = {'business_id':M.curBusinessID, 'status':'20', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'20', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'20', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'20', 'sorting':'invoice_number'});
             } else if( ordertype == 'sgready' ) {
                 this.list.title = 'SG Ready';
                 this.list.sections['completed'].label = '';
                 this.list.sections['completed'].visible = 'no';
-                args = {'business_id':M.curBusinessID, 'status':'25', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'25', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'25', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'25', 'sorting':'invoice_number'});
             } else if( ordertype == 'todaysracking' ) {
                 this.list.title = 'Todays Racking';
                 this.list.sections['completed'].label = 'Racked Today';
                 this.list.sections['completed'].visible = 'yes';
-                args = {'business_id':M.curBusinessID, 'status':'25', 'sorting':'racking_date,invoice_number'};
-                args2 = {'business_id':M.curBusinessID, 'status':'30', 'racked_date':'today', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'25', 'sorting':'racking_date,invoice_number'});
-//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'racked_date':'today', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'25', 'sorting':'racking_date,invoice_number'};
+                args2 = {'tnid':M.curTenantID, 'status':'30', 'racked_date':'today', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'25', 'sorting':'racking_date,invoice_number'});
+//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'racked_date':'today', 'sorting':'invoice_number'});
             } else {
                 this.list.title = 'Wines to be racked';
                 this.list.sections['completed'].label = '';
                 this.list.sections['completed'].visible = 'no';
-                args = {'business_id':M.curBusinessID, 'status':'25', 'after_racking_date':'today', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'25', 'after_racking_date':'today', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'25', 'after_racking_date':'today', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'25', 'after_racking_date':'today', 'sorting':'invoice_number'});
 //              rsp2 = null;
             }
             this.list.buttonText = 'Racked';
@@ -1528,23 +1528,23 @@ function ciniki_wineproduction_main() {
                 this.list.title = 'Racked';
                 this.list.sections['completed'].label = '';
                 this.list.sections['completed'].visible = 'no';
-                args = {'business_id':M.curBusinessID, 'status':'30', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'30', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'sorting':'invoice_number'});
             } else if( ordertype == 'todaysfiltering' ) {
                 this.list.title = 'Todays Filtering';
                 this.list.sections['completed'].label = 'Filtered Today';
                 this.list.sections['completed'].visible = 'yes';
                 // Want to include today, so should be before_tomorrow
-                args = {'business_id':M.curBusinessID, 'status':'30', 'before_filtering_date':'tomorrow', 'sorting':'invoice_number'};
-                args2 = {'business_id':M.curBusinessID, 'status':'40', 'filtered_date':'today', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'before_filtering_date':'tomorrow', 'sorting':'invoice_number'});
-//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'40', 'filtered_date':'today', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'30', 'before_filtering_date':'tomorrow', 'sorting':'invoice_number'};
+                args2 = {'tnid':M.curTenantID, 'status':'40', 'filtered_date':'today', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'before_filtering_date':'tomorrow', 'sorting':'invoice_number'});
+//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'40', 'filtered_date':'today', 'sorting':'invoice_number'});
             } else {
                 this.list.title = 'Wines to be filtered';
                 this.list.sections['completed'].label = '';
                 this.list.sections['completed'].visible = 'no';
-                args = {'business_id':M.curBusinessID, 'status':'30', 'after_filtering_date':'today', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'after_filtering_date':'today', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'30', 'after_filtering_date':'today', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'after_filtering_date':'today', 'sorting':'invoice_number'});
 //              rsp2 = null;
             }
             this.list.sections['pending'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
@@ -1563,16 +1563,16 @@ function ciniki_wineproduction_main() {
                 this.list.title = 'Filtered';
                 this.list.sections['completed'].visible = 'no';
                 this.list.sections['completed'].label = '';
-                args = {'business_id':M.curBusinessID, 'status':'40', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'40', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'40', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'40', 'sorting':'invoice_number'});
             } else {
                 this.list.title = 'Wines to be bottled';
                 this.list.sections['completed'].visible = 'yes';
                 this.list.sections['completed'].label = 'Bottled Today';
-                args = {'business_id':M.curBusinessID, 'status':'40', 'sorting':'invoice_number'};
-                args2 = {'business_id':M.curBusinessID, 'status':'60', 'bottled_date':'today', 'sorting':'invoice_number'};
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'40', 'sorting':'invoice_number'});
-//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'60', 'bottled_date':'today', 'sorting':'invoice_number'});
+                args = {'tnid':M.curTenantID, 'status':'40', 'sorting':'invoice_number'};
+                args2 = {'tnid':M.curTenantID, 'status':'60', 'bottled_date':'today', 'sorting':'invoice_number'};
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'40', 'sorting':'invoice_number'});
+//              rsp2 = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'60', 'bottled_date':'today', 'sorting':'invoice_number'});
             }
             this.list.sections['pending'].headerValues = ['INV#', 'Wine', 'Filtered', 'BD', '', ''];
             this.list.sections['pending'].num_cols = 6;
@@ -1592,8 +1592,8 @@ function ciniki_wineproduction_main() {
             this.list.dataMaps['pending'] = ['invoice_number', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date_and_flags', 'notes'];
             this.list.sections['completed'].label = '';
             this.list.sections['completed'].visible = 'no';
-            args = {'business_id':M.curBusinessID, 'status_list':'0,10,20,25,30', 'bottling_date':'late_wine', 'sorting':'bottling_date'};
-//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'0,10,20,25,30', 'bottling_date':'late_wine', 'sorting':'bottling_date'});
+            args = {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30', 'bottling_date':'late_wine', 'sorting':'bottling_date'};
+//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30', 'bottling_date':'late_wine', 'sorting':'bottling_date'});
 //          rsp2 = null;
         } 
         else if( ordertype == 'ctb' ) {
@@ -1604,8 +1604,8 @@ function ciniki_wineproduction_main() {
             this.list.dataMaps['pending'] = ['bottling_flags_colour', 'invoice_number_and_status', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date_and_flags', 'notes'];
             this.list.sections['completed'].label = '';
             this.list.sections['completed'].visible = 'no';
-            args = {'business_id':M.curBusinessID, 'status_list':'0,10,20,25,30,40', 'bottling_date':'ctb', 'sorting':'invoice_number'};
-//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'0,10,20,25,30,40', 'bottling_date':'ctb', 'sorting':'invoice_number'});
+            args = {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30,40', 'bottling_date':'ctb', 'sorting':'invoice_number'};
+//          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30,40', 'bottling_date':'ctb', 'sorting':'invoice_number'});
 //          rsp2 = null;
         } 
         
@@ -1658,7 +1658,7 @@ function ciniki_wineproduction_main() {
         // Add the customer if required
         if( this.add.formValue('customer_id') == 0 ) {
             var customer_name = M.gE(this.add.panelUID + '_customer_id_fkidstr').value;
-            var rsp = M.api.getJSON('ciniki.customers.add', {'business_id':M.curBusinessID, 'name':encodeURIComponent(customer_name)});
+            var rsp = M.api.getJSON('ciniki.customers.add', {'tnid':M.curTenantID, 'name':encodeURIComponent(customer_name)});
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1688,7 +1688,7 @@ function ciniki_wineproduction_main() {
                 var wine_name = M.gE(this.add.panelUID + '_product_id_' + i + '_fkidstr').value;
                 var wine_type = M.gE(this.add.panelUID + '_wine_type_' + i).value;
                 var kit_length = M.gE(this.add.panelUID + '_kit_length_' + i).value;
-                var rsp = M.api.getJSON('ciniki.products.productAdd', {'business_id':M.curBusinessID, 
+                var rsp = M.api.getJSON('ciniki.products.productAdd', {'tnid':M.curTenantID, 
                     'name':encodeURIComponent(wine_name),
                     'type_name_s':'Wine Kit',
                     'status':10,
@@ -1719,7 +1719,7 @@ function ciniki_wineproduction_main() {
                 sc += '&batch_count=' + wines[pid]['cur'];
                 wines[pid]['cur'] += 1;
             }
-            var rsp = M.api.postJSON('ciniki.wineproduction.add', {'business_id':M.curBusinessID, 'status':10}, content + sc);
+            var rsp = M.api.postJSON('ciniki.wineproduction.add', {'tnid':M.curTenantID, 'status':10}, content + sc);
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -1741,7 +1741,7 @@ function ciniki_wineproduction_main() {
             }
         }
         var rsp = M.api.getJSONCb('ciniki.wineproduction.actionOrder', 
-            {'business_id':M.curBusinessID, 'wineproduction_id':orderID, 'action':action, 
+            {'tnid':M.curTenantID, 'wineproduction_id':orderID, 'action':action, 
                 'kit_length':kit_length, 'batch_code':batch_code}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1753,7 +1753,7 @@ function ciniki_wineproduction_main() {
 
     this.actionScheduleOrder = function(orderID, action, kit_length) {
         var rsp = M.api.getJSONCb('ciniki.wineproduction.actionOrder', 
-            {'business_id':M.curBusinessID, 'wineproduction_id':orderID, 
+            {'tnid':M.curTenantID, 'wineproduction_id':orderID, 
                 'action':action, 'kit_length':kit_length}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -1765,7 +1765,7 @@ function ciniki_wineproduction_main() {
 
     this.actionScheduleSGbutton = function(oid, sg) {
         var rsp = M.api.getJSONCb('ciniki.wineproduction.actionOrder', 
-            {'business_id':M.curBusinessID, 'wineproduction_id':oid, 'action':'SGRead', 'sg_reading':sg}, function(rsp) {
+            {'tnid':M.curTenantID, 'wineproduction_id':oid, 'action':'SGRead', 'sg_reading':sg}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1776,7 +1776,7 @@ function ciniki_wineproduction_main() {
 
     this.quickSGbutton = function(orderID, sg) {
         var rsp = M.api.getJSONCb('ciniki.wineproduction.actionOrder', 
-            {'business_id':M.curBusinessID, 'wineproduction_id':orderID, 'action':'SGRead', 'sg_reading':sg}, function(rsp) {
+            {'tnid':M.curTenantID, 'wineproduction_id':orderID, 'action':'SGRead', 'sg_reading':sg}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1794,7 +1794,7 @@ function ciniki_wineproduction_main() {
             this.order.order_id = oid;
         }
         var rsp = M.api.getJSONCb('ciniki.wineproduction.getOrder', 
-            {'business_id':M.curBusinessID, 'wineproduction_id':this.order.order_id}, function(rsp) {
+            {'tnid':M.curTenantID, 'wineproduction_id':this.order.order_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1823,7 +1823,7 @@ function ciniki_wineproduction_main() {
             this.order.customer_id = cid;
         }
         // Update the customer details
-        M.api.getJSONCb('ciniki.customers.customerDetails', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.customers.customerDetails', {'tnid':M.curTenantID, 
             'customer_id':this.order.customer_id, 'phones':'yes', 'emails':'yes'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -1870,7 +1870,7 @@ function ciniki_wineproduction_main() {
             this.schedule.date = scheduleDate;
         }
         var rsp = M.api.getJSONCb('ciniki.wineproduction.statsSchedule', 
-            {'business_id':M.curBusinessID, 'start_date':this.schedule.date, 'days':14}, function(rsp) {
+            {'tnid':M.curTenantID, 'start_date':this.schedule.date, 'days':14}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -1912,7 +1912,7 @@ function ciniki_wineproduction_main() {
         } else {
             this.schedule.displayDate = displayDate;
         }
-        var args = {'business_id':M.curBusinessID};
+        var args = {'tnid':M.curTenantID};
         if( ordertype == 'racking' || ordertype == 'before_racking' ) {
             this.schedule.buttonText = 'Racked';
             if( displayDate != null ) {
@@ -1924,17 +1924,17 @@ function ciniki_wineproduction_main() {
                 args.status_list = '20,25';
                 args.racking_date = this.schedule.ordersDate;
                 args.sorting = 'invoice_number';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'20,25', 'racking_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'20,25', 'racking_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
             } else if( ordertype == 'after_racking' ) {
                 args.status_list = '20,25';
                 args.after_racking_date = this.schedule.ordersDate;
                 args.sorting = 'invoice_number';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'20,25', 'after_racking_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'20,25', 'after_racking_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
             } else {
                 args.status_list = '20,25';
                 args.before_racking_date = this.schedule.ordersDate + ' 12:00AM';
                 args.sorting = 'invoice_number';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'20,25', 'before_racking_date':this.schedule.ordersDate + ' 12:00AM', 'sorting':'invoice_number'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'20,25', 'before_racking_date':this.schedule.ordersDate + ' 12:00AM', 'sorting':'invoice_number'});
             }
             this.schedule.sections.orders.num_cols = 10;
             this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
@@ -1956,17 +1956,17 @@ function ciniki_wineproduction_main() {
                 args.status = '30';
                 args.filtering_date = this.schedule.ordersDate;
                 args.sorting = 'invoice_number';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'filtering_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'filtering_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
             } else if( ordertype == 'after_filtering' ) {
                 args.status = '30';
                 args.after_filtering_date = this.schedule.ordersDate;
                 args.sorting = 'invoice_number';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'after_filtering_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'after_filtering_date':this.schedule.ordersDate, 'sorting':'invoice_number'});
             } else {
                 args.status = '30';
                 args.before_filtering_date = this.schedule.ordersDate + ' 12:00AM';
                 args.sorting = 'invoice_number';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status':'30', 'before_filtering_date':this.schedule.ordersDate + ' 12:00AM', 'sorting':'invoice_number'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'before_filtering_date':this.schedule.ordersDate + ' 12:00AM', 'sorting':'invoice_number'});
             }
             this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
             this.schedule.sections.orders.num_cols = 9;
@@ -1987,17 +1987,17 @@ function ciniki_wineproduction_main() {
                 args.status_list = '10,20,25,30,40';
                 args.bottling_date = this.schedule.ordersDate;
                 args.sorting = 'appointments';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'10,20,25,30,40', 'bottling_date':this.schedule.ordersDate, 'sorting':'appointments'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'10,20,25,30,40', 'bottling_date':this.schedule.ordersDate, 'sorting':'appointments'});
             } else if( ordertype == 'after_bottling' ) {
                 args.status_list = '10,20,25,30,40';
                 args.after_bottling_date = this.schedule.ordersDate;
                 args.sorting = 'appointments';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'10,20,25,30,40', 'after_bottling_date':this.schedule.ordersDate, 'sorting':'appointments'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'10,20,25,30,40', 'after_bottling_date':this.schedule.ordersDate, 'sorting':'appointments'});
             } else {
                 args.status_list = '10,20,25,30,40';
                 args.before_bottling_date = this.schedule.ordersDate;
                 args.sorting = 'appointments';
-//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'business_id':M.curBusinessID, 'status_list':'10,20,25,30,40', 'before_bottling_date':this.schedule.ordersDate, 'sorting':'appointments'});
+//              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'10,20,25,30,40', 'before_bottling_date':this.schedule.ordersDate, 'sorting':'appointments'});
             }
             this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
             this.schedule.sections.orders.num_cols = 8;
@@ -2029,7 +2029,7 @@ function ciniki_wineproduction_main() {
 //      if( this.order.formValue('customer_id') == 0 ) {
 //          var customer_name = M.gE(this.order.panelUID + '_customer_id_fkidstr').value;
 //          var rsp = M.api.getJSON('ciniki.customers.add', 
-//              {'business_id':M.curBusinessID, 'name':encodeURIComponent(customer_name)});
+//              {'tnid':M.curTenantID, 'name':encodeURIComponent(customer_name)});
 //          if( rsp.stat != 'ok' ) {
 //              M.api.err(rsp);
 //              return false;
@@ -2041,7 +2041,7 @@ function ciniki_wineproduction_main() {
             var wine_name = M.gE(this.order.panelUID + '_product_id_fkidstr').value;
             var wine_type = M.gE(this.order.panelUID + '_wine_type').value;
             var kit_length = M.gE(this.order.panelUID + '_kit_length').value;
-            var rsp = M.api.getJSON('ciniki.products.productAdd', {'business_id':M.curBusinessID, 
+            var rsp = M.api.getJSON('ciniki.products.productAdd', {'tnid':M.curTenantID, 
                 'name':encodeURIComponent(wine_name),
                 'wine_type':encodeURIComponent(wine_type),
                 'kit_length':encodeURIComponent(kit_length),
@@ -2064,7 +2064,7 @@ function ciniki_wineproduction_main() {
         }
         if( c != '' ) {
             var rsp = M.api.postJSON('ciniki.wineproduction.update', 
-                {'business_id':M.curBusinessID, 'wineproduction_id':M.ciniki_wineproduction_main.order.order_id}, c);
+                {'tnid':M.curTenantID, 'wineproduction_id':M.ciniki_wineproduction_main.order.order_id}, c);
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
@@ -2075,7 +2075,7 @@ function ciniki_wineproduction_main() {
     }
 
     this.searchOrders = function(search_str) {
-        var rsp = M.api.getJSONBg('ciniki.wineproduction.searchFull', {'business_id':M.curBusinessID, 'search_str':search_str, 'limit':100});
+        var rsp = M.api.getJSONBg('ciniki.wineproduction.searchFull', {'tnid':M.curTenantID, 'search_str':search_str, 'limit':100});
         if( rsp['stat'] != 'ok' ) {
             M.api.err(rsp);
             return false;
@@ -2090,14 +2090,14 @@ function ciniki_wineproduction_main() {
     }
 
     this.downloadXLS = function() {
-        M.api.openFile('ciniki.wineproduction.downloadXLS', {'business_id':M.curBusinessID});
+        M.api.openFile('ciniki.wineproduction.downloadXLS', {'tnid':M.curTenantID});
     }
 
     this.showAppointment = function(cb, aid) {
         if( aid != null ) {
             this.appointment.appointment_id = aid;
         }
-        var rsp = M.api.getJSONCb('ciniki.wineproduction.appointment', {'business_id':M.curBusinessID, 
+        var rsp = M.api.getJSONCb('ciniki.wineproduction.appointment', {'tnid':M.curTenantID, 
             'appointment_id':this.appointment.appointment_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -2155,7 +2155,7 @@ function ciniki_wineproduction_main() {
                 cma = ',';
             }
             var rsp = M.api.getJSONCb('ciniki.wineproduction.updateAppointment', 
-                {'business_id':M.curBusinessID, 'wineproduction_ids':wids, 
+                {'tnid':M.curTenantID, 'wineproduction_ids':wids, 
                 'customer_id':this.appointment.customer_id}, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
@@ -2170,7 +2170,7 @@ function ciniki_wineproduction_main() {
 
     this.updateAppointmentCustomerFinish = function() {
         // Update the customer details
-        M.api.getJSONCb('ciniki.customers.get', {'business_id':M.curBusinessID, 
+        M.api.getJSONCb('ciniki.customers.get', {'tnid':M.curTenantID, 
             'customer_id':this.appointment.customer_id, 'emails':'list'}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
@@ -2198,7 +2198,7 @@ function ciniki_wineproduction_main() {
                 cma = ',';
             }
             var rsp = M.api.postJSONCb('ciniki.wineproduction.updateAppointment', 
-                {'business_id':M.curBusinessID, 'wineproduction_ids':wids, 'bottled':bottled}, c, function(rsp) {
+                {'tnid':M.curTenantID, 'wineproduction_ids':wids, 'bottled':bottled}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

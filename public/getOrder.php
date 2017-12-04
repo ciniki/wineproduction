@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the wineproduction order for.
+// tnid:         The ID of the tenant to get the wineproduction order for.
 // wineproduction_id:   The ID of the wineproduction order to get.
 // 
 // Returns
@@ -20,7 +20,7 @@ function ciniki_wineproduction_getOrder($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'wineproduction_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'),
         )); 
     if( $rc['stat'] != 'ok' ) { 
@@ -30,10 +30,10 @@ function ciniki_wineproduction_getOrder($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.getOrder'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.getOrder'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -41,8 +41,8 @@ function ciniki_wineproduction_getOrder($ciniki) {
     //
     // Load timezone info
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -78,10 +78,10 @@ function ciniki_wineproduction_getOrder($ciniki) {
         . "ciniki_wineproductions.batch_code "
         . "FROM ciniki_wineproductions "
 //      . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-//          . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+//          . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
         . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_wineproductions.id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
@@ -108,7 +108,7 @@ function ciniki_wineproduction_getOrder($ciniki) {
     $order['customer_name'] = '';
     if( $order['customer_id'] > 0 ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'customerDetails');
-        $rc = ciniki_customers__customerDetails($ciniki, $args['business_id'], $order['customer_id'], 
+        $rc = ciniki_customers__customerDetails($ciniki, $args['tnid'], $order['customer_id'], 
             array('phones'=>'yes', 'emails'=>'yes', 'addresses'=>'no', 'subscriptions'=>'no'));
         if( $rc['stat'] != 'ok' ) {
             return $rc;
@@ -120,10 +120,10 @@ function ciniki_wineproduction_getOrder($ciniki) {
 //          . "ciniki_customer_emails.email AS emails "
 //          . "FROM ciniki_customers "
 //          . "LEFT JOIN ciniki_customer_emails ON (ciniki_customers.id = ciniki_customer_emails.customer_id "
-//              . "AND ciniki_customer_emails.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+//              . "AND ciniki_customer_emails.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
 //              . ") "
 //          . "WHERE ciniki_customers.id = '" . ciniki_core_dbQuote($ciniki, $order['customer_id']) . "' "
-//          . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+//          . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
 //          . "";
 //      $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.customers', array(
 //          array('container'=>'customers', 'fname'=>'id', 'name'=>'customer',

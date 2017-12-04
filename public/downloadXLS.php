@@ -12,7 +12,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to export all open orders for.
+// tnid:         The ID of the tenant to export all open orders for.
 //
 // Returns
 // -------
@@ -23,7 +23,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -31,19 +31,19 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id
+    // Check access to tnid
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $ac = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.downloadXLS', 0);
+    $ac = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.downloadXLS', 0);
     if( $ac['stat'] != 'ok' ) {
         return $ac;
     }
 
     //
-    // Get the settings for the business to apply the flags and colours
+    // Get the settings for the tenant to apply the flags and colours
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
-    $rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
+    $rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'tnid', $args['tnid'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -82,13 +82,13 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
         . ", ciniki_wineproductions.notes, ciniki_wineproductions.batch_code "
         . "FROM ciniki_wineproductions "
         . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
         . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_wineproductions.status > 0 AND ciniki_wineproductions.status <= 40 "
         . "AND ciniki_wineproductions.product_id = ciniki_products.id "
-        . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY ciniki_wineproductions.status, ciniki_wineproductions.invoice_number "
         . "";
     

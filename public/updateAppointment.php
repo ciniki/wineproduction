@@ -20,7 +20,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'wineproduction_ids'=>array('required'=>'yes', 'type'=>'idlist', 'blank'=>'no', 'name'=>'Order'), 
         'bottling_duration'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Duration'), 
         'bottling_flags'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Bottling Flags'), 
@@ -37,10 +37,10 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.updateAppointment'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.updateAppointment'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -78,10 +78,10 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
         $strsql .= ", bottle_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "', status = 60 ";
         foreach($args['wineproduction_ids'] as $wid) {
             $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 
-                'ciniki_wineproduction_history', $args['business_id'], 
+                'ciniki_wineproduction_history', $args['tnid'], 
                 2, 'ciniki_wineproductions', $wid, 'bottle_date', $todays_date);
             $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 
-                'ciniki_wineproduction_history', $args['business_id'], 
+                'ciniki_wineproduction_history', $args['tnid'], 
                 2, 'ciniki_wineproductions', $wid, 'status', '60');
         }
     }
@@ -93,7 +93,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
         if( isset($ciniki['request']['args']['order_' . $wid . '_bottling_status']) && $ciniki['request']['args']['order_' . $wid . '_bottling_status'] != '' ) {
             $strsql_a = "UPDATE ciniki_wineproductions SET "
                 . "bottling_status = '" . ciniki_core_dbQuote($ciniki, $ciniki['request']['args']['order_' . $wid . '_bottling_status']) . "' "
-                . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+                . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
                 . "AND id = '" . ciniki_core_dbQuote($ciniki, $wid) . "' ";
             $rc = ciniki_core_dbUpdate($ciniki, $strsql_a, 'ciniki.wineproduction');
             if( $rc['stat'] != 'ok' ) { 
@@ -101,7 +101,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
                 return $rc;
             }
 
-            $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['business_id'], 
+            $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 
                 2, 'ciniki_wineproductions', $wid, 'bottling_status', $ciniki['request']['args']['order_' . $wid . '_bottling_status']);
         }
     }
@@ -122,12 +122,12 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
             $strsql .= ", $field = '" . ciniki_core_dbQuote($ciniki, $args[$field]) . "' ";
             foreach($args['wineproduction_ids'] as $wid) {
                 $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 
-                    'ciniki_wineproduction_history', $args['business_id'], 
+                    'ciniki_wineproduction_history', $args['tnid'], 
                     2, 'ciniki_wineproductions', $wid, $field, $args[$field]);
             }
         }
     }
-    $strsql .= "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+    $strsql .= "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND id IN (" . ciniki_core_dbQuoteIDs($ciniki, $args['wineproduction_ids']) . ") ";
     $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.wineproduction');
     if( $rc['stat'] != 'ok' ) { 
@@ -148,11 +148,11 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
     }
 
     //
-    // Update the last_change date in the business modules
+    // Update the last_change date in the tenant modules
     // Ignore the result, as we don't want to stop user updates if this fails.
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'updateModuleChangeDate');
-    ciniki_businesses_updateModuleChangeDate($ciniki, $args['business_id'], 'ciniki', 'wineproduction');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'updateModuleChangeDate');
+    ciniki_tenants_updateModuleChangeDate($ciniki, $args['tnid'], 'ciniki', 'wineproduction');
 
     foreach($args['wineproduction_ids'] as $wid) {
         $ciniki['syncqueue'][] = array('push'=>'ciniki.wineproduction.order',

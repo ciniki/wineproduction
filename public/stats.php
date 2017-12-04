@@ -9,7 +9,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the wineproduction statistics for.
+// tnid:     The ID of the tenant to get the wineproduction statistics for.
 // 
 // Returns
 // -------
@@ -23,7 +23,7 @@ function ciniki_wineproduction_stats($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -32,10 +32,10 @@ function ciniki_wineproduction_stats($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.stats'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.stats'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -52,7 +52,7 @@ function ciniki_wineproduction_stats($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "GROUP BY status ";
     $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
     if( $rc['stat'] != 'ok' ) { 
@@ -68,7 +68,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get past stats
     //
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ("
             . "(status = 10 AND start_date < '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
             . " OR (status = 20 AND racking_date < '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
@@ -90,7 +90,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get todays or previous order stats
     //
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ("
             . "(status = 10 AND start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
             . " OR (status = 20 AND racking_date >= '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' AND racking_date <= '" . ciniki_core_dbQuote($ciniki, $today_plus_four) . "') "
@@ -111,7 +111,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get todays bottling stats
     //
     $strsql = "SELECT '40' AS status, COUNT(DISTINCT customer_id, bottling_date) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND DATE(bottling_date) = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' "
         . "AND TIME(bottling_date) <> '00:00:00' "
         . "";
@@ -125,7 +125,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get future stats
     //
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ("
             . "(status = 10 AND start_date > '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
             . " OR (status = 20 AND racking_date > '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') "
@@ -148,7 +148,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get Work Completed stats
     //
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ((status = 10 && order_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
             . "(status = 20 && start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
             . "(status = 25 && start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
@@ -170,7 +170,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get Late Wines stats
     //
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 40 "
         . "AND bottling_date > 0 AND TIME(bottling_date) <> '00:00:00' AND (bottling_date < filtering_date "
             . "OR (filtering_date = 0 AND bottling_date < DATE_ADD(racking_date, INTERVAL (kit_length-2) WEEK)) "
@@ -191,7 +191,7 @@ function ciniki_wineproduction_stats($ciniki) {
     // Get Call to Book Stats
     //
     $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 60 "
         . "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00') "
         . "AND (filtering_date > 0 AND filtering_date < NOW()) "

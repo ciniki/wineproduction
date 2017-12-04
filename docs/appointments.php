@@ -8,7 +8,7 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:         The ID of the business to get the appointments for.
+// tnid:         The ID of the tenant to get the appointments for.
 // args:                The args passed from the API.
 //
 // Returns
@@ -17,12 +17,12 @@
 //      <appointment module="ciniki.wineproduction" customer_name="" invoice_number="" wine_name="" />
 //  </appointments>
 //
-function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
+function ciniki_wineproduction__appointments($ciniki, $tnid, $args) {
     //
-    // Grab the settings for the business from the database
+    // Grab the settings for the tenant from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
-    $rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $business_id, 'ciniki.wineproduction', 'settings', '');
+    $rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'tnid', $tnid, 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -57,10 +57,10 @@ function ciniki_wineproduction__appointments($ciniki, $business_id, $args) {
         . "ciniki_wineproductions.status "
         . "FROM ciniki_wineproductions "
         . "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "') "
         . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "') "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_wineproductions.status < 100 "
         . "";
     if( isset($args['customer_id']) && $args['customer_id'] != '' ) {

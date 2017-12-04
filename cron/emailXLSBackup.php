@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This cron job will send an email to the business owner with a backup of the
+// This cron job will send an email to the tenant owner with a backup of the
 // wineproduction database in excel format.
 //
 // Info
@@ -21,7 +21,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
     //
     // Check the arguments
     //
-    if( !isset($cronjob['business_id']) || $cronjob['business_id'] < 1 ) {
+    if( !isset($cronjob['tnid']) || $cronjob['tnid'] < 1 ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.1', 'msg'=>'No email address specified.'));
     }
     if( !isset($cronjob['args']) || !isset($cronjob['args']['email_address']) || $cronjob['args']['email_address'] == '' ) {
@@ -29,10 +29,10 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
     }
     
     //
-    // Get the settings for the business to apply the flags and colours
+    // Get the settings for the tenant to apply the flags and colours
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
-    $rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $cronjob['business_id'], 'ciniki.wineproduction', 'settings', '');
+    $rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'tnid', $cronjob['tnid'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -70,13 +70,13 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
         . ", ciniki_wineproductions.notes, ciniki_wineproductions.batch_code "
         . "FROM ciniki_wineproductions "
         . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "') "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $cronjob['tnid']) . "') "
         . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "') "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $cronjob['tnid']) . "') "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $cronjob['tnid']) . "' "
         . "AND ciniki_wineproductions.status > 0 AND ciniki_wineproductions.status <= 40 "
         . "AND ciniki_wineproductions.product_id = ciniki_products.id "
-        . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $cronjob['business_id']) . "' "
+        . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $cronjob['tnid']) . "' "
         . "ORDER BY ciniki_wineproductions.status, ciniki_wineproductions.invoice_number "
         . "";
 

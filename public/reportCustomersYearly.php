@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the wineproduction statistics for.
+// tnid:     The ID of the tenant to get the wineproduction statistics for.
 // 
 // Returns
 // -------
@@ -19,7 +19,7 @@ function ciniki_wineproduction_reportCustomersYearly($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -28,10 +28,10 @@ function ciniki_wineproduction_reportCustomersYearly($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.reportCustomersYearly'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.reportCustomersYearly'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -46,9 +46,9 @@ function ciniki_wineproduction_reportCustomersYearly($ciniki) {
         . "FROM ciniki_wineproductions "
         . "LEFT JOIN ciniki_customers ON ("
             . "ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "GROUP BY ciniki_wineproductions.customer_id, year "
         . "HAVING year >= '" . ciniki_core_dbQuote($ciniki, $start_year) . "' "
         . "AND year <= '" . ciniki_core_dbQuote($ciniki, $end_year) . "' "

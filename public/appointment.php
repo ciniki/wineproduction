@@ -8,7 +8,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the details for.
+// tnid:         The ID of the tenant to get the details for.
 // appointment_id:      The ID of the bottling appointment to get.  The ID
 //                      is a combination of unix timestamp formatted bottling
 //                      date and the ID of the customer.  
@@ -32,7 +32,7 @@ function ciniki_wineproduction_appointment($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'appointment_id'=>array('required'=>'yes', 'blank'=>'yes', 'name'=>'Appointment'), 
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -41,19 +41,19 @@ function ciniki_wineproduction_appointment($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.appointment');
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.appointment');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     //
-    // Grab the settings for the business from the database
+    // Grab the settings for the tenant from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
-    $rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
+    $rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'tnid', $args['tnid'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -66,8 +66,8 @@ function ciniki_wineproduction_appointment($ciniki) {
     //
     // Load timezone info
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $args['business_id']);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -101,14 +101,14 @@ function ciniki_wineproduction_appointment($ciniki) {
         . "ciniki_wineproductions.bottling_notes "
         . "FROM ciniki_wineproductions "
         . "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
         . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
-        . "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.business_id = ciniki_wineproduction_settings.business_id "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
+        . "LEFT JOIN ciniki_wineproduction_settings ON (ciniki_wineproductions.tnid = ciniki_wineproduction_settings.tnid "
             . "AND ciniki_wineproduction_settings.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'colour')) "
-        . "LEFT JOIN ciniki_wineproduction_settings s2 ON (ciniki_wineproductions.business_id = s2.business_id "
+        . "LEFT JOIN ciniki_wineproduction_settings s2 ON (ciniki_wineproductions.tnid = s2.tnid "
             . "AND s2.detail_key = CONCAT_WS('.', 'bottling.status', LOG2(ciniki_wineproductions.bottling_status)+1, 'name')) "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_wineproductions.status < 100 "
         . "";
     // Select all orders which have the same customer_id and bottling_date, specified as appointment_id
@@ -149,7 +149,7 @@ function ciniki_wineproduction_appointment($ciniki) {
         $appointments[0]['appointment']['customer'] = array();
         if( $appointments[0]['appointment']['customer_id'] > 0 ) {
             ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'customerDetails');
-            $rc = ciniki_customers__customerDetails($ciniki, $args['business_id'], 
+            $rc = ciniki_customers__customerDetails($ciniki, $args['tnid'], 
                 $appointments[0]['appointment']['customer_id'], 
                 array('phones'=>'yes', 'emails'=>'yes', 'addresses'=>'no', 'subscriptions'=>'no'));
             if( $rc['stat'] != 'ok' ) {

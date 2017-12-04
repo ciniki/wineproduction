@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This method will return the wineproduction settings for a business.
+// This method will return the wineproduction settings for a tenant.
 //
 // Info
 // ----
@@ -12,7 +12,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the settings for.
+// tnid:     The ID of the tenant to get the settings for.
 // 
 // Returns
 // -------
@@ -23,7 +23,7 @@ function ciniki_wineproduction_settingsGet($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -32,16 +32,16 @@ function ciniki_wineproduction_settingsGet($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.settingsGet'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.settingsGet'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
     
 //  ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'getColours');
-//  $colours = ciniki_wineproduction__getColours($ciniki, $args['business_id']);
+//  $colours = ciniki_wineproduction__getColours($ciniki, $args['tnid']);
 
     //
     // Get the current time in the users format
@@ -63,10 +63,10 @@ function ciniki_wineproduction_settingsGet($ciniki) {
     }
 
     //
-    // Grab the settings for the business from the database
+    // Grab the settings for the tenant from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
-    $rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $args['business_id'], 'ciniki.wineproduction', 'settings', '');
+    $rc = ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'tnid', $args['tnid'], 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }

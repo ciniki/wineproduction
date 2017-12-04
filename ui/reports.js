@@ -65,7 +65,7 @@ function ciniki_wineproduction_reports() {
     };
 
     this.yearlyShow = function(cb) {
-        M.api.getJSONCb('ciniki.wineproduction.reportCustomersYearly', {'business_id':M.curBusinessID}, function(rsp) {
+        M.api.getJSONCb('ciniki.wineproduction.reportCustomersYearly', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;

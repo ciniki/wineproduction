@@ -96,7 +96,7 @@ function ciniki_wineproduction_customer() {
 
     this.showOrders = function(cb, cid) {
         if( cid != null ) { this.orders.customer_id = cid; }
-        M.api.getJSONCb('ciniki.wineproduction.customerOrders', {'business_id':M.curBusinessID,
+        M.api.getJSONCb('ciniki.wineproduction.customerOrders', {'tnid':M.curTenantID,
             'customer_id':this.orders.customer_id}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);

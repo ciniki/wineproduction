@@ -16,7 +16,7 @@ function ciniki_wineproduction_dbIntegrityCheck($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'fix'=>array('required'=>'no', 'default'=>'no', 'name'=>'Fix Problems'),
         ));
     if( $rc['stat'] != 'ok' ) {
@@ -25,10 +25,10 @@ function ciniki_wineproduction_dbIntegrityCheck($ciniki) {
     $args = $rc['args'];
     
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.dbIntegrityCheck', 0);
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.dbIntegrityCheck', 0);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -42,7 +42,7 @@ function ciniki_wineproduction_dbIntegrityCheck($ciniki) {
         //
         // Update the history for ciniki_wineproductions
         //
-        $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.wineproduction', $args['business_id'],
+        $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.wineproduction', $args['tnid'],
             'ciniki_wineproductions', 'ciniki_wineproduction_history', 
             array('uuid', 'customer_id', 'invoice_id', 'invoice_number', 'product_id', 'wine_type',
                 'kit_length', 'status', 'colour_tag', 'rack_colour', 'filter_colour',

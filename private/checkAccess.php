@@ -12,17 +12,17 @@
 //
 // Arguments
 // ---------
-// business_id:         The ID of the business the request is for.
+// tnid:         The ID of the tenant the request is for.
 // 
 // Returns
 // -------
 //
-function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
+function ciniki_wineproduction_checkAccess($ciniki, $tnid, $method) {
     //
-    // Check if the business is active and the module is enabled
+    // Check if the tenant is active and the module is enabled
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'checkModuleAccess');
-    $rc = ciniki_businesses_checkModuleAccess($ciniki, $business_id, 'ciniki', 'wineproduction');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'checkModuleAccess');
+    $rc = ciniki_tenants_checkModuleAccess($ciniki, $tnid, 'ciniki', 'wineproduction');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -70,19 +70,19 @@ function ciniki_wineproduction_checkAccess($ciniki, $business_id, $method) {
     //
 
     //
-    // If business_group specified, check the session user in the business_users table.
+    // If tenant_group specified, check the session user in the tenant_users table.
     //
     if( isset($rules['permission_groups']) && $rules['permission_groups'] > 0 ) {
         //
-        // If the user is attached to the business AND in the one of the accepted permissions group, they will be granted access
+        // If the user is attached to the tenant AND in the one of the accepted permissions group, they will be granted access
         //
-        $strsql = "SELECT business_id, user_id FROM ciniki_business_users "
-            . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+        $strsql = "SELECT tnid, user_id FROM ciniki_tenant_users "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND user_id = '" . ciniki_core_dbQuote($ciniki, $ciniki['session']['user']['id']) . "' "
             . "AND status = 10 "
             . "AND CONCAT_WS('.', package, permission_group) IN ('" . implode("','", $rules['permission_groups']) . "') "
             . "";
-        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.businesses', 'user');
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'user');
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.9', 'msg'=>'Access denied.', 'err'=>$rc['err']));
         }

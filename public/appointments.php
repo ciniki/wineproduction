@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This function will return the list of bottling appointments for a business
+// This function will return the list of bottling appointments for a tenant
 //
 // Arguments
 // ---------
 // api_key:
 // auth_token:
-// business_id:         The ID of the business to get the details for.
+// tnid:         The ID of the tenant to get the details for.
 //
 // Returns
 // -------
@@ -22,7 +22,7 @@ function ciniki_wineproduction_appointments($ciniki) {
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'date'=>array('required'=>'no', 'default'=>'today', 'blank'=>'yes', 'name'=>'Date'), 
         'startdate'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Start Date'), 
         'enddate'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'End Date'), 
@@ -43,15 +43,15 @@ function ciniki_wineproduction_appointments($ciniki) {
     }
     
     //
-    // Check access to business_id as owner, or sys admin
+    // Check access to tnid as owner, or sys admin
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.appointments');
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.appointments');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'hooks', 'appointments');
-    return ciniki_wineproduction_hooks_appointments($ciniki, $args['business_id'], $args);
+    return ciniki_wineproduction_hooks_appointments($ciniki, $args['tnid'], $args);
 }
 ?>

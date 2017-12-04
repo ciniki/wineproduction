@@ -12,12 +12,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:     The ID of the business to get the colours for.
+// tnid:     The ID of the tenant to get the colours for.
 // 
 // Returns
 // -------
 //
-function ciniki_wineproduction__getColours($ciniki, $business_id) {
+function ciniki_wineproduction__getColours($ciniki, $tnid) {
     
     return array(
         'racking_colours'=>array(

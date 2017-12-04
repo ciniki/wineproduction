@@ -21,7 +21,7 @@ function ciniki_wineproduction_customerOrders($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'customer_id'=>array('required'=>'yes', 'default'=>'', 'name'=>'Customer'),
         'status'=>array('required'=>'no', 'default'=>'', 'name'=>'Status'),
         )); 
@@ -32,10 +32,10 @@ function ciniki_wineproduction_customerOrders($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.customerOrders'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.customerOrders'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -51,7 +51,7 @@ function ciniki_wineproduction_customerOrders($ciniki) {
     $status_maps = $rc['maps'];
 
     //
-    // FIXME: Add timezone information from business settings
+    // FIXME: Add timezone information from tenant settings
     //
     date_default_timezone_set('America/Toronto');
     $todays_date = strftime("%Y-%m-%d");
@@ -64,7 +64,7 @@ function ciniki_wineproduction_customerOrders($ciniki) {
     // Get the customer details
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'private', 'customerDetails');
-    $rc = ciniki_customers__customerDetails($ciniki, $args['business_id'], $args['customer_id'], 
+    $rc = ciniki_customers__customerDetails($ciniki, $args['tnid'], $args['customer_id'], 
         array('emails'=>'yes', 'addresses'=>'no', 'subscriptions'=>'no'));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -88,9 +88,9 @@ function ciniki_wineproduction_customerOrders($ciniki) {
             . "DATE_ADD(ciniki_wineproductions.start_date, INTERVAL kit_length WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS approx_filtering_date "
         . "FROM ciniki_wineproductions "
         . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "') "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
         . "WHERE ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' "
-        . "AND ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "AND ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";
 
     if( isset($args['status']) && $args['status'] != '' ) {

@@ -8,7 +8,7 @@
 // -------------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the stats schedule for.
+// tnid:     The ID of the tenant to get the stats schedule for.
 // start_date:      The first date to get the stats from.
 // days:            The number of days to collect stats for.
 // 
@@ -30,7 +30,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         'start_date'=>array('required'=>'yes', 'type'=>'date', 'blank'=>'no', 'name'=>'Start Date'), 
         'days'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Days'), 
         )); 
@@ -41,10 +41,10 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.statsSchedule'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.statsSchedule'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -78,7 +78,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "DATE_FORMAT(racking_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as racking_date, "
         . "COUNT(id) AS count "
         . "FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 30 "
         . "AND racking_date >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
         . "AND racking_date < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
@@ -99,7 +99,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     // Get the past and future values for racking
     //
     $strsql = "SELECT COUNT(id) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 30 "
         . "AND racking_date > '0000-00-00' "
         . "AND DATE(racking_date) < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
@@ -111,7 +111,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     $stats['racking']['past'] = $rc['racking']['count'];
 
     $strsql = "SELECT COUNT(id) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 30 "
         . "AND racking_date >= DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
         . "";
@@ -131,7 +131,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "DATE_FORMAT(filtering_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filtering_date, "
         . "COUNT(id) AS count "
         . "FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 40 "
         . "AND filtering_date >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
         . "AND filtering_date < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
@@ -152,7 +152,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     // Get the past and future values for filtering
     //
     $strsql = "SELECT COUNT(id) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status > 25 AND status < 40 "
         . "AND filtering_date > '0000-00-00' "
         . "AND DATE(filtering_date) < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
@@ -164,7 +164,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     $stats['filtering']['past'] = $rc['filtering']['count'];
 
     $strsql = "SELECT COUNT(id) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 40 "
         . "AND filtering_date >= DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
         . "";
@@ -183,7 +183,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
         . "DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as bottling_date, "
         . "COUNT(id) AS count "
         . "FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 60 "
         . "AND DATE(bottling_date) >= '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
         . "AND DATE(bottling_date) < DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
@@ -204,7 +204,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     // Get the past and future values for bottling
     //
     $strsql = "SELECT COUNT(id) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 60 "
 //      . "AND bottling_date > '0000-00-00' "
         . "AND bottling_date < '" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "' "
@@ -216,7 +216,7 @@ function ciniki_wineproduction_statsSchedule($ciniki) {
     $stats['bottling']['past'] = $rc['bottling']['count'];
 
     $strsql = "SELECT COUNT(id) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 60 "
         . "AND bottling_date >= DATE_ADD('" . ciniki_core_dbQuote($ciniki, $args['start_date']) . "', INTERVAL '" . ciniki_core_dbQuote($ciniki, $args['days']) . "' DAY) "
         . "";

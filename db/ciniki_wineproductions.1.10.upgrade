@@ -1,5 +1,5 @@
 #
 # This file will upgrade the database table wineproductions to version 1.10.
 #
-CREATE INDEX business_uuid ON ciniki_wineproductions (business_id, uuid, last_updated);
+CREATE INDEX tenant_uuid ON ciniki_wineproductions (tnid, uuid, last_updated);
 ALTER TABLE ciniki_wineproductions COMMENT='v1.10';

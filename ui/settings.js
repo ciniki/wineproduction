@@ -319,7 +319,7 @@ function ciniki_wineproduction_settings() {
                 comma = ',';
             }
             var rsp = M.api.getJSON('ciniki.wineproduction.settingsHistory', 
-                {'business_id':M.curBusinessID, 'fields':fields});
+                {'tnid':M.curTenantID, 'fields':fields});
             if( rsp.stat != 'ok' ) { 
                 M.api.err(rsp);
                 return false;
@@ -350,7 +350,7 @@ function ciniki_wineproduction_settings() {
                 return this.gridRowHistory(pieces[0] + '.autocolour', pieces[1]);
             } else {
                 var rsp = M.api.getJSON('ciniki.wineproduction.settingHistory', 
-                    {'business_id':M.curBusinessID, 'field':i});
+                    {'tnid':M.curTenantID, 'field':i});
             }
             if( rsp.stat != 'ok' ) { 
                 M.api.err(rsp);
@@ -389,11 +389,11 @@ function ciniki_wineproduction_settings() {
     }
 
     //
-    // Grab the stats for the business from the database and present the list of orders.
+    // Grab the stats for the tenant from the database and present the list of orders.
     //
     this.showMain = function(cb) {
         var rsp = M.api.getJSONCb('ciniki.wineproduction.settingsGet', 
-            {'business_id':M.curBusinessID}, function(rsp) {
+            {'tnid':M.curTenantID}, function(rsp) {
                 if( rsp.stat != 'ok' ) {
                     M.api.err(rsp);
                     return false;
@@ -409,7 +409,7 @@ function ciniki_wineproduction_settings() {
         var c = this.main.serializeForm('no');
         if( c != '' ) {
             var rsp = M.api.postJSONCb('ciniki.wineproduction.settingsUpdate', 
-                {'business_id':M.curBusinessID}, c, function(rsp) {
+                {'tnid':M.curTenantID}, c, function(rsp) {
                     if( rsp.stat != 'ok' ) {
                         M.api.err(rsp);
                         return false;

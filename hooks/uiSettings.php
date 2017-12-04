@@ -7,12 +7,12 @@
 // Arguments
 // ---------
 // ciniki:
-// business_id:     The ID of the business to get events for.
+// tnid:     The ID of the tenant to get events for.
 //
 // Returns
 // -------
 //
-function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
+function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
 
     //
     // Setup the default response
@@ -22,7 +22,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Check if wineproduction flag is set, and if the user has permissions
     //
-    if( isset($ciniki['business']['modules']['ciniki.wineproduction'])
+    if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -42,7 +42,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
                 'headerValues'=>array('INV#', 'Wine', 'Type', 'BD', 'OD', 'SD', 'RD', 'FD'),
                 'cellClasses'=>array('multiline', 'multiline', 'multiline', 'multiline aligncenter', 'multiline aligncenter', 'multiline aligncenter', 'multiline aligncenter', 'multiline aligncenter'),
                 'cellValues'=>array(
-                    '0'=>'\'<span class="maintext">\' + d.order.invoice_number + \'</span><span class="subtext">\' + M.ciniki_businesses_main.statusOptions[d.order.status] + \'</span>\'',
+                    '0'=>'\'<span class="maintext">\' + d.order.invoice_number + \'</span><span class="subtext">\' + M.ciniki_tenants_main.statusOptions[d.order.status] + \'</span>\'',
                     '1'=>'\'<span class="maintext">\' + d.order.wine_name + \'</span><span class="subtext">\' + d.order.customer_name + \'</span>\'',
                     '2'=>'\'<span class="maintext">\' + d.order.wine_type + \'</span><span class="subtext">\' + d.order.kit_length + \'&nbsp;weeks</span>\'',
                     '3'=>'if( d.order.bottling_date != null && d.order.bottling_date != \'\' ) { d.order.bottling_date.replace(/(...)\s([0-9]+),\s([0-9][0-9][0-9][0-9])/, \'<span class="maintext">$1</span><span class="subtext">$2</span>\') } else { \'\'; }',
@@ -62,7 +62,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
     //
     // Check permissions for what menu items should be available
     //
-    if( isset($ciniki['business']['modules']['ciniki.wineproduction'])
+    if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -77,7 +77,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $business_id, $args) {
         $rsp['menu_items'][] = $menu_item;
     } 
 
-    if( isset($ciniki['business']['modules']['ciniki.wineproduction'])
+    if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01

@@ -10,7 +10,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the wineproduction statistics for.
+// tnid:     The ID of the tenant to get the wineproduction statistics for.
 // 
 // Returns
 // -------
@@ -24,7 +24,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -33,10 +33,10 @@ function ciniki_wineproduction_statsCTB($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.statsCTB'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.statsCTB'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -52,7 +52,7 @@ function ciniki_wineproduction_statsCTB($ciniki) {
     // Get Call to Book Stats
     //
     $strsql = "SELECT 'ctb', COUNT(*) AS count FROM ciniki_wineproductions "
-        . "WHERE business_id = '" . ciniki_core_dbQuote($ciniki, $args['business_id']) . "' "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND status < 60 "
         . "AND (TIME(bottling_date) = '00:00:00' OR bottling_date = '0000-00-00 00:00:00') "
         . "AND (filtering_date > 0 AND filtering_date < NOW()) "

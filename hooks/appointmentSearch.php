@@ -2,13 +2,13 @@
 //
 // Description
 // -----------
-// This function will return the appointment for a business
+// This function will return the appointment for a tenant
 //
 //
 // Arguments
 // ---------
 // ciniki:
-// business_id:         The ID of the business to get the details for.
+// tnid:         The ID of the tenant to get the details for.
 // args:                The args passed through the API.
 //
 // Returns
@@ -17,12 +17,12 @@
 //      <appointment calendar="Appointments" customer_name="" invoice_number="" wine_name="" />
 //  </appointments>
 //
-function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $args) {
+function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $tnid, $args) {
     //
-    // Grab the settings for the business from the database
+    // Grab the settings for the tenant from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
-    $rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'business_id', $business_id, 'ciniki.wineproduction', 'settings', '');
+    $rc =  ciniki_core_dbDetailsQuery($ciniki, 'ciniki_wineproduction_settings', 'tnid', $tnid, 'ciniki.wineproduction', 'settings', '');
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -35,8 +35,8 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $a
     //
     // Load timezone info
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'businesses', 'private', 'intlSettings');
-    $rc = ciniki_businesses_intlSettings($ciniki, $business_id);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $tnid);
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -70,10 +70,10 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $business_id, $a
         . "bottling_duration AS duration, '#aaddff' AS colour, 'ciniki.appointments' AS 'module' "
         . "FROM ciniki_wineproductions "
         . "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "') "
         . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "') "
-        . "WHERE ciniki_wineproductions.business_id = '" . ciniki_core_dbQuote($ciniki, $business_id) . "' "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "') "
+        . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     if( isset($args['full']) && $args['full'] == 'yes' ) {
         // search for orders including bottled

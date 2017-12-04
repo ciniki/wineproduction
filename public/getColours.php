@@ -2,7 +2,7 @@
 //
 // Description
 // -----------
-// This function will return the list of available colours for this business.
+// This function will return the list of available colours for this tenant.
 //
 // Info
 // ----
@@ -12,7 +12,7 @@
 // ---------
 // api_key:
 // auth_token:
-// business_id:     The ID of the business to get the colours for.
+// tnid:     The ID of the tenant to get the colours for.
 // 
 // Returns
 // -------
@@ -23,7 +23,7 @@ function ciniki_wineproduction_getColours($ciniki) {
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
-        'business_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Business'), 
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -32,10 +32,10 @@ function ciniki_wineproduction_getColours($ciniki) {
     
     //  
     // Make sure this module is activated, and
-    // check permission to run this function for this business
+    // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['business_id'], 'ciniki.wineproduction.getColours'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.getColours'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -57,7 +57,7 @@ function ciniki_wineproduction_getColours($ciniki) {
 //      ));
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'getColours');
-    $colours = ciniki_wineproduction__getColours($ciniki, $args['business_id']);
+    $colours = ciniki_wineproduction__getColours($ciniki, $args['tnid']);
     return array('stat'=>'ok', 'colours'=>$colours);
 }
 ?>
