@@ -262,7 +262,7 @@ function ciniki_wineproduction_main() {
         };
         this.add.liveSearchResultValue = function(s, f, i, j, d) {
             if( f.match(/^product_id/) ) { return d.name.wine_name; }
-            if( f == 'customer_id') {  return d.customer.display_name; }
+            if( f == 'customer_id') {  return d.display_name; }
             return '';
         };
         // this.add.liveSearchResultID = function(i, result_index, d) { return result_index; }
@@ -271,7 +271,7 @@ function ciniki_wineproduction_main() {
                 var x = f.replace(/^product_id_/, '');
                 return 'M.ciniki_wineproduction_main.add.updateProduct(\'' + s + '\',\'' + x + '\',\'' + d.name.id + '\',\'' + escape(d.name.wine_name) + '\',\'' + d.name.wine_type + '\',\'' + d.name.kit_length + '\',\'' + d.name.order_flags + '\');';
             } else if( f == 'customer_id' ) {
-                return 'M.ciniki_wineproduction_main.add.updateCustomer(\'' + s + '\',\'' + escape(d.customer.display_name) + '\',\'' + d.customer.id + '\');';
+                return 'M.ciniki_wineproduction_main.add.updateCustomer(\'' + s + '\',\'' + escape(d.display_name) + '\',\'' + d.id + '\');';
             }
         };
         this.add.updateCustomer = function(s, customer_name, customer_id) {
