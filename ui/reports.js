@@ -71,7 +71,7 @@ function ciniki_wineproduction_reports() {
     //
     this.cellarnights = new M.panel('Cellar Nights Orders',
         'ciniki_wineproduction_reports', 'cellarnights',
-        'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.cellarnights');
+        'mc', 'xlarge', 'sectioned', 'ciniki.wineproduction.reports.cellarnights');
     this.cellarnights.sections = {
         '_years':{'label':'', 'type':'paneltabs', 'selected':'', 'tabs':{}, 'visible':'no'},
         'orders':{'label':'Orders', 'type':'simplegrid', 'num_cols':6, 
