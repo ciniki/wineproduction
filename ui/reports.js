@@ -1,70 +1,42 @@
 //
 function ciniki_wineproduction_reports() {
     //
-    // Panels
+    // The yearly panel, which lists the customers and the years they made wine, along with percentage increase or decrease between years
     //
-    this.init = function() {
-        //
-        // The yearly panel, which lists the customers and the years they made wine, along with percentage increase or decrease between years
-        //
-        this.yearly = new M.panel('Customers Yearly Production',
-            'ciniki_wineproduction_reports', 'yearly',
-            'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.yearly');
-        this.yearly.sections = {
-            'customers':{},
-        };
-        this.yearly.sectionData = function(s) { return this.data[s]; }
-        this.yearly.cellValue = function(s, i, j, d) {
-            if( j == 0 ) {
-                return d.display_name;
-            }
-            if( j > 2 && j%2 == 0 && d.years[this.sections[s].headerValues[j-3]] != null && d.years[this.sections[s].headerValues[j-1]] != null ) {
-                return d.years[this.sections[s].headerValues[j-1]].pi + '%';
-            } else if( j%2 == 1 && d.years[this.sections[s].headerValues[j]] != null ) {
-                return d.years[this.sections[s].headerValues[j]].num_orders;
-            }
-            return '';
+    this.yearly = new M.panel('Customers Yearly Production',
+        'ciniki_wineproduction_reports', 'yearly',
+        'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.yearly');
+    this.yearly.sections = {
+        'customers':{},
+    };
+    this.yearly.sectionData = function(s) { return this.data[s]; }
+    this.yearly.cellValue = function(s, i, j, d) {
+        if( j == 0 ) {
+            return d.display_name;
         }
-        this.yearly.cellSortValue = function(s, i, j, d) {
-            if( j == 0 ) {
-                return d.display_name;
-            }
-            if( j > 2 && j%2 == 0 && d.years[this.sections[s].headerValues[j-3]] != null && d.years[this.sections[s].headerValues[j-1]] != null ) {
-                return d.years[this.sections[s].headerValues[j-1]].pi;
-            } else if( j%2 == 1 && d.years[this.sections[s].headerValues[j]] != null ) {
-                return d.years[this.sections[s].headerValues[j]].num_orders;
-            }
-            return -0.1;
+        if( j > 2 && j%2 == 0 && d.years[this.sections[s].headerValues[j-3]] != null && d.years[this.sections[s].headerValues[j-1]] != null ) {
+            return d.years[this.sections[s].headerValues[j-1]].pi + '%';
+        } else if( j%2 == 1 && d.years[this.sections[s].headerValues[j]] != null ) {
+            return d.years[this.sections[s].headerValues[j]].num_orders;
         }
-
-        this.yearly.rowFn = function(s, i, d) {
-            return 'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_reports.show();\',\'mc\',{\'customer_id\':\'' + d.customer_id + '\'});';
+        return '';
+    }
+    this.yearly.cellSortValue = function(s, i, j, d) {
+        if( j == 0 ) {
+            return d.display_name;
         }
-        this.yearly.addClose('Back');
+        if( j > 2 && j%2 == 0 && d.years[this.sections[s].headerValues[j-3]] != null && d.years[this.sections[s].headerValues[j-1]] != null ) {
+            return d.years[this.sections[s].headerValues[j-1]].pi;
+        } else if( j%2 == 1 && d.years[this.sections[s].headerValues[j]] != null ) {
+            return d.years[this.sections[s].headerValues[j]].num_orders;
+        }
+        return -0.1;
     }
 
-    //
-    // Arguments:
-    // aG - The arguments to be parsed into args
-    //
-    this.start = function(cb, appPrefix, aG) {
-        args = {};
-        if( aG != null ) { args = eval(aG); }
-
-        //
-        // Create the app container if it doesn't exist, and clear it out
-        // if it does exist.
-        //
-        var appContainer = M.createContainer(appPrefix, 'ciniki_wineproduction_reports', 'yes');
-        if( appContainer == null ) {
-            alert('App Error');
-            return false;
-        } 
-
-        this.yearlyShow(cb);
-    };
-
-    this.yearlyShow = function(cb) {
+    this.yearly.rowFn = function(s, i, d) {
+        return 'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_reports.yearly.open();\',\'mc\',{\'customer_id\':\'' + d.customer_id + '\'});';
+    }
+    this.yearly.open = function(cb) {
         M.api.getJSONCb('ciniki.wineproduction.reportCustomersYearly', {'tnid':M.curTenantID}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
@@ -92,4 +64,83 @@ function ciniki_wineproduction_reports() {
             p.show(cb);
         });
     };
+    this.yearly.addClose('Back');
+
+    //
+    // The cellarnights panel, which lists the customers and the years they made wine, along with percentage increase or decrease between years
+    //
+    this.cellarnights = new M.panel('Cellar Nights Orders',
+        'ciniki_wineproduction_reports', 'cellarnights',
+        'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.cellarnights');
+    this.cellarnights.sections = {
+        'orders':{'label':'Orders', 'type':'simplegrid', 'num_cols':5, 
+            'headerValues':['Invoice #', 'Customer', 'Status', 'Bottling Date', 'Bottling Status'],
+            'sortable':'yes',
+            'sortTypes':['number', 'text', 'altnumber', 'date', 'altnumber'],
+            },
+    };
+    this.cellarnights.sectionData = function(s) { return this.data[s]; }
+    this.cellarnights.cellValue = function(s, i, j, d) {
+        switch (j) {
+            case 0: return d.invoice_number;
+            case 1: return d.display_name;
+            case 2: return d.status_text;
+            case 3: return d.bottling_date;
+            case 4: return d.bottling_status_text;
+        }
+        return '';
+    }
+    this.cellarnights.cellSortValue = function(s, i, j, d) {
+        switch (j) {
+            case 0: return d.invoice_number;
+            case 1: return d.display_name;
+            case 2: return d.status;
+            case 3: return d.bottling_date;
+            case 4: return d.bottling_status;
+        }
+    }
+    this.cellarnights.rowFn = function(s, i, d) {
+        return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+    }
+    this.cellarnights.open = function(cb) {
+        M.api.getJSONCb('ciniki.wineproduction.reportCellarNights', {'tnid':M.curTenantID}, function(rsp) {
+            if( rsp.stat != 'ok' ) {
+                M.api.err(rsp);
+                return false;
+            } 
+            var p = M.ciniki_wineproduction_reports.cellarnights;
+            p.data = rsp;
+            p.refresh();
+            p.show(cb);
+        });
+    };
+    this.cellarnights.addClose('Back');
+
+
+
+    //
+    // Arguments:
+    // aG - The arguments to be parsed into args
+    //
+    this.start = function(cb, appPrefix, aG) {
+        args = {};
+        if( aG != null ) { args = eval(aG); }
+
+        //
+        // Create the app container if it doesn't exist, and clear it out
+        // if it does exist.
+        //
+        var appContainer = M.createContainer(appPrefix, 'ciniki_wineproduction_reports', 'yes');
+        if( appContainer == null ) {
+            alert('App Error');
+            return false;
+        } 
+
+        if( args.report != null && args.report == 'cellarnights' ) {
+            this.cellarnights.open(cb);    
+        } else {
+            this.yearly.open(cb);
+        }
+    };
+
 }
