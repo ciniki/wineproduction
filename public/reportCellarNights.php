@@ -101,11 +101,16 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
         . "orders.status AS status_text, "
         . "orders.bottling_date, "
         . "orders.bottling_status, "
-        . "orders.bottling_status AS bottling_status_text "
+        . "orders.bottling_status AS bottling_status_text, "
+        . "products.name AS product_name "
         . "FROM ciniki_wineproductions AS orders "
         . "LEFT JOIN ciniki_customers AS customers ON ("
             . "orders.customer_id = customers.id "
             . "AND customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "LEFT JOIN ciniki_products AS products ON ("
+            . "orders.product_id = products.id "
+            . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
         . "WHERE orders.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND orders.invoice_number LIKE '%CN%' "
@@ -117,7 +122,7 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
         array('container'=>'orders', 'fname'=>'customer_id', 
             'fields'=>array('id', 'status', 'status_text', 'order_date', 'order_year',
                 'customer_id', 'display_name', 'invoice_number', 
-                'bottling_date', 'bottling_status', 'bottling_status_text',
+                'bottling_date', 'bottling_status', 'bottling_status_text', 'product_name',
                 ),
             'utctotz'=>array(
                 'order_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
