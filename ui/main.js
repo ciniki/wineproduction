@@ -19,6 +19,7 @@ function ciniki_wineproduction_main() {
         '25':'SG Ready',
         '30':'Racked',
         '40':'Filtered',
+        '50':'Shared',
         '60':'Bottled',
         '100':'Removed',
         '*':'Unknown',
@@ -115,6 +116,7 @@ function ciniki_wineproduction_main() {
                 'sgready':{'label':'SG Ready', 'count':0, 'fn':'M.ciniki_wineproduction_main.showOrders(null, \'sgready\');'},
                 'racked':{'label':'Racked', 'count':0, 'fn':'M.ciniki_wineproduction_main.showOrders(null, \'racked\');'},
                 'filtered':{'label':'Filtered', 'count':0, 'fn':'M.ciniki_wineproduction_main.showOrders(null, \'filtered\');'},
+                'shared':{'label':'Shared', 'count':0, 'fn':'M.ciniki_wineproduction_main.showOrders(null, \'shared\');'},
                 }},
             'reports':{'label':'Reports', 'type':'simplelist', 'list':{
                 'schedule':{'label':'Production Schedule', 'fn':'M.ciniki_wineproduction_main.showSchedule(\'M.ciniki_wineproduction_main.showMain();\',null,\'today\');'},
@@ -1198,6 +1200,7 @@ function ciniki_wineproduction_main() {
         p.sections.orders.list.sgready.count = 0;
         p.sections.orders.list.racked.count = 0;
         p.sections.orders.list.filtered.count = 0;
+        p.sections.orders.list.shared.count = 0;
         for(i in rsp.stats) {
             if( rsp.stats[i].stat.status == 10 ) {
                 p.sections.orders.list.ordered.count = rsp.stats[i].stat.count;
@@ -1210,6 +1213,8 @@ function ciniki_wineproduction_main() {
                 p.sections.orders.list.racked.count = rsp.stats[i].stat.count;
             } else if( rsp.stats[i].stat.status == 40 ) {
                 p.sections.orders.list.filtered.count = rsp.stats[i].stat.count;
+            } else if( rsp.stats[i].stat.status == 50 ) {
+                p.sections.orders.list.shared.count = rsp.stats[i].stat.count;
             }
         }
         p.statsPast = rsp.past;
@@ -1583,6 +1588,19 @@ function ciniki_wineproduction_main() {
             this.list.sections['completed'].num_cols = 6;
             this.list.sections['completed'].sortTypes = ['number', 'text', 'date', 'date', 'none', 'none'];
             this.list.dataMaps['completed'] = ['invoice_number', 'wine_and_customer', 'filter_date', 'bottling_date_and_flags', 'notes'];
+        } 
+        else if( ordertype == 'shared' ) {
+            this.list.title = 'Shared';
+            this.list.buttonText = 'Bottled';
+            this.list.sections['completed'].visible = 'no';
+            this.list.sections['completed'].label = '';
+            args = {'tnid':M.curTenantID, 'status':'50', 'sorting':'invoice_number'};
+
+            this.list.sections['pending'].headerValues = ['INV#', 'Wine', 'Filtered', 'BD', '', ''];
+            this.list.sections['pending'].num_cols = 6;
+            this.list.sections['pending'].sortTypes = ['number', 'text', 'date', 'date', 'none', 'none'];
+            this.list.dataMaps['pending'] = ['invoice_number', 'wine_and_customer', 'filter_date', 'bottling_date_and_flags', 'buttons', 'notes'];
+            this.list.sections['completed'].visible = 'no';
         } 
         
         else if( ordertype == 'latewines' ) {

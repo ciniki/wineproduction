@@ -73,6 +73,7 @@ function ciniki_wineproduction_reports() {
         'ciniki_wineproduction_reports', 'cellarnights',
         'mc', 'large', 'sectioned', 'ciniki.wineproduction.reports.cellarnights');
     this.cellarnights.sections = {
+        '_years':{'label':'', 'type':'paneltabs', 'selected':'', 'tabs':{}, 'visible':'no'},
         'orders':{'label':'Orders', 'type':'simplegrid', 'num_cols':5, 
             'headerValues':['Invoice #', 'Customer', 'Status', 'Bottling Date', 'Bottling Status'],
             'sortable':'yes',
@@ -102,21 +103,37 @@ function ciniki_wineproduction_reports() {
     this.cellarnights.rowFn = function(s, i, d) {
         return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
     }
+    this.cellarnights.switchYear = function(y) {
+        this.sections._years.selected = y;
+        this.open();
+    }
     this.cellarnights.open = function(cb) {
-        M.api.getJSONCb('ciniki.wineproduction.reportCellarNights', {'tnid':M.curTenantID}, function(rsp) {
+        M.api.getJSONCb('ciniki.wineproduction.reportCellarNights', {'tnid':M.curTenantID, 'year':this.sections._years.selected}, function(rsp) {
             if( rsp.stat != 'ok' ) {
                 M.api.err(rsp);
                 return false;
             } 
             var p = M.ciniki_wineproduction_reports.cellarnights;
             p.data = rsp;
+            p.sections._years.visible = 'no';
+            p.sections._years.tabs = {};
+            p.sections._years.selected = year = rsp.year;
+            if( rsp.years != null && rsp.years != '' ) {
+                var i = 0;
+                for(i in rsp.years) {
+                    console.log(rsp.years[i]);
+                    p.sections._years.tabs[rsp.years[i]] = {'label':rsp.years[i], 'fn':'M.ciniki_wineproduction_reports.cellarnights.switchYear(' + rsp.years[i] + ');'};
+                }
+                if( rsp.years.length > 1 ) {
+                    p.sections._years.visible = 'yes';
+                }
+            }
+            console.log(p.sections);
             p.refresh();
             p.show(cb);
         });
     };
     this.cellarnights.addClose('Back');
-
-
 
     //
     // Arguments:

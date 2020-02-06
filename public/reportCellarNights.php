@@ -20,6 +20,7 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'), 
+        'year'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Year'), 
         )); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
@@ -59,9 +60,34 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
     //
     // Load the date format strings for the user
     //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'dateFormat');
+    $date_format = ciniki_users_dateFormat($ciniki, 'php');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'users', 'private', 'datetimeFormat');
     $datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
-    
+
+    //
+    // Get the years of orders
+    //
+    $strsql = "SELECT DISTINCT DATE_FORMAT(order_date, '%Y') AS year "
+        . "FROM ciniki_wineproductions "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "AND invoice_number LIKE '%CN%' "
+        . "ORDER BY year "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
+    $rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.wineproduction', 'years', 'year');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.40', 'msg'=>'Unable to load the list of years', 'err'=>$rc['err']));
+    }
+    $years = isset($rc['years']) ? $rc['years'] : array();
+
+    //
+    // Set the default year to the last year
+    //
+    if( !isset($args['year']) || !in_array($args['year'], $years)) {
+        $args['year'] = end($years);
+    } 
+
     //
     // Get the list of orders for cellar nights and their bottling status
     //
@@ -69,6 +95,8 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
         . "customers.id AS customer_id, "
         . "customers.display_name, "
         . "orders.invoice_number, "
+        . "orders.order_date, "
+        . "orders.order_date AS order_year, "
         . "orders.status, "
         . "orders.status AS status_text, "
         . "orders.bottling_date, "
@@ -81,15 +109,21 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
             . ") "
         . "WHERE orders.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND orders.invoice_number LIKE '%CN%' "
-        . "ORDER BY orders.invoice_number ASC "
+        . "AND YEAR(orders.order_date) = '" . ciniki_core_dbQuote($ciniki, $args['year']) . "' "
+        . "ORDER BY orders.invoice_number DESC "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'orders', 'fname'=>'customer_id', 
-            'fields'=>array('id', 'status', 'status_text', 'customer_id', 'display_name', 'invoice_number', 
+            'fields'=>array('id', 'status', 'status_text', 'order_date', 'order_year',
+                'customer_id', 'display_name', 'invoice_number', 
                 'bottling_date', 'bottling_status', 'bottling_status_text',
                 ),
-            'utctotz'=>array('bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format)),
+            'utctotz'=>array(
+                'order_date'=>array('timezone'=>$intl_timezone, 'format'=>$date_format),
+                'order_year'=>array('timezone'=>$intl_timezone, 'format'=>'Y'),
+                'bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$datetime_format),
+                ),
             'maps'=>array(
                 'status_text'=>$maps['wineproduction']['status'],
                 'bottling_status_text'=>$maps['wineproduction']['bottling_status'],
@@ -104,6 +138,6 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
     foreach($orders as $oid => $order) {
     }
 
-    return array('stat'=>'ok', 'orders'=>$orders);
+    return array('stat'=>'ok', 'orders'=>$orders, 'year'=>$args['year'], 'years'=>$years);
 }
 ?>

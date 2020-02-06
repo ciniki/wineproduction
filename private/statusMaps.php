@@ -18,6 +18,7 @@ function ciniki_wineproduction_statusMaps($ciniki) {
         '25'=>'SG Ready',
         '30'=>'Racked',
         '40'=>'Filtered',
+        '50'=>'Shared',
         '60'=>'Bottled',
         '100'=>'Removed',
         );
