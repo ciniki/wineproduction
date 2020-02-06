@@ -115,7 +115,7 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
         . "WHERE orders.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND orders.invoice_number LIKE '%CN%' "
         . "AND YEAR(orders.order_date) = '" . ciniki_core_dbQuote($ciniki, $args['year']) . "' "
-        . "ORDER BY orders.invoice_number DESC "
+        . "ORDER BY orders.invoice_number ASC "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
