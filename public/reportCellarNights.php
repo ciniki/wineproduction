@@ -138,11 +138,49 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.39', 'msg'=>'Unable to load ', 'err'=>$rc['err']));
     }
-    $orders = isset($rc['orders']) ? $rc['orders'] : array();
+    $orderlist = isset($rc['orders']) ? $rc['orders'] : array();
 
-    foreach($orders as $oid => $order) {
+    $orders = array(); 
+    $badorders = array();
+    foreach($orderlist as $oid => $order) {
+        if( $order['status'] == 60 || $order['bottling_status'] == 0 ) {
+            $order['bottling_status_text'] = $order['status_text'];
+        } elseif( $order['bottling_status'] > 0 ) {
+            $order['bottling_status_text'] = $order['status_text'] . '/' . $order['bottling_status_text'];
+        }
+        if( preg_match("/\s*([0-9]+)\s*CN\s*A/i", $order['invoice_number'], $m) ) {
+            $order_key = $m[1] . '-' . $order['product_name'];
+            if( !isset($orders[$order_key]) ) {
+                $orders[$order_key] = $order;
+                $orders[$order_key]['B'] = array(
+                    'invoice_number' => '',
+                    'display_name' => '',
+                    'bottling_date' => '',
+                    'bottling_status' => 0,
+                    'bottling_status_text' => '',
+                    );
+                $orders[$order_key]['C'] = array(
+                    'invoice_number' => '',
+                    'display_name' => '',
+                    'bottling_date' => '',
+                    'bottling_status' => 0,
+                    'bottling_status_text' => '',
+                    );
+            } else {
+                $badorders[] = $order;
+            }
+        } elseif( preg_match("/\s*([0-9]+)\s*CN\s*(B|C)/i", $order['invoice_number'], $m) ) {
+            $order_key = $m[1] . '-' . $order['product_name'];
+            if( isset($orders[$order_key]) ) {
+                $orders[$order_key][$m[2]] = $order;
+            } else {
+                $badorders[] = $order;
+            }
+        } else {
+            $badorders[] = $order; 
+        }
     }
 
-    return array('stat'=>'ok', 'orders'=>$orders, 'year'=>$args['year'], 'years'=>$years);
+    return array('stat'=>'ok', 'orders'=>$orders, 'badorders'=>$badorders, 'year'=>$args['year'], 'years'=>$years);
 }
 ?>

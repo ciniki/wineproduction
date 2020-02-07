@@ -71,10 +71,16 @@ function ciniki_wineproduction_reports() {
     //
     this.cellarnights = new M.panel('Cellar Nights Orders',
         'ciniki_wineproduction_reports', 'cellarnights',
-        'mc', 'xlarge', 'sectioned', 'ciniki.wineproduction.reports.cellarnights');
+        'mc', 'full', 'sectioned', 'ciniki.wineproduction.reports.cellarnights');
     this.cellarnights.sections = {
         '_years':{'label':'', 'type':'paneltabs', 'selected':'', 'tabs':{}, 'visible':'no'},
-        'orders':{'label':'Orders', 'type':'simplegrid', 'num_cols':6, 
+        'orders':{'label':'Orders', 'type':'simplegrid', 'num_cols':9,
+            'headerValues':['Invoice #', 'Product', 'Status', 'Customer A', 'Bottling A', 'Customer B', 'Bottling B', 'Customer C', 'Bottling C'],
+            'cellClasses':['', '', '', 'multiline', 'multiline', 'multiline', 'multiline', 'multiline', 'multiline'],
+            'sortable':'yes',
+            'sortTypes':['number', 'text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'],
+            },
+        'badorders':{'label':'Bad Orders', 'type':'simplegrid', 'num_cols':6, 
             'headerValues':['Invoice #', 'Customer', 'Product', 'Status', 'Bottling Date', 'Bottling Status'],
             'sortable':'yes',
             'sortTypes':['number', 'text', 'text', 'altnumber', 'date', 'altnumber'],
@@ -82,28 +88,66 @@ function ciniki_wineproduction_reports() {
     };
     this.cellarnights.sectionData = function(s) { return this.data[s]; }
     this.cellarnights.cellValue = function(s, i, j, d) {
-        switch (j) {
-            case 0: return d.invoice_number;
-            case 1: return d.display_name;
-            case 2: return d.product_name;
-            case 3: return d.status_text;
-            case 4: return d.bottling_date;
-            case 5: return d.bottling_status_text;
+        if( s == 'orders' ) {
+            switch (j) {
+                case 0: return d.invoice_number;
+                case 1: return d.product_name;
+                case 2: return d.status_text;
+                case 3: return '<span class="maintext">' + d.display_name + '</span>'
+                    + '<span class="subtext">' + d.invoice_number + '</span>';
+                case 4: return '<span class="maintext">' + d.bottling_status_text + '</span>'
+                    + '<span class="subtext">' + d.bottling_date + '</span>';
+                case 5: return '<span class="maintext">' + d.B.display_name + '</span>'
+                    + '<span class="subtext">' + d.B.invoice_number + '</span>';
+                case 6: return '<span class="maintext">' + d.B.bottling_status_text + '</span>'
+                    + '<span class="subtext">' + d.B.bottling_date + '</span>';
+                case 7: return '<span class="maintext">' + d.C.display_name + '</span>'
+                    + '<span class="subtext">' + d.C.invoice_number + '</span>';
+                case 8: return '<span class="maintext">' + d.C.bottling_status_text + '</span>'
+                    + '<span class="subtext">' + d.C.bottling_date + '</span>';
+            }
+        } 
+        if( s == 'badorders' ) {
+            switch (j) {
+                case 0: return d.invoice_number;
+                case 1: return d.display_name;
+                case 2: return d.product_name;
+                case 3: return d.status_text;
+                case 4: return d.bottling_date;
+                case 5: return d.bottling_status_text;
+            }
+        }
+        return '';
+    }
+    this.cellarnights.cellFn = function(s, i, j, d) {
+        if( s == 'orders' ) {
+            switch (j) {
+                case 0:
+                case 1:
+                case 2: 
+                case 3:
+                case 4: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+                case 5:
+                case 6: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.B.id + '\'});';
+                case 7:
+                case 8: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.C.id + '\'});';
+            }
         }
         return '';
     }
     this.cellarnights.cellSortValue = function(s, i, j, d) {
         switch (j) {
             case 0: return d.invoice_number;
-            case 1: return d.display_name;
-            case 2: return d.product_name;
-            case 3: return d.status;
+            case 1: return d.product_name;
+            case 2: return d.status;
+            case 3: return d.display_name;
             case 4: return d.bottling_date;
             case 5: return d.bottling_status;
         }
     }
     this.cellarnights.rowFn = function(s, i, d) {
-        return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+        return '';
+//        return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
     }
     this.cellarnights.switchYear = function(y) {
         this.sections._years.selected = y;
@@ -123,14 +167,12 @@ function ciniki_wineproduction_reports() {
             if( rsp.years != null && rsp.years != '' ) {
                 var i = 0;
                 for(i in rsp.years) {
-                    console.log(rsp.years[i]);
                     p.sections._years.tabs[rsp.years[i]] = {'label':rsp.years[i], 'fn':'M.ciniki_wineproduction_reports.cellarnights.switchYear(' + rsp.years[i] + ');'};
                 }
                 if( rsp.years.length > 1 ) {
                     p.sections._years.visible = 'yes';
                 }
             }
-            console.log(p.sections);
             p.refresh();
             p.show(cb);
         });
