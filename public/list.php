@@ -247,7 +247,9 @@ function ciniki_wineproduction_list($ciniki) {
         }
         elseif( $args['bottling_date'] == 'ctb' ) {
             $strsql .= "AND (TIME(ciniki_wineproductions.bottling_date) = '00:00:00' OR ciniki_wineproductions.bottling_date = '0000-00-00 00:00:00' ) "
-                . "AND (ciniki_wineproductions.filtering_date > 0 AND ciniki_wineproductions.filtering_date < NOW()) "
+                . "AND ((ciniki_wineproductions.filtering_date > 0 AND ciniki_wineproductions.filtering_date < NOW()) "
+                    . "OR (ciniki_wineproductions.status = 50 && ciniki_wineproductions.bottling_status = 128) "
+                    . ") "
                 . " ";
         }
         elseif( $args['bottling_date'] != '' ) {
@@ -307,7 +309,7 @@ function ciniki_wineproduction_list($ciniki) {
         $strsql .= "ORDER BY ciniki_wineproductions.invoice_number DESC ";
     }
 
-    // error_log($strsql);
+     error_log($strsql);
 //  ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbRspQuery');
 //  $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'orders', 'order', array('stat'=>'ok', 'orders'=>array()));
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');

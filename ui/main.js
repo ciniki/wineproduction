@@ -1623,7 +1623,7 @@ function ciniki_wineproduction_main() {
             this.list.dataMaps['pending'] = ['bottling_flags_colour', 'invoice_number_and_status', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date_and_flags', 'notes'];
             this.list.sections['completed'].label = '';
             this.list.sections['completed'].visible = 'no';
-            args = {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30,40', 'bottling_date':'ctb', 'sorting':'invoice_number'};
+            args = {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30,40,50', 'bottling_date':'ctb', 'sorting':'invoice_number'};
 //          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'0,10,20,25,30,40', 'bottling_date':'ctb', 'sorting':'invoice_number'});
 //          rsp2 = null;
         } 

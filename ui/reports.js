@@ -135,6 +135,32 @@ function ciniki_wineproduction_reports() {
         }
         return '';
     }
+    this.cellarnights.cellClass = function(s, i, j, d) {
+        if( s == 'orders' ) {
+            if( ((j == 3 || j == 4) && d.status == 60) 
+                || ((j == 5 || j == 6) && d.B.status == 60) 
+                || ((j == 7 || j == 8) && d.C.status == 60) 
+                ) {
+                return 'multiline statusgrey';
+            }
+            if( ((j == 3 || j == 4) && d.bottling_status > 0 && d.bottling_status < 128 ) 
+                || ((j == 5 || j == 6) && d.B.bottling_status > 0 && d.B.bottling_status < 128 ) 
+                || ((j == 7 || j == 8) && d.C.bottling_status > 0 && d.C.bottling_status < 128 ) 
+                ) {
+                return 'multiline statusorange';
+            }
+            if( ((j == 3 || j == 4) && d.bottling_status == 128 ) 
+                || ((j == 5 || j == 6) && d.B.bottling_status == 128 ) 
+                || ((j == 7 || j == 8) && d.C.bottling_status == 128 ) 
+                ) {
+                return 'multiline statusgreen';
+            }
+        }
+        if( this.sections[s].cellClasses != null ) {
+            return this.sections[s].cellClasses[j];
+        } 
+        return '';
+    }
     this.cellarnights.cellSortValue = function(s, i, j, d) {
         switch (j) {
             case 0: return d.invoice_number;
@@ -146,8 +172,10 @@ function ciniki_wineproduction_reports() {
         }
     }
     this.cellarnights.rowFn = function(s, i, d) {
+        if( s == 'badorders' ) {
+            return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+        }
         return '';
-//        return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
     }
     this.cellarnights.switchYear = function(y) {
         this.sections._years.selected = y;
