@@ -119,7 +119,7 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
-        array('container'=>'orders', 'fname'=>'customer_id', 
+        array('container'=>'orders', 'fname'=>'id', 
             'fields'=>array('id', 'status', 'status_text', 'order_date', 'order_year',
                 'customer_id', 'display_name', 'invoice_number', 
                 'bottling_date', 'bottling_status', 'bottling_status_text', 'product_name',
