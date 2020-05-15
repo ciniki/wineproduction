@@ -124,6 +124,7 @@ function ciniki_wineproduction_main() {
                 'latewines':{'label':'Late Wines', 'count':0, 'fn':'M.ciniki_wineproduction_main.showOrders(null, \'latewines\');'},
                 'ctb':{'label':'Call to Book', 'count':0, 'fn':'M.ciniki_wineproduction_main.showOrders(\'M.ciniki_wineproduction_main.showMain();\', \'ctb\');'},
                 'cellarnights':{'label':'Cellar Nights', 'fn':'M.startApp(\'ciniki.wineproduction.reports\',null,\'M.ciniki_wineproduction_main.showMain();\',\'mc\',{\'report\':\'cellarnights\'});'},
+                'shared':{'label':'Shared Batches', 'fn':'M.startApp(\'ciniki.wineproduction.reports\',null,\'M.ciniki_wineproduction_main.showMain();\',\'mc\',{\'report\':\'shared\'});'},
                 'customerhistory':{'label':'Yearly Report', 'fn':'M.startApp(\'ciniki.wineproduction.reports\',null,\'M.ciniki_wineproduction_main.showMain();\',\'mc\',{\'report\':\'customers_yearly\'});'},
                 'export':{'label':'Export Orders', 'fn':'M.ciniki_wineproduction_main.downloadXLS();'},
                 }},
