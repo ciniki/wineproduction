@@ -1127,7 +1127,7 @@ function ciniki_wineproduction_main() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_wineproduction_main', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
 
@@ -1756,7 +1756,7 @@ function ciniki_wineproduction_main() {
                 return false;
             } 
             if( batch_code == '' ) {
-                alert("Invalid batch code");
+                M.alert("Invalid batch code");
                 return false;
             }
         }

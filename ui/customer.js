@@ -88,7 +88,7 @@ function ciniki_wineproduction_customer() {
         //
         var appContainer = M.createContainer(appPrefix, 'ciniki_wineproduction_customer', 'yes');
         if( appContainer == null ) {
-            alert('App Error');
+            M.alert('App Error');
             return false;
         } 
         this.showOrders(cb, args.customer_id);
