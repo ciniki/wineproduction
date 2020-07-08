@@ -70,7 +70,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
             )
         ) {
         $menu_item = array(
-            'priority'=>3900,
+            'priority'=>5000,
             'label'=>'Production Schedule', 
             'edit'=>array('app'=>'ciniki.wineproduction.main', 'args'=>array('schedule'=>'"\'today\'"')),
             );
