@@ -99,8 +99,8 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
     } else {
         $strsql .= "ORDER BY ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, wine_name, id ";
     }
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryTree');
-    $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'appointments', 'fname'=>'id', 'name'=>'appointment', 
             'fields'=>array('id', 'start_date', 'start_ts', 'date', 'time', '12hour', 'duration', 'wine_name'),
             'utctotz'=>array('start_ts'=>array('timezone'=>$intl_timezone, 'format'=>'U'),
@@ -122,76 +122,94 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
     //
     // Create subject, and remote orders to flatten appointments
     //
-    foreach($appointments as $anum => $appointment) {
-        if( $appointment['appointment']['time'] == '00:00' ) {
-            $appointments[$anum]['appointment']['allday'] = 'yes';
+    foreach($appointments as $aid => $appointment) {
+        if( $appointment['time'] == '00:00' ) {
+            $appointments[$aid]['allday'] = 'yes';
         }
-        $appointments[$anum]['appointment']['subject'] = $appointment['appointment']['orders'][0]['order']['customer_name'];
-        if( count($appointment['appointment']['orders']) > 1 ) {
-            $appointments[$anum]['appointment']['subject'] .= ' (' . count($appointment['appointment']['orders']) . ')';
+        $appointments[$aid]['subject'] = $appointment['orders'][0]['customer_name'];
+        if( count($appointment['orders']) > 1 ) {
+            $appointments[$aid]['subject'] .= ' (' . count($appointment['orders']) . ')';
         }
-        $appointments[$anum]['appointment']['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['appointment']['orders'][0]['order']['invoice_number']);
-        $appointments[$anum]['appointment']['subject'] .= ' - ' . $appointment['appointment']['wine_name'];
+        $appointments[$aid]['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['orders'][0]['invoice_number']);
+        $appointments[$aid]['subject'] .= ' - ' . $appointment['wine_name'];
         $min_status = 255;
         $min_flags = 255;
         $min_order_status = 99;
         $bottling_notes = '';
-        $appointments[$anum]['appointment']['abbr_secondary_text'] = '';
-        $appointments[$anum]['appointment']['secondary_text'] = '';
-        $appointments[$anum]['appointment']['secondary_colour'] = '#ffffff';
-        $appointments[$anum]['appointment']['secondary_colour_text'] = '';
+        $appointments[$aid]['abbr_secondary_text'] = '';
+        $appointments[$aid]['secondary_text'] = '';
+        $appointments[$aid]['secondary_colour'] = '#ffffff';
+        $appointments[$aid]['secondary_colour_text'] = '';
         $scomma = '';
         $bottling_nocolour_flags = 0;
-        foreach($appointments[$anum]['appointment']['orders'] as $onum => $order) {
-            if( $order['order']['bottling_status'] < $min_status ) {
-                $min_status = $order['order']['bottling_status'];
+        foreach($appointments[$aid]['orders'] as $onum => $order) {
+            if( $order['bottling_status'] < $min_status ) {
+                $min_status = $order['bottling_status'];
             }
-            if( $order['order']['bottling_flags'] < $min_flags ) {
-                $min_flags = $order['order']['bottling_flags'];
+            if( $order['bottling_flags'] < $min_flags ) {
+                $min_flags = $order['bottling_flags'];
             }
-            if( $order['order']['status'] < $min_order_status ) {
-                $min_order_status = $order['order']['status'];
+            if( $order['status'] < $min_order_status ) {
+                $min_order_status = $order['status'];
             }
             if( $bottling_notes == '' ) {
-                $bottling_notes = $order['order']['bottling_notes'];
+                $bottling_notes = $order['bottling_notes'];
             }
-            if( $order['order']['bottling_nocolour_flags'] > 0 ) {
-                $appointments[$anum]['appointment']['secondary_colour_text'] = '*';
+            if( $order['bottling_nocolour_flags'] > 0 ) {
+                $appointments[$aid]['secondary_colour_text'] = '*';
             }
-            $bottling_nocolour_flags |= $order['order']['bottling_nocolour_flags'];
+            $bottling_nocolour_flags |= $order['bottling_nocolour_flags'];
         }
         for($i=1;$i<=8;$i++) {
             if( isset($settings["bottling.nocolour.flags.$i.name"]) && $settings["bottling.nocolour.flags.$i.name"] != '' 
                 && ($bottling_nocolour_flags&pow(2, $i-1)) == pow(2,$i-1) ) {
-                $appointments[$anum]['appointment']['secondary_colour_text'] = 'm';
-                $appointments[$anum]['appointment']['secondary_text'] .= $scomma . $settings["bottling.nocolour.flags.$i.name"];
+                $appointments[$aid]['secondary_colour_text'] = 'm';
+                $appointments[$aid]['secondary_text'] .= $scomma . $settings["bottling.nocolour.flags.$i.name"];
                 $scomma = ', ';
             }
         }
         
         if( $min_status < 255 && isset($settings['bottling.status.' . (log($min_status, 2)+1) . '.name'])) {
-            $appointments[$anum]['appointment']['secondary_text'] .= $scomma . $settings['bottling.status.' . (log($min_status, 2)+1) . '.name'];
-            $appointments[$anum]['appointment']['colour'] = $settings['bottling.status.' . (log($min_status, 2)+1) . '.colour'];
+            $appointments[$aid]['secondary_text'] .= $scomma . $settings['bottling.status.' . (log($min_status, 2)+1) . '.name'];
+            $appointments[$aid]['colour'] = $settings['bottling.status.' . (log($min_status, 2)+1) . '.colour'];
             $scomma = ', ';
         }
         if( $min_flags < 255 && isset($settings['bottling.flags.' . (log($min_flags, 2)+1) . '.name']) ) {
-            $appointments[$anum]['appointment']['secondary_text'] .= $scomma . $settings['bottling.flags.' . (log($min_flags, 2)+1) . '.name'];
-            $appointments[$anum]['appointment']['secondary_colour'] = $settings['bottling.flags.' . (log($min_flags, 2)+1) . '.colour'];
+            $appointments[$aid]['secondary_text'] .= $scomma . $settings['bottling.flags.' . (log($min_flags, 2)+1) . '.name'];
+            $appointments[$aid]['secondary_colour'] = $settings['bottling.flags.' . (log($min_flags, 2)+1) . '.colour'];
         }
         if( $min_order_status == 60 ) {
-            $appointments[$anum]['appointment']['colour'] = '#e4d8f9';
+            $appointments[$aid]['colour'] = '#e4d8f9';
         }
         if( $bottling_notes != '' ) {
-            $appointments[$anum]['appointment']['secondary_text'] .= $scomma . $bottling_notes;
+            $appointments[$aid]['secondary_text'] .= $scomma . $bottling_notes;
         }
-//      if( isset($appointments[$anum]['appointment']['bottling_status']) && $appointments[$anum]['appointment']['bottling_status'] != '' ) {
-//          $appointments[$anum]['appointment']['subject'] .= ' ' . $appointment['appointment']['bottling_status'];
+//      if( isset($appointments[$aid]['appointment']['bottling_status']) && $appointments[$aid]['appointment']['bottling_status'] != '' ) {
+//          $appointments[$aid]['appointment']['subject'] .= ' ' . $appointment['appointment']['bottling_status'];
 //      }
-        unset($appointments[$anum]['appointment']['wine_name']);
-        unset($appointments[$anum]['appointment']['orders']);
-        unset($appointments[$anum]['appointment']['bottling_status']);
-        $appointments[$anum]['appointment']['calendar'] = 'Bottling Schedule';
-        $appointments[$anum]['appointment']['module'] = 'ciniki.wineproduction';
+
+        //
+        // Format items for uiCustomersData
+        //
+        if( $appointments[$aid]['start_ts'] == 0 ) {
+            $appointments[$aid]['start_date_display'] = 'unscheduled';
+            $appointments[$aid]['start_time_display'] = '';
+        } elseif( isset($appointments[$aid]['allday']) && $appointments[$aid]['allday'] == 'yes' ) {
+            $appointments[$aid]['start_date_display'] = preg_replace('/ [0-9]+:.*$/', '', $appointments[$aid]['start_date']);
+            $appointments[$aid]['start_time_display'] = '';
+        } else {
+            $appointments[$aid]['start_date_display'] = preg_replace('/ [0-9]+:.*$/', '', $appointments[$aid]['start_date']);
+            $appointments[$aid]['start_time_display'] = preg_replace('/.*[0-9]{4} /', '', $appointments[$aid]['start_date']);
+        }
+        if( !isset($appointments[$aid]['colour']) ) {
+            $appointments[$aid]['colour'] = '#77ddff';
+        }
+
+        unset($appointments[$aid]['wine_name']);
+        unset($appointments[$aid]['orders']);
+        unset($appointments[$aid]['bottling_status']);
+        $appointments[$aid]['calendar'] = 'Bottling Schedule';
+        $appointments[$aid]['module'] = 'ciniki.wineproduction';
     }
 
     return array('stat'=>'ok', 'appointments'=>$appointments);;
