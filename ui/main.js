@@ -738,18 +738,19 @@ function ciniki_wineproduction_main() {
         //
         this.appointment = new M.panel('Appointment',
             'ciniki_wineproduction_main', 'appointment',
-            'mc', 'large', 'sectioned', 'ciniki.wineproduction.main.appointment');
+            'mc', 'large narrowaside', 'sectioned', 'ciniki.wineproduction.main.appointment');
         this.appointment.data = null;
         this.appointment.cb = null;
         this.appointment.sections = {
-            'customer':{'label':'Customer', 'type':'simplegrid', 'num_cols':2,
+            'customer':{'label':'Customer', 'type':'simplegrid', 'num_cols':2, 'aside':'yes',
                 'cellClasses':['label',''],
                 'addTxt':'Edit',
-                'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});',
+//                'addFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});',
+                'addFn':'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});',
                 'changeTxt':'Change customer',
                 'changeFn':'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':0});',
             },
-            'info':{'label':'', 'fields':{
+            'info':{'label':'Bottling Appointment', 'fields':{
                 'invoice_number':{'label':'Invoice #', 'type':'noedit', 'size':'small', 'history':'no'},
 //              'customer_name':{'label':'Customer', 'type':'noedit', 'size':'medium', 'history':'no'},
                 'bottling_duration':{'label':'Duration', 'type':'multitoggle', 'toggles':this.bottlingDurations},
@@ -1823,12 +1824,14 @@ function ciniki_wineproduction_main() {
                 p.data = rsp.order;
                 p.customer_id = rsp.order.customer_id;
                 if( rsp.order.customer_id > 0 ) {
-                    p.sections.customer.addTxt = 'Edit Customer';
+                    p.sections.customer.addTxt = 'View Customer';
+                    p.sections.customer.addFn = 'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});';
                     p.sections.customer.changeTxt = 'Change Customer';
 //                  p.data.customer = M.ciniki_wineproduction_main.setupCustomer(rsp.order.customer);
                     p.data.customer = rsp.order.customer;
                 } else {
                     p.sections.customer.addTxt = 'Add Customer';
+                    p.sections.customer.addFn = 'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});';
                     p.sections.customer.changeTxt = '';
                 }
 
@@ -2149,12 +2152,14 @@ function ciniki_wineproduction_main() {
 
                 p.customer_id = rsp.appointments[0].appointment.customer_id;
                 if( p.customer_id > 0 ) {
-                    p.sections.customer.addTxt = 'Edit Customer';
+                    p.sections.customer.addTxt = 'View Customer';
+                    p.sections.customer.addFn = 'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});';
                     p.sections.customer.changeTxt = 'Change Customer';
 //                  p.data.customer = M.ciniki_wineproduction_main.setupCustomer(rsp.appointments[0].appointment.customer);
                     p.data.customer = rsp.appointments[0].appointment.customer;
                 } else {
                     p.sections.customer.addTxt = 'Add Customer';
+                    p.sections.customer.addFn = 'M.startApp(\'ciniki.customers.edit\',null,\'M.ciniki_wineproduction_main.showAppointment();\',\'mc\',{\'next\':\'M.ciniki_wineproduction_main.updateAppointmentCustomer\',\'customer_id\':M.ciniki_wineproduction_main.appointment.customer_id});';
                     p.sections.customer.changeTxt = '';
                 }
                 // this.appointment.refresh();
