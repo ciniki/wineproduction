@@ -738,7 +738,7 @@ function ciniki_wineproduction_main() {
         //
         this.appointment = new M.panel('Appointment',
             'ciniki_wineproduction_main', 'appointment',
-            'mc', 'large narrowaside', 'sectioned', 'ciniki.wineproduction.main.appointment');
+            'mc', 'large mediumaside', 'sectioned', 'ciniki.wineproduction.main.appointment');
         this.appointment.data = null;
         this.appointment.cb = null;
         this.appointment.sections = {
