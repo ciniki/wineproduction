@@ -112,6 +112,9 @@ function ciniki_wineproduction_reporting_blockWinesProcessed(&$ciniki, $tnid, $a
     } else {
         $strsql .= "AND ciniki_wineproductions.last_updated >= '" . ciniki_core_dbQuote($ciniki, $start_dt->format('Y-m-d H:i:s')) . "' ";
     }
+    $strsql .= "ORDER BY customer_name, wine_name, status "
+        . "";
+        
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'wines', 'fname'=>'id', 
