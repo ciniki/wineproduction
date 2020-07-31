@@ -99,7 +99,7 @@ function ciniki_wineproduction_reporting_blockWinesProcessed(&$ciniki, $tnid, $a
     if( isset($args['status']) && $args['status'] != '' && $args['status'] > 0 ) {
         $strsql .= "AND ciniki_wineproductions.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";
         if( $args['status'] == 10 ) {
-            $strsql .= "AND ciniki_wineproductions.date_added = '" . ciniki_core_dbQuote($ciniki, $today_date->format('Y-m-d')) . "' ";
+            $strsql .= "AND ciniki_wineproductions.order_date = '" . ciniki_core_dbQuote($ciniki, $today_date->format('Y-m-d')) . "' ";
         } elseif( $args['status'] == 20 ) {
             $strsql .= "AND ciniki_wineproductions.start_date = '" . ciniki_core_dbQuote($ciniki, $today_date->format('Y-m-d')) . "' ";
         } elseif( $args['status'] == 30 ) {
@@ -114,7 +114,6 @@ function ciniki_wineproduction_reporting_blockWinesProcessed(&$ciniki, $tnid, $a
     }
     $strsql .= "ORDER BY customer_name, wine_name, status "
         . "";
-        
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'wines', 'fname'=>'id', 
