@@ -121,6 +121,8 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '20');
         $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'batch_code', $args['batch_code']);
+
+        $notification_trigger = 'started';
     } 
 
     //
@@ -180,6 +182,8 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'rack_date', $todays_date);
         $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '30');
+
+        $notification_trigger = 'racked';
     } 
 
     //
@@ -193,6 +197,8 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'filter_date', $todays_date);
         $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '40');
+
+        $notification_trigger = 'filtered';
     } 
 
     //
@@ -217,12 +223,25 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'bottle_date', $todays_date);
         $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'status', '60');
+        $notification_trigger = 'bottled';
     }
 
     if( $strsql != "" ) {
         $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.wineproduction');
         if( $rc['stat'] != 'ok' ) { 
             return $rc;
+        }
+    }
+
+    //
+    // Trigger customer notifications
+    //
+    if( isset($notification_trigger) && $notification_trigger != '' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'notificationTrigger');
+        $rc = ciniki_wineproduction_notificationTrigger($ciniki, $args['tnid'], $notification_trigger, $args['wineproduction_id']);
+        if( $rc['stat'] != 'ok' ) {
+            // FIXME: Find way to warn user without return full error
+            error_log('WINEPRODUCTION[actionOrder:' . __LINE__ . ']: ' . print_r($rc['err'], true));
         }
     }
 

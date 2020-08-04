@@ -1,0 +1,67 @@
+#
+# Description
+# -----------
+#
+# Fields
+# ------
+# id:                       The ID assigned to the record.
+# uuid:                     The Universal Unique ID.
+# tnid:                     The Tenant ID the record belongs to.
+#
+# name:                     The name/title for internal use
+#
+# ntype:                    The type of notification
+#
+#                               10 - New Customer First Order
+#                               20 - Started
+#                               25 - Post started education
+#                               40 - SG Reading ** future **
+#                               50 - Racked
+#                               55 - Post Racked education
+#                               60 - Filtered
+#                               65 - Post Filtered education
+#                               80 - Bottling Reminder
+#                               100 - After Bottling Reminders (2weeks: lay wines down, 2months: try wine)
+#                               120 - After Bottling Education
+#                               130 - After Bottling Recipes **future**
+#                               150 - After Bottling Deals/Marketing
+#                               
+# offset_days:              The number of days after the trigger to queue the notification
+#
+# status:                   The current status of the of the notification.
+#
+#                                0 - Inactive
+#                               10 - Require Approval (emails are put in pending status, and need to be individually approved)
+#                               20 - Auto Send (Emails will be placed in outgoing queue to be sent)
+#
+# email_time:               The time of day to send the email.
+# email_subject:            The subject of the email.
+# email_content:            The content of the email.
+#
+# sms_content:              The content for the SMS message. **Future**
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last update.
+#
+create table ciniki_wineproduction_notifications (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+
+    name varchar(250) not null,
+    ntype tinyint unsigned not null,
+    offset_days tinyint unsigned not null,
+    status tinyint unsigned not null,
+
+    email_time time not null,
+    email_subject varchar(250) not null,
+    email_content text not null,
+    sms_content varchar(1000) not null,
+
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    unique index (tnid, ntype, offset_days),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

@@ -221,6 +221,17 @@ function ciniki_wineproduction_add(&$ciniki) {
                     $args['tnid'], 1, 'ciniki_wineproductions', $wineproduction_id, $insert_name, $ciniki['request']['args'][$field]);
             }
         }
+
+        //
+        // Trigger customer notifications
+        //
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'notificationTrigger');
+        $rc = ciniki_wineproduction_notificationTrigger($ciniki, $args['tnid'], 'entered', $wineproduction_id);
+        if( $rc['stat'] != 'ok' ) {
+            // FIXME: Find way to warn user without return full error
+            error_log('WINEPRODUCTION[add:' . __LINE__ . ']: ' . print_r($rc['err'], true));
+        }
+
         //
         // Add the order to the sync queue
         //

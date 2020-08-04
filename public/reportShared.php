@@ -136,7 +136,7 @@ function ciniki_wineproduction_reportShared($ciniki) {
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.39', 'msg'=>'Unable to load ', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.50', 'msg'=>'Unable to load ', 'err'=>$rc['err']));
     }
     $orderlist = isset($rc['orders']) ? $rc['orders'] : array();
 

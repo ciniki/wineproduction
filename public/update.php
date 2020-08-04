@@ -68,7 +68,24 @@ function ciniki_wineproduction_update(&$ciniki) {
     // Update the order
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    return ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.wineproduction.order', 
+    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.wineproduction.order', 
         $args['wineproduction_id'], $args, 0x07);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+
+    //
+    // Check if bottling_date changed
+    //
+    if( isset($args['bottling_date']) ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'notificationTrigger');
+        $rc = ciniki_wineproduction_notificationTrigger($ciniki, $args['tnid'], 'bottlingdate', $args['wineproduction_id']);
+        if( $rc['stat'] != 'ok' ) {
+            // FIXME: Find way to warn user without return full error
+            error_log('WINEPRODUCTION[update:' . __LINE__ . ']: ' . print_r($rc['err'], true));
+        }
+    }
+
+    return array('stat'=>'ok');
 }
 ?>

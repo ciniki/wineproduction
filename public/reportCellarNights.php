@@ -77,7 +77,7 @@ function ciniki_wineproduction_reportCellarNights($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbQueryList');
     $rc = ciniki_core_dbQueryList($ciniki, $strsql, 'ciniki.wineproduction', 'years', 'year');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.40', 'msg'=>'Unable to load the list of years', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.51', 'msg'=>'Unable to load the list of years', 'err'=>$rc['err']));
     }
     $years = isset($rc['years']) ? $rc['years'] : array();
 

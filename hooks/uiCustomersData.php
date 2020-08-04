@@ -208,8 +208,38 @@ function ciniki_wineproduction_hooks_uiCustomersData($ciniki, $tnid, $args) {
         'priority' => 10000,
         'sections' => $sections,
         );
-    $sections = array();
 
+    //
+    // Get the notifications for the customer
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'customerNotifications');
+    $rc = ciniki_wineproduction_customerNotifications($ciniki, $tnid, $args['customer_id']);
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.64', 'msg'=>'Unable to load notifications', 'err'=>$rc['err']));
+    }
+
+    $rsp['tabs'][] = array(
+        'id' => 'ciniki.wineproduction.notifications',
+        'label' => 'Notifications',
+        'sections' => array(
+            'notifications' => array(
+                'label' => 'Notifications',
+                'type' => 'simplegrid', 
+                'num_cols' => 2,
+                'headerValues' => array('Name', 'Status'),
+                'cellClasses' => array('', ''),
+                'noData' => 'No notifications',
+                'changeTxt' => 'Edit Notifications',
+                'changeApp' => array('app'=>'ciniki.wineproduction.notifications', 'args'=>array('customer_id'=>$args['customer_id'], 'source'=>'\'\'')),
+                'cellValues' => array(
+                    '0' => "d.label",
+                    '1' => "d.status_text",
+                    ),
+                'rowClass' => "((d.flags&0x10) == 0x10 ? 'statusred' : ((d.flags&0x01) == 0x01 ? 'statusgreen' : ''))",
+                'data' => $rc['notifications'],
+                ),
+            )
+        );
     return $rsp;
 }
 ?>

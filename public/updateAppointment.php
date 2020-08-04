@@ -67,7 +67,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
     $todays_date = strftime("%Y-%m-%d");
 
     //
-    // Add the order to the database
+    // Update the order in the database
     //
     $strsql = "UPDATE ciniki_wineproductions SET last_updated = UTC_TIMESTAMP() ";
 
@@ -84,6 +84,7 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
                 'ciniki_wineproduction_history', $args['tnid'], 
                 2, 'ciniki_wineproductions', $wid, 'status', '60');
         }
+        $notification_trigger = 'bottled';
     }
 
     //
@@ -125,6 +126,9 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
                     'ciniki_wineproduction_history', $args['tnid'], 
                     2, 'ciniki_wineproductions', $wid, $field, $args[$field]);
             }
+            if( $field == 'bottling_date' && !isset($notification_trigger) ) {
+                $notification_trigger = 'bottlingdate';
+            }
         }
     }
     $strsql .= "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
@@ -137,6 +141,20 @@ function ciniki_wineproduction_updateAppointment(&$ciniki) {
     if( !isset($rc['num_affected_rows']) || $rc['num_affected_rows'] < 1 ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.38', 'msg'=>'Unable to add order'));
+    }
+
+    //
+    // Trigger customer notifications
+    //
+    if( isset($notification_trigger) && $notification_trigger != '' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'notificationTrigger');
+        foreach($args['wineproduction_ids'] as $wid) {
+            $rc = ciniki_wineproduction_notificationTrigger($ciniki, $args['tnid'], $notification_trigger, $wid);
+            if( $rc['stat'] != 'ok' ) {
+                // FIXME: Find way to warn user without return full error
+                error_log('WINEPRODUCTION[updateAppointment:' . __LINE__ . ']: ' . print_r($rc['err'], true));
+            }
+        }
     }
 
     //

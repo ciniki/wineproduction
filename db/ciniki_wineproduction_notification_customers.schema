@@ -1,0 +1,47 @@
+#
+# Description
+# -----------
+# The customer subscriptions to the notification types. They are subscribed to the type
+# of notification, so if the unsubscribe from After Bottling, they long longer 
+# receive any of the followup emails.
+#
+# Fields
+# ------
+# id:                       The ID assigned to the record.
+# uuid:                     The Universal Unique ID.
+# tnid:                     The Tenant ID the record belongs to.
+#
+# customer_id:              The ID of the customer 
+#
+# ntype:                    The type of notification, refer to ciniki_wineproduction_notifications for the list.
+#
+# flags:                    The options for the customer
+#
+#                               0x01 - Email Notification
+#                               0x02 - SMS Notification
+#                               0x04 - 
+#                               0x08 - 
+#                               0x10 - Removed, don't turn back on.
+#                               0x20 - 
+#                               0x40 - 
+#                               0x80 - 
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last update.
+#
+create table ciniki_wineproduction_notification_customers (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+
+    customer_id int not null,
+    ntype tinyint unsigned not null,
+    flags tinyint unsigned not null,
+
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    unique index (tnid, customer_id, ntype),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

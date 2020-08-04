@@ -59,10 +59,18 @@ function ciniki_wineproduction_getOrder($ciniki) {
     $datetime_format = ciniki_users_datetimeFormat($ciniki);
     $php_datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
-    $strsql = "SELECT ciniki_wineproductions.id, ciniki_wineproductions.customer_id, "
+    $strsql = "SELECT ciniki_wineproductions.id, "
+        . "ciniki_wineproductions.customer_id, "
         . "invoice_number, "
-        . "ciniki_products.id as product_id, ciniki_products.name AS wine_name, wine_type, kit_length, "
-        . "ciniki_wineproductions.status, colour_tag, order_flags, rack_colour, filter_colour, "
+        . "ciniki_products.id as product_id, "
+        . "ciniki_products.name AS wine_name, "
+        . "wine_type, "
+        . "kit_length, "
+        . "ciniki_wineproductions.status, "
+        . "colour_tag, "
+        . "order_flags, "
+        . "rack_colour, "
+        . "filter_colour, "
         . "DATE_FORMAT(ciniki_wineproductions.order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as order_date, "
         . "DATE_FORMAT(ciniki_wineproductions.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as start_date, "
         . "DATE_FORMAT(ciniki_wineproductions.racking_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as racking_date, "
@@ -73,22 +81,31 @@ function ciniki_wineproduction_getOrder($ciniki) {
 //      . "DATE_FORMAT(ciniki_wineproductions.bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') as bottling_date, "
         . "bottling_date, "
         . "DATE_FORMAT(ciniki_wineproductions.bottle_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as bottle_date, "
-        . "bottling_flags, bottling_nocolour_flags, bottling_status, bottling_duration, "
+        . "bottling_flags, "
+        . "bottling_nocolour_flags, "
+        . "bottling_status, "
+        . "bottling_duration, "
         . "ciniki_wineproductions.notes, "
         . "ciniki_wineproductions.batch_code "
         . "FROM ciniki_wineproductions "
-//      . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-//          . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
-        . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
+//      . "LEFT JOIN ciniki_customers ON ("
+//          . "ciniki_wineproductions.customer_id = ciniki_customers.id "
+//          . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+//          . ") "
+        . "LEFT JOIN ciniki_products ON ("
+            . "ciniki_wineproductions.product_id = ciniki_products.id "
+            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
         . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_wineproductions.id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' "
         . "";
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
-            'fields'=>array('id', 'customer_id', 'invoice_number', 'product_id', 'wine_name', 'wine_type', 'kit_length', 'status', 'colour_tag', 'order_flags',
+            'fields'=>array('id', 'customer_id', 'invoice_number', 
+                'product_id', 'wine_name', 'wine_type', 'kit_length', 'status', 'colour_tag', 'order_flags',
                 'rack_colour', 'order_flags', 'rack_colour', 'filter_colour', 
-                'order_date', 'start_date', 'racking_date', 'rack_date', 'sg_reading', 'filtering_date', 'filter_date', 'bottling_date', 'bottle_date',
+                'order_date', 'start_date', 'racking_date', 'rack_date', 'sg_reading', 
+                'filtering_date', 'filter_date', 'bottling_date', 'bottle_date',
                 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_duration', 'notes', 'batch_code', 
                 ),
             'utctotz'=>array('bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$php_datetime_format))),

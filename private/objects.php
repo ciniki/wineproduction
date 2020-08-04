@@ -45,6 +45,51 @@ function ciniki_wineproduction_objects($ciniki) {
             ),
         'history_table'=>'ciniki_wineproduction_history',
         );
+    $objects['notification'] = array(
+        'name' => 'Notification',
+        'sync' => 'yes',
+        'o_name' => 'notification',
+        'o_container' => 'notifications',
+        'table' => 'ciniki_wineproduction_notifications',
+        'fields' => array(
+            'name' => array('name'=>'Name'),
+            'ntype' => array('name'=>'Type'),
+            'offset_days' => array('name'=>'Offset Days', 'default'=>'0'),
+            'status' => array('name'=>'Status', 'default'=>'10'),
+            'email_time' => array('name'=>'Email Time', 'default'=>''),
+            'email_subject' => array('name'=>'Email Subject', 'default'=>''),
+            'email_content' => array('name'=>'Email Message', 'default'=>''),
+            'sms_content' => array('name'=>'SMS Message', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['notification_customer'] = array(
+        'name' => 'Notification Customer',
+        'sync' => 'yes',
+        'o_name' => 'customer',
+        'o_container' => 'customers',
+        'table' => 'ciniki_wineproduction_notification_customers',
+        'fields' => array(
+            'customer_id' => array('name'=>'Customer', 'ref'=>'ciniki.customers.customer'),
+            'ntype' => array('name'=>'Notification Type'),
+            'flags' => array('name'=>'Options', 'default'=>'0'),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['notification_queue'] = array(
+        'name' => 'Notification Queue',
+        'sync' => 'yes',
+        'o_name' => 'notification_queue',
+        'o_container' => 'notification_queues',
+        'table' => 'ciniki_wineproduction_notification_queue',
+        'fields' => array(
+            'scheduled_dt' => array('name'=>'Scheduled Date/Time'),
+            'notification_id' => array('name'=>'Notification', 'ref'=>'ciniki.wineproduction.notification'),
+            'customer_id' => array('name'=>'Customer', 'ref'=>'ciniki.customers.customer'),
+            'order_id' => array('name'=>'Wine Order', 'ref'=>'ciniki.wineproduction.order'),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
     $objects['setting'] = array(
         'type'=>'settings',
         'name'=>'Wine Production Setting',
