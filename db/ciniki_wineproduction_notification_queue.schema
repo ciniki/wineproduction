@@ -31,7 +31,7 @@ create table ciniki_wineproduction_notification_queue (
     last_updated datetime not null,
     primary key (id),
     unique index (uuid),
-    unique index (notifiction_id, customer_id, order_id),
+    unique index (notification_id, customer_id, order_id),
     index (scheduled_dt),
     index sync (tnid, uuid, last_updated)
 ) ENGINE='InnoDB', COMMENT='v1.01';
