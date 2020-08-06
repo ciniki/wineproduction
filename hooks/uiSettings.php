@@ -38,8 +38,8 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
                 'method'=>'ciniki.wineproduction.searchQuick',
                 'args'=>array(),
                 'container'=>'orders',
-                'cols'=>8,
-                'headerValues'=>array('INV#', 'Wine', 'Type', 'BD', 'OD', 'SD', 'RD', 'FD'),
+                'cols'=>7,
+                'headerValues'=>array('INV#', 'Wine', 'BD', 'OD', 'SD', 'RD', 'FD'),
                 'cellClasses'=>array('multiline', 'multiline', 'multiline', 'multiline aligncenter', 'multiline aligncenter', 'multiline aligncenter', 'multiline aligncenter', 'multiline aligncenter'),
                 'cellValues'=>array(
                     '0'=>'\'<span class="maintext">\' + d.order.invoice_number + \'</span><span class="subtext">\' + M.ciniki_tenants_main.statusOptions[d.order.status] + \'</span>\'',
