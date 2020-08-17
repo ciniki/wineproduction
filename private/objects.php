@@ -55,6 +55,7 @@ function ciniki_wineproduction_objects($ciniki) {
             'name' => array('name'=>'Name'),
             'ntype' => array('name'=>'Type'),
             'offset_days' => array('name'=>'Offset Days', 'default'=>'0'),
+            'min_days_from_last' => array('name'=>'Min Days From Last', 'default'=>'0'),
             'status' => array('name'=>'Status', 'default'=>'10'),
             'email_time' => array('name'=>'Email Time', 'default'=>''),
             'email_subject' => array('name'=>'Email Subject', 'default'=>''),

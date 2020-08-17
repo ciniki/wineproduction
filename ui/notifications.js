@@ -60,20 +60,22 @@ function ciniki_wineproduction_notifications() {
             'ntype':{'label':'Type', 'required':'yes', 'type':'select', 'options':{
                 '10':'New Customer',
                 '20':'Started',
-                '25':'Post Started Education',
+                '25':'Started Education',
 //                '40':'SG Reading', **future**
                 '50':'Racked',
-                '55':'Post Racked Education',
+                '55':'Racked Education',
                 '60':'Filtered',
-                '65':'Post Filtered Education',
+                '65':'Filtered Education',
+                '70':'Filtered No Bottling Appointment',
                 '80':'Upcoming Bottling Reminder',
-                '100':'Post Bottling Reminder',
-                '120':'Post Bottling Education',
-//                '130':'Post Bottling Recipes', **future**
-                '150':'Post Bottling No Order Deals',
+                '100':'Post Bottled Reminder',
+                '120':'Post Bottled Education',
+//                '130':'Post Bottled Recipes', **future**
+                '150':'Post Bottled No Order Deals',
                 }},
             'name':{'label':'Name', 'required':'yes', 'type':'text'},
             'offset_days':{'label':'Days After/Before', 'type':'text', 'size':'small'},
+            'min_days_from_last':{'label':'Min Days From Last', 'type':'text', 'size':'small'},
             'status':{'label':'Status', 'type':'toggle', 'toggles':{'0':'Inactive', '10':'Require Approval', '20':'Auto Send'}},
             'email_time':{'label':'Email Time', 'type':'text', 'size':'small'},
             'email_subject':{'label':'Email Subject', 'type':'text'},
@@ -176,12 +178,12 @@ function ciniki_wineproduction_notifications() {
     this.customer.sections = {
         'customer_details':{'label':'Customer', 'aside':'yes', 'type':'simplegrid', 'num_cols':2, 
             'cellClasses':['label', ''],
-//            'changeTxt':'View Customer',
-//            'changeFn':'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_customers_reminders.reminder.open();\',\'mc\',{\'customer_id\':M.ciniki_customers_reminders.reminder.data.customer_id});',
             },
         'notifications':{'label':'Notifications', 'fields':{
             }},
         '_buttons':{'label':'', 'buttons':{
+            'subscribeall':{'label':'Subscribe All', 'fn':'M.ciniki_wineproduction_notifications.customer.subAll();'},
+            'removeall':{'label':'Remove All', 'fn':'M.ciniki_wineproduction_notifications.customer.unsubAll();'},
             'save':{'label':'Save Notifications', 'fn':'M.ciniki_wineproduction_notifications.customer.save();'},
             }},
         };
@@ -191,6 +193,16 @@ function ciniki_wineproduction_notifications() {
                 case 0: return d.label;
                 case 1: return (d.label == 'Email' ? M.linkEmail(d.value):d.value);
             }
+        }
+    }
+    this.customer.subAll = function() {
+        for(var i in this.data.notifications) {
+            this.setFieldValue('n_' + this.data.notifications[i].ntype, 10);
+        }
+    }
+    this.customer.unsubAll = function() {
+        for(var i in this.data.notifications) {
+            this.setFieldValue('n_' + this.data.notifications[i].ntype, 60);
         }
     }
     this.customer.open = function(cb, cid) {

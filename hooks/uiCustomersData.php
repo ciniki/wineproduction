@@ -217,6 +217,17 @@ function ciniki_wineproduction_hooks_uiCustomersData($ciniki, $tnid, $args) {
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.64', 'msg'=>'Unable to load notifications', 'err'=>$rc['err']));
     }
+    $notifications = isset($rc['notifications']) ? $rc['notifications'] : array();
+
+    //
+    // Get the queue for the customer
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'customerNotificationQueue');
+    $rc = ciniki_wineproduction_customerNotificationQueue($ciniki, $tnid, $args['customer_id']);
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.72', 'msg'=>'', 'err'=>$rc['err']));
+    }
+    $queue = isset($rc['queue']) ? $rc['queue'] : array();
 
     $rsp['tabs'][] = array(
         'id' => 'ciniki.wineproduction.notifications',
@@ -236,9 +247,23 @@ function ciniki_wineproduction_hooks_uiCustomersData($ciniki, $tnid, $args) {
                     '1' => "d.status_text",
                     ),
                 'rowClass' => "((d.flags&0x10) == 0x10 ? 'statusred' : ((d.flags&0x01) == 0x01 ? 'statusgreen' : ''))",
-                'data' => $rc['notifications'],
+                'data' => $notifications,
                 ),
-            )
+            'queue' => array(
+                'label' => 'Upcoming Notifications',
+                'type' => 'simplegrid', 
+                'num_cols' => 2,
+                'headerValues' => array('Date', 'Notification'),
+                'cellClasses' => array('multiline', 'multiline', 'multiline'),
+                'noData' => 'No queued notifications',
+                'cellValues' => array(
+                    '0' => "M.multiline(d.scheduled_date, d.scheduled_time);",
+                    '1' => "M.multiline(d.name, d.subject);",
+                    '2' => "M.multiline(d.product_name, d.order_date);",
+                    ),
+                'data' => $queue,
+                ),
+            ),
         );
     return $rsp;
 }

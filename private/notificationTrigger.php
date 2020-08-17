@@ -14,7 +14,7 @@
 //                      entered - Order entered, check for new customer
 //                      started - Order started, check for ntypes 20, 25
 //                      racked - Order racked, check for ntypes 50, 55
-//                      filtered - Order filtered, check for ntypes 50, 55A
+//                      filtered - Order filtered, check for ntypes 60, 65, 70
 //                      bottlingdate - Bottling date set, check for ntypes 80
 //                      bottled - Wine was bottled, setup ntypes 100, 120, 130, 150
 //
@@ -35,6 +35,11 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
     $intl_timezone = $rc['settings']['intl-default-timezone'];
 
     //
+    // Setup todays date to make sure we don't queue any messages before now
+    //
+    $today_dt = new DateTime('now', new DateTimezone('UTC'));
+
+    //
     // Load the order
     //
     $strsql = "SELECT orders.id, "
@@ -48,8 +53,12 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
         . "orders.status, "
         . "orders.colour_tag, "
         . "orders.order_flags, "
+        . "orders.order_date, "
+        . "orders.start_date, "
         . "orders.rack_colour, "
+        . "orders.rack_date, "
         . "orders.filter_colour, "
+        . "orders.filter_date, "
         . "orders.bottling_date, "
         . "orders.bottle_date, "
         . "orders.bottling_flags, "
@@ -108,7 +117,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             'fields'=>array('id', 'uuid', 'scheduled_dt', 'notification_id')),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.58', 'msg'=>'Unable to load queue', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.79', 'msg'=>'Unable to load queue', 'err'=>$rc['err']));
     }
     $order_queue = isset($rc['queue']) ? $rc['queue'] : array();
 
@@ -168,7 +177,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
     } elseif( $trigger == 'racked' ) {
         $strsql .= "AND ntype IN (50, 55) ";
     } elseif( $trigger == 'filtered' ) {
-        $strsql .= "AND ntype IN (60, 65) ";
+        $strsql .= "AND ntype IN (60, 65, 70) ";
     } elseif( $trigger == 'bottlingdate' ) {
         $strsql .= "AND ntype = 80 ";
     } elseif( $trigger == 'bottled' ) {
@@ -211,7 +220,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
         // Setup email time and offset days from today
         // Note: Not all ntypes will use this
         //
-        $future_dt = new DateTime('now', new DateTimezone($intl_timezone));
+        $future_dt = new DateTime((isset($args['trigger_date']) ? $args['trigger_date'] : 'now'), new DateTimezone($intl_timezone));
         $future_dt = new DateTime($future_dt->format('Y-m-d') . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
         if( isset($notification['offset_days']) && $notification['offset_days'] > 0 ) { 
             $future_dt->add(new DateInterval('P' . $notification['offset_days'] . 'D'));
@@ -223,13 +232,22 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
         //
         if( $notification['ntype'] == 10 ) {
             //
+            // Setup email time and offset days from today
+            //
+            $future_dt = new DateTime($order['order_date'] . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
+            if( isset($notification['offset_days']) && $notification['offset_days'] > 0 ) { 
+                $future_dt->add(new DateInterval('P' . $notification['offset_days'] . 'D'));
+            }
+            $future_dt->setTimezone(new DateTimezone('UTC'));
+
+            //
             // Check for prior orders
             //
             $strsql = "SELECT COUNT(*) "
-                . "FROM ciniki_wineproduction "
+                . "FROM ciniki_wineproductions "
                 . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . "AND customer_id = '" . ciniki_core_dbQuote($ciniki, $order['customer_id']) . "' "
-                . "AND id = '" . ciniki_core_dbQuote($ciniki, $order['id']) . "' "
+                . "AND id <> '" . ciniki_core_dbQuote($ciniki, $order['id']) . "' "
                 . "";
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
             $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
@@ -251,15 +269,17 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             //
             // Add notification to queue
             //
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-            $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
-                'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
-                'notification_id' => $notification['id'],
-                'customer_id' => $order['customer_id'],
-                'order_id' => $order['id'],
-                ), 0x04);
-            if( $rc['stat'] != 'ok' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.59', 'msg'=>'Unable to add the '));
+            if( $future_dt > $today_dt ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
+                    'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
+                    'notification_id' => $notification['id'],
+                    'customer_id' => $order['customer_id'],
+                    'order_id' => $order['id'],
+                    ), 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.80', 'msg'=>'Unable to add the '));
+                }
             }
         }
 
@@ -288,6 +308,22 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             || $notification['ntype'] == 130 
             ) {
             //
+            // Setup email time and offset days from today
+            //
+            if( $notification['ntype'] == 20 || $notification['ntype'] == 25 ) {
+                $future_dt = new DateTime($order['start_date'] . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
+            } elseif( $notification['ntype'] == 50 || $notification['ntype'] == 55 ) {
+                $future_dt = new DateTime($order['rack_date'] . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
+            } elseif( $notification['ntype'] == 60 || $notification['ntype'] == 65 ) {
+                $future_dt = new DateTime($order['filter_date'] . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
+            } elseif( $notification['ntype'] >= 100 ) {
+                $future_dt = new DateTime($order['bottle_date'] . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
+            }
+            if( isset($notification['offset_days']) && $notification['offset_days'] > 0 ) { 
+                $future_dt->add(new DateInterval('P' . $notification['offset_days'] . 'D'));
+            }
+            $future_dt->setTimezone(new DateTimezone('UTC'));
+            //
             // Check if it already exists
             //
             if( isset($order_queue[$notification['id']]) ) {
@@ -298,7 +334,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
                         $order_queue[$notification['id']]['uuid'], 
                         0x04);
                     if( $rc['stat'] != 'ok' ) {
-                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.60', 'msg'=>'Unable to delete existing notification', 'err'=>$rc['err']));
+                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.87', 'msg'=>'Unable to delete existing notification', 'err'=>$rc['err']));
                     }
                     unset($order_queue[$notification['id']]);
                 }
@@ -318,15 +354,86 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             //
             // Add notification to queue
             //
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-            $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
-                'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
-                'notification_id' => $notification['id'],
-                'customer_id' => $order['customer_id'],
-                'order_id' => $order['id'],
-                ), 0x04);
-            if( $rc['stat'] != 'ok' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.59', 'msg'=>'Unable to add the '));
+            if( $future_dt > $today_dt ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
+                    'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
+                    'notification_id' => $notification['id'],
+                    'customer_id' => $order['customer_id'],
+                    'order_id' => $order['id'],
+                    ), 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.81', 'msg'=>'Unable to add the '));
+                }
+            }
+        }
+
+        //
+        // Filtered and no bottling appointment
+        //
+        elseif( $notification['ntype'] == 70 ) {
+            //
+            // Check for no bottling_date
+            //
+            $action = 'none';
+            if( $notification['bottling_date'] == '0000-00-00 00:00:00' ) {
+                $action = 'ctb';
+            } else {
+                $dt = new DateTime($notification['bottling_date'], new DateTimezone($intl_timezone));
+                // Check if marked as midnight, then all day event
+                if( $dt->format('H:i:s') == '00:00:00' ) {
+                    $action = 'ctb';
+                }
+            }
+
+            //
+            // Setup queue
+            //
+            if( $action == 'ctb' ) {
+                $future_dt = new DateTime($order['filter_date'] . ' ' . $notification['email_time'], new DateTimezone($intl_timezone));
+                //
+                // Check if it already exists
+                //
+                if( isset($order_queue[$notification['id']]) ) {
+                    if( $order_queue[$notification['id']]['scheduled_dt'] != $future_dt->format('Y-m-d H:i:s') ) {
+                        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
+                        $rc = ciniki_core_objectDelete($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', 
+                            $order_queue[$notification['id']]['id'], 
+                            $order_queue[$notification['id']]['uuid'], 
+                            0x04);
+                        if( $rc['stat'] != 'ok' ) {
+                            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.97', 'msg'=>'Unable to delete existing notification', 'err'=>$rc['err']));
+                        }
+                        unset($order_queue[$notification['id']]);
+                    }
+                    else {
+                        // Already scheduled at correct time, skip
+                        continue;
+                    }
+                }
+                
+                //
+                // Do we already have one of ntype scheduled for another order on this same day.
+                //
+                if( isset($ntype_day_queue[$notification['ntype']]['queue'][$future_dt->format('Y-m-d H:i:s')]) ) {
+                    continue;
+                }
+
+                //
+                // Add notification to queue
+                //
+                if( $future_dt > $today_dt ) {
+                    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                    $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
+                        'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
+                        'notification_id' => $notification['id'],
+                        'customer_id' => $order['customer_id'],
+                        'order_id' => $order['id'],
+                        ), 0x04);
+                    if( $rc['stat'] != 'ok' ) {
+                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.98', 'msg'=>'Unable to add the notification queue item'));
+                    }
+                }
             }
         }
 
@@ -355,7 +462,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
                         $order_queue[$notification['id']]['uuid'], 
                         0x04);
                     if( $rc['stat'] != 'ok' ) {
-                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.60', 'msg'=>'Unable to delete existing notification', 'err'=>$rc['err']));
+                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.88', 'msg'=>'Unable to delete existing notification', 'err'=>$rc['err']));
                     }
                     unset($order_queue[$notification['id']]);
                 }
@@ -378,7 +485,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
             $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
             if( $rc['stat'] != 'ok' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.62', 'msg'=>'Unable to load get the number of items', 'err'=>$rc['err']));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.89', 'msg'=>'Unable to load get the number of items', 'err'=>$rc['err']));
             }
             if( isset($rc['num']) && $rc['num'] > 0 ) {
                 continue;
@@ -387,17 +494,18 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             //
             // Add notification to queue
             //
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-            $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
-                'scheduled_dt' => $email_dt->format('Y-m-d H:i:s'),
-                'notification_id' => $notification['id'],
-                'customer_id' => $order['customer_id'],
-                'order_id' => $order['id'],
-                ), 0x04);
-            if( $rc['stat'] != 'ok' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.59', 'msg'=>'Unable to add the '));
+            if( $email_dt > $future_dt ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
+                    'scheduled_dt' => $email_dt->format('Y-m-d H:i:s'),
+                    'notification_id' => $notification['id'],
+                    'customer_id' => $order['customer_id'],
+                    'order_id' => $order['id'],
+                    ), 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.82', 'msg'=>'Unable to add the '));
+                }
             }
-
         }
 
         elseif( $notification['ntype'] == 150 ) {
@@ -451,15 +559,17 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             //
             // Add notification to queue
             //
-            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-            $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
-                'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
-                'notification_id' => $notification['id'],
-                'customer_id' => $order['customer_id'],
-                'order_id' => $order['id'],
-                ), 0x04);
-            if( $rc['stat'] != 'ok' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.59', 'msg'=>'Unable to add the '));
+            if( $future_dt > $today_dt ) {
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', array(
+                    'scheduled_dt' => $future_dt->format('Y-m-d H:i:s'),
+                    'notification_id' => $notification['id'],
+                    'customer_id' => $order['customer_id'],
+                    'order_id' => $order['id'],
+                    ), 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.59', 'msg'=>'Unable to add the '));
+                }
             }
         }
     }

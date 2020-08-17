@@ -44,7 +44,25 @@ function ciniki_wineproduction_customerNotificationsGet(&$ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.65', 'msg'=>'Unable to load notifications', 'err'=>$rc['err']));
     }
+    $rsp = array('stat'=>'ok', 'notifications'=>$rc['notifications']);
 
-    return $rc;
+    //
+    // Load the customer details
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'customers', 'hooks', 'customerDetails2');
+    $rc = ciniki_customers_hooks_customerDetails2($ciniki, $args['tnid'], array(
+        'customer_id' => $args['customer_id'],
+        'phones' => 'yes',
+        'emails' => 'yes', 
+        'addresses' => 'yes',
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.mail.83', 'msg'=>'Unable to load customer details', 'err'=>$rc['err']));
+    }
+    if( isset($rc['details']) ) {
+        $rsp['customer_details'] = $rc['details'];
+    }
+
+    return $rsp;
 }
 ?>

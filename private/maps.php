@@ -44,6 +44,7 @@ function ciniki_wineproduction_maps(&$ciniki) {
             '55'=>'Post Racked Education',
             '60'=>'Filtered',
             '65'=>'Post Filtered Education',
+            '70'=>'No Bottling Appointment',
             '80'=>'Upcoming Bottling Reminder',
             '100'=>'Post Bottling Reminder',
             '120'=>'Post Bottling Education',

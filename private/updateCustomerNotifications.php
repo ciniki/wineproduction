@@ -18,7 +18,7 @@
 function ciniki_wineproduction_updateCustomerNotifications($ciniki, $tnid, $customer_id, $subs, $unsubs) {
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'customerNotifications');
-    $rc = ciniki_wineproduction_customerNotifications($ciniki, $tnid, $customer);
+    $rc = ciniki_wineproduction_customerNotifications($ciniki, $tnid, $customer_id);
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.66', 'msg'=>'Unable to load customer notifications', 'err'=>$rc['err']));
     }
@@ -26,6 +26,7 @@ function ciniki_wineproduction_updateCustomerNotifications($ciniki, $tnid, $cust
 
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
 
     foreach($notifications as $notification) {
         
@@ -54,6 +55,31 @@ function ciniki_wineproduction_updateCustomerNotifications($ciniki, $tnid, $cust
                     return $rc;
                 }
             }
+
+            //
+            // Get the list from the queue and delete
+            //
+            $strsql = "SELECT queue.id, queue.uuid "
+                . "FROM ciniki_wineproduction_notification_queue AS queue "
+                . "INNER JOIN ciniki_wineproduction_notifications AS notifications ON ("
+                    . "queue.notification_id = notifications.id "
+                    . "AND notifications.ntype = '" . ciniki_core_dbQuote($ciniki, $notification['ntype']) . "' "
+                    . "AND notifications.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                    . ") "
+                . "WHERE queue.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                . "AND queue.customer_id = '" . ciniki_core_dbQuote($ciniki, $customer_id) . "' "
+                . "";
+            $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'queue');
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.90', 'msg'=>'Unable to load existing queue', 'err'=>$rc['err']));
+            }
+            $rows = isset($rc['rows']) ? $rc['rows'] : array();
+            foreach($rows as $row) {
+                $rc = ciniki_core_objectDelete($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', $row['id'], $row['uuid'], 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.67', 'msg'=>'Unable to remove notification queue', 'err'=>$rc['err']));
+                }
+            }
         }
         //
         // Check if to be subscribed
@@ -79,6 +105,18 @@ function ciniki_wineproduction_updateCustomerNotifications($ciniki, $tnid, $cust
                 if( $rc['stat'] != 'ok' ) {
                     return $rc;
                 }
+            }
+
+            //
+            // Rebuild queues for open orders
+            //
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'notificationQueueRebuild');
+            $rc = ciniki_wineproduction_notificationQueueRebuild($ciniki, $tnid, array(
+                'customer_id'=>$customer_id,
+                'ntype' => $notification['ntype'],
+                ));
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.68', 'msg'=>'Unable to rebuild notification queue', 'err'=>$rc['err']));
             }
         }
     }

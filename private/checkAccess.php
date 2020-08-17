@@ -84,7 +84,7 @@ function ciniki_wineproduction_checkAccess($ciniki, $tnid, $method) {
             . "";
         $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.tenants', 'user');
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.9', 'msg'=>'Access denied.', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.76', 'msg'=>'Access denied.', 'err'=>$rc['err']));
         }
         
         //
@@ -99,6 +99,6 @@ function ciniki_wineproduction_checkAccess($ciniki, $tnid, $method) {
     //
     // If all tests passed, then return ok
     //
-    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.10', 'msg'=>'Access denied.'));
+    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.78', 'msg'=>'Access denied.'));
 }
 ?>

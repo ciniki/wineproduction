@@ -20,6 +20,7 @@
 #                               55 - Post Racked education
 #                               60 - Filtered
 #                               65 - Post Filtered education
+#                               70 - Post Filtered no bottling appointment
 #                               80 - Bottling Reminder
 #                               100 - After Bottling Reminders (2weeks: lay wines down, 2months: try wine)
 #                               120 - After Bottling Education
@@ -27,6 +28,9 @@
 #                               150 - After Bottling Deals/Marketing
 #                               
 # offset_days:              The number of days after the trigger to queue the notification
+# min_days_from_last:       The minimum number of days since the last time this notification
+#                           was sent to the customer. This ensures that they are not 
+#                           bombarded if they have several orders on the go at once.
 #
 # status:                   The current status of the of the notification.
 #
@@ -51,6 +55,7 @@ create table ciniki_wineproduction_notifications (
     name varchar(250) not null,
     ntype tinyint unsigned not null,
     offset_days tinyint unsigned not null,
+    min_days_from_last smallint unsigned not null,
     status tinyint unsigned not null,
 
     email_time time not null,

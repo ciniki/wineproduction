@@ -25,6 +25,7 @@ function ciniki_wineproduction_customerNotifications(&$ciniki, $tnid, $customer_
         55 => array('ntype' => 55, 'label' => 'Racking Information'),
         60 => array('ntype' => 60, 'label' => 'Filtered Notifications'),
         65 => array('ntype' => 65, 'label' => 'Filtering Information'),
+        70 => array('ntype' => 70, 'label' => 'Filtered No Bottling Appointment'),
         80 => array('ntype' => 80, 'label' => 'Bottling Appointment Reminders'),
         100 => array('ntype' => 100, 'label' => 'Care & Storage Reminders'),
         120 => array('ntype' => 120, 'label' => 'Wine Information'),

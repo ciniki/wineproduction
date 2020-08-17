@@ -23,6 +23,7 @@ function ciniki_wineproduction_notificationAdd(&$ciniki) {
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'ntype'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Type'),
         'offset_days'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Delay'),
+        'min_days_from_last'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Min Days From Last'),
         'status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Status'),
         'email_time'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'time', 'name'=>'Email Time'),
         'email_subject'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Email Subject'),

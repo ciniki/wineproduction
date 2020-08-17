@@ -61,6 +61,7 @@ function ciniki_wineproduction_notificationGet($ciniki) {
             'name'=>'',
             'ntype'=>'',
             'offset_days'=>'0',
+            'min_days_from_last'=>'1',
             'status'=>'10',
             'email_time'=>'',
             'email_subject'=>'',
@@ -77,6 +78,7 @@ function ciniki_wineproduction_notificationGet($ciniki) {
             . "ciniki_wineproduction_notifications.name, "
             . "ciniki_wineproduction_notifications.ntype, "
             . "ciniki_wineproduction_notifications.offset_days, "
+            . "ciniki_wineproduction_notifications.min_days_from_last, "
             . "ciniki_wineproduction_notifications.status, "
             . "TIME_FORMAT(ciniki_wineproduction_notifications.email_time, '%l:%i %p') AS email_time, "
             . "ciniki_wineproduction_notifications.email_subject, "
@@ -89,7 +91,9 @@ function ciniki_wineproduction_notificationGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
             array('container'=>'notifications', 'fname'=>'id', 
-                'fields'=>array('name', 'ntype', 'offset_days', 'status', 'email_time', 'email_subject', 'email_content', 'sms_content'),
+                'fields'=>array('name', 'ntype', 'offset_days', 'min_days_from_last', 'status', 
+                    'email_time', 'email_subject', 'email_content', 'sms_content',
+                    ),
                 ),
             ));
         if( $rc['stat'] != 'ok' ) {

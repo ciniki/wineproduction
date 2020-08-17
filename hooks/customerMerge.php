@@ -35,13 +35,13 @@ function ciniki_wineproduction_hooks_customerMerge($ciniki, $tnid, $args) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'items');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.9', 'msg'=>'Unable to find wineproduction items', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.75', 'msg'=>'Unable to find wineproduction items', 'err'=>$rc['err']));
     }
     $items = $rc['rows'];
     foreach($items as $i => $row) {
         $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.wineproduction.order', $row['id'], array('customer_id'=>$args['primary_customer_id']), 0x04);
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.10', 'msg'=>'Unable to update wine orders.', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.77', 'msg'=>'Unable to update wine orders.', 'err'=>$rc['err']));
         }
         $updated++;
     }

@@ -50,7 +50,7 @@
 #
 # bottling_duration:    The number of minutes it will take to bottle this order.  Typeically this is 30, 45, 60 minutes.
 # bottling_date:        The UTC date and time the customer is scheduled for bottling.
-# bottle_date:          The date and time the customer bottled the wine.
+# bottle_date:          The date the customer bottled the wine.
 # bottling_status:      The current status of the wine as it relates to bottling.  Is the wine ready to be bottled. This is stored
 #                       as bit flags, and not strict on uniqueness.  
 #
