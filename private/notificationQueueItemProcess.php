@@ -293,7 +293,6 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
         }
     }
 
-
     //
     // Goto point when no message sent, but queue should be removed
     //
