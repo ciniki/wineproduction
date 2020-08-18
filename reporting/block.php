@@ -40,6 +40,9 @@ function ciniki_wineproduction_reporting_block(&$ciniki, $tnid, $args) {
     if( $args['block_ref'] == 'ciniki.wineproduction.winesprocessed' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'reporting', 'blockWinesProcessed');
         return ciniki_wineproduction_reporting_blockWinesProcessed($ciniki, $tnid, $args['options']);
+    } elseif( $args['block_ref'] == 'ciniki.wineproduction.winesprocessedsummary' ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'reporting', 'blockWinesProcessedSummary');
+        return ciniki_wineproduction_reporting_blockWinesProcessedSummary($ciniki, $tnid, $args['options']);
     }
 
     return array('stat'=>'ok');

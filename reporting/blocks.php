@@ -41,6 +41,11 @@ function ciniki_wineproduction_reporting_blocks(&$ciniki, $tnid, $args) {
                 )),
             ),
         );
+    $blocks['ciniki.wineproduction.winesprocessedsummary'] = array(
+        'name'=>'Daily Summary',
+        'module' => 'Wine Production',
+        'options'=>array(),
+        );
 
     return array('stat'=>'ok', 'blocks'=>$blocks);
 }
