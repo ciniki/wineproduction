@@ -632,7 +632,7 @@ function ciniki_wineproduction_main() {
                 'bottle_date':{'label':'Bottled', 'type':'date', 'caloffset':0},
                 'batch_code':{'label':'Batch Code', 'type':'text'},
                 }},
-            '_notes':{'label':'Notes', 'fields':{
+            '_notes':{'label':'Production Notes', 'fields':{
                 'notes':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'small'},
                 }},
             '_buttons':{'label':'', 'buttons':{
@@ -772,7 +772,7 @@ function ciniki_wineproduction_main() {
                 'fields':{},
                 'data':{}
             },
-            '_notes':{'label':'Notes', 'fields':{
+            '_notes':{'label':'Bottling Notes', 'fields':{
                 'bottling_notes':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'small'},
                 }},
             '_buttons':{'label':'', 'buttons':{
