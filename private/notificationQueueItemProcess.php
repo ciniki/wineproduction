@@ -234,6 +234,7 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
                 . ") "
             . "WHERE orders.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND orders.id <> '" . ciniki_core_dbQuote($ciniki, $notification['order_id']) . "' "
+            . "AND orders.customer_id = '" . ciniki_core_dbQuote($ciniki, $notification['customer_id']) . "' " 
             . "";
         if( $notification['ntype'] == 20 || $notification['ntype'] == 25 ) {
             $strsql .= "AND orders.start_date = '" . ciniki_core_dbQuote($ciniki, $notification['start_date']) . "' ";
@@ -272,6 +273,9 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
     $content = str_replace('{_firstname_}', $customer['first'], $content);
     $subject = str_replace('{_orders_}', $order_list, $subject);
     $content = str_replace('{_orders_}', $order_list, $content);
+
+    $subject = str_replace('{_numorders_}', ($num_orders > 1 ? 's' : ''), $subject);
+    $content = str_replace('{_numorders_}', ($num_orders > 1 ? 's' : ''), $content);
 
     //
     // Send the email
