@@ -376,10 +376,10 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
             // Check for no bottling_date
             //
             $action = 'none';
-            if( $notification['bottling_date'] == '0000-00-00 00:00:00' ) {
+            if( $order['bottling_date'] == '0000-00-00 00:00:00' ) {
                 $action = 'ctb';
             } else {
-                $dt = new DateTime($notification['bottling_date'], new DateTimezone($intl_timezone));
+                $dt = new DateTime($order['bottling_date'], new DateTimezone($intl_timezone));
                 // Check if marked as midnight, then all day event
                 if( $dt->format('H:i:s') == '00:00:00' ) {
                     $action = 'ctb';
