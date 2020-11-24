@@ -217,6 +217,7 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
     //
     // Check if this should include multiple wine orders
     //
+    $bottling_date = '';
     if( $notification['ntype'] > 10 ) {
         $strsql = "SELECT orders.id, "
             . "orders.product_id, "
@@ -224,7 +225,7 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
             . "orders.start_date, "
             . "orders.rack_date, "
             . "orders.filter_date, "
-            . "orders.bottling_date, "
+            . "DATE_FORMAT(orders.bottling_date, '%M %D') AS bottling_date, "
             . "orders.bottle_date, "
             . "products.name AS product_name "
             . "FROM ciniki_wineproductions AS orders "
@@ -257,6 +258,9 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
         foreach($orders as $order) {
             $num_orders++;
             $order_list .= "\n" . $order['product_name'];
+            if( $bottling_date == '' ) {
+                $bottling_date = $order['bottling_date'];
+            }
         }
     }
    
@@ -276,6 +280,9 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
 
     $subject = str_replace('{_numorders_}', ($num_orders > 1 ? 's' : ''), $subject);
     $content = str_replace('{_numorders_}', ($num_orders > 1 ? 's' : ''), $content);
+
+    $subject = str_replace('{_bottledate_}', $bottling_date, $subject);
+    $content = str_replace('{_bottledate_}', $bottling_date, $content);
 
     //
     // Send the email
