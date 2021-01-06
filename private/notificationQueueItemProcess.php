@@ -65,7 +65,10 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.92', 'msg'=>'Unable to load queued notification', 'err'=>$rc['err']));
     }
     if( !isset($rc['item']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.93', 'msg'=>'Unable to find requested queue notification'));
+        // No queue notification means the notification was sent in another email with multiple wines
+        // and it was deleted but not from the list cron is working from.
+        return array('stat'=>'ok');
+//        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.93', 'msg'=>'Unable to find requested queue notification'));
     }
     $notification = $rc['item'];
 
@@ -227,11 +230,18 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
             . "orders.filter_date, "
             . "DATE_FORMAT(orders.bottling_date, '%M %D') AS bottling_date, "
             . "orders.bottle_date, "
-            . "products.name AS product_name "
+            . "products.name AS product_name, "
+            . "IFNULL(queue.id, 0) AS queue_id, "
+            . "IFNULL(queue.uuid, '') AS queue_uuid "
             . "FROM ciniki_wineproductions AS orders "
             . "LEFT JOIN ciniki_products AS products ON ("
                 ."orders.product_id = products.id "
                 . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+                . ") "
+            . "LEFT JOIN ciniki_wineproduction_notification_queue AS queue ON ("
+                . "orders.id = queue.order_id "
+                . "AND queue.notification_id = '" . ciniki_core_dbQuote($ciniki, $notification['notification_id']) . "' "
+                . "AND queue.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
                 . ") "
             . "WHERE orders.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . "AND orders.id <> '" . ciniki_core_dbQuote($ciniki, $notification['order_id']) . "' "
@@ -301,6 +311,21 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
             ));
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.102', 'msg'=>'Unable to add', 'err'=>$rc['err']));
+        }
+    }
+
+    //
+    // Delete notifications for the other orders so not getting duplicates
+    //
+    if( isset($orders) && count($orders) > 1 ) {
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
+        foreach($orders as $order) {
+            if( isset($order['queue_id']) && $order['queue_id'] > 0 ) {
+                $rc = ciniki_core_objectDelete($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', $orders['queue_id'], $orders['queue_uuid'], 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.104', 'msg'=>'Unable to remove notification queue item', 'err'=>$rc['err']));
+                }
+            }
         }
     }
 
