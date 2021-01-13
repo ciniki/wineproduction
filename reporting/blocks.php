@@ -46,6 +46,11 @@ function ciniki_wineproduction_reporting_blocks(&$ciniki, $tnid, $args) {
         'module' => 'Wine Production',
         'options'=>array(),
         );
+    $blocks['ciniki.wineproduction.productsmissing'] = array(
+        'name'=>'Products Missing Information',
+        'module' => 'Products',
+        'options'=>array(),
+        );
 
     return array('stat'=>'ok', 'blocks'=>$blocks);
 }
