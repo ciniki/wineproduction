@@ -49,8 +49,7 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $tnid, $args) {
         . "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
         . "ciniki_customers.display_name AS customer_name, "
         . "invoice_number, "
-        . "ciniki_products.name AS wine_name, "
-        //. "CONCAT_WS(' - ', CONCAT_WS(' ', first, last), IF(COUNT(invoice_number)>1, CONCAT('(',COUNT(invoice_number),')'), NULL), invoice_number, ciniki_products.name) AS subject, "
+        . "ciniki_wineproduction_products.name AS wine_name, "
         . "bottling_date AS start_date, "
         . "bottling_date AS start_ts, "
         . "bottling_date AS date, "
@@ -69,10 +68,14 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $tnid, $args) {
         . "ciniki_wineproductions.status, "
         . "bottling_duration AS duration, '#aaddff' AS colour, 'ciniki.appointments' AS 'module' "
         . "FROM ciniki_wineproductions "
-        . "JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "') "
-        . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "') "
+        . "JOIN ciniki_wineproduction_products ON ("
+            . "ciniki_wineproductions.product_id = ciniki_wineproduction_products.id "
+            . "AND ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") "
+        . "LEFT JOIN ciniki_customers ON ("
+            . "ciniki_wineproductions.customer_id = ciniki_customers.id "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . ") "
         . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     if( isset($args['full']) && $args['full'] == 'yes' ) {
@@ -92,18 +95,18 @@ function ciniki_wineproduction_hooks_appointmentSearch($ciniki, $tnid, $args) {
             . "OR ciniki_customers.last LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_customers.company LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_customers.company LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "OR ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ) "
+            . "OR ciniki_wineproduction_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_wineproduction_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ) "
             . "OR DATE_FORMAT(bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') LIKE '%" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "";
     }
     //$strsql .= "GROUP BY CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) ";
     if( isset($args['date']) && $args['date'] != '' ) {
-        $strsql .= "ORDER BY ABS(DATEDIFF(DATE(ciniki_wineproductions.bottling_date), DATE('" . ciniki_core_dbQuote($ciniki, $args['date']) . "'))), ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, ciniki_products.name, id ";
+        $strsql .= "ORDER BY ABS(DATEDIFF(DATE(ciniki_wineproductions.bottling_date), DATE('" . ciniki_core_dbQuote($ciniki, $args['date']) . "'))), ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, ciniki_wineproduction_products.name, id ";
     } else {
-        $strsql .= "ORDER BY ABS(DATEDIFF(DATE(ciniki_wineproductions.bottling_date), DATE(NOW()))), ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, ciniki_products.name, id ";
+        $strsql .= "ORDER BY ABS(DATEDIFF(DATE(ciniki_wineproductions.bottling_date), DATE(NOW()))), ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, ciniki_wineproduction_products.name, id ";
     }
-    // $strsql .= "ORDER BY ABS(DATEDIFF(ciniki_wineproductions.bottling_date, NOW())), ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, ciniki_products.name, id ";
+    // $strsql .= "ORDER BY ABS(DATEDIFF(ciniki_wineproductions.bottling_date, NOW())), ciniki_wineproductions.bottling_date, ciniki_wineproductions.customer_id, ciniki_wineproduction_products.name, id ";
 
     // 
     // Have to increase the limit because there are several wines per order, we want the limit the orders, not the wines.

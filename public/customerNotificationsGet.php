@@ -57,7 +57,7 @@ function ciniki_wineproduction_customerNotificationsGet(&$ciniki) {
         'addresses' => 'yes',
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.mail.83', 'msg'=>'Unable to load customer details', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.83', 'msg'=>'Unable to load customer details', 'err'=>$rc['err']));
     }
     if( isset($rc['details']) ) {
         $rsp['customer_details'] = $rc['details'];

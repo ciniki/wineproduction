@@ -16,6 +16,13 @@ function ciniki_wineproduction_maps(&$ciniki) {
     // Build the maps object
     //
     $maps = array();
+    $maps['product'] = array(
+        'status'=>array(
+            '0'=>'Unknown',
+            '10'=>'Active',
+            '60'=>'Discontinued',
+            ),
+        );
     $maps['wineproduction'] = array(
         'status'=>array(
             '10'=>'Ordered',

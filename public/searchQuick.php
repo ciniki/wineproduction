@@ -50,17 +50,24 @@ function ciniki_wineproduction_searchQuick($ciniki) {
     //
     $strsql = "SELECT ciniki_wineproductions.id, ciniki_wineproductions.customer_id, "
         . "ciniki_customers.display_name AS customer_name, invoice_number, "
-        . "ciniki_products.name AS wine_name, ciniki_wineproductions.status, ciniki_wineproductions.wine_type, ciniki_wineproductions.kit_length, "
+        . "ciniki_wineproduction_products.name AS wine_name, "
+        . "ciniki_wineproductions.status, "
+        . "ciniki_wineproduction_products.wine_type, "
+        . "ciniki_wineproduction_products.kit_length, "
         . "DATE_FORMAT(ciniki_wineproductions.order_date, '%b %e, %Y') AS order_date, "
         . "DATE_FORMAT(ciniki_wineproductions.start_date, '%b %e, %Y') AS start_date, "
         . "DATE_FORMAT(ciniki_wineproductions.racking_date, '%b %e, %Y') AS racking_date, "
         . "DATE_FORMAT(ciniki_wineproductions.filtering_date, '%b %e, %Y') AS filtering_date, "
         . "DATE_FORMAT(ciniki_wineproductions.bottling_date, '%b %e, %Y') AS bottling_date "
         . "FROM ciniki_wineproductions "
-        . "LEFT JOIN ciniki_customers ON (ciniki_wineproductions.customer_id = ciniki_customers.id "
-            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
-        . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
+        . "LEFT JOIN ciniki_customers ON ("
+            . "ciniki_wineproductions.customer_id = ciniki_customers.id "
+            . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "LEFT JOIN ciniki_wineproduction_products ON ("
+            . "ciniki_wineproductions.product_id = ciniki_wineproduction_products.id "
+            . "AND ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
         . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_wineproductions.status < 60 ";
     if( is_numeric($args['start_needle']) ) {
@@ -73,8 +80,8 @@ function ciniki_wineproduction_searchQuick($ciniki) {
             . "OR ciniki_customers.last LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_customers.company LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_customers.company LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "OR ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ) "
+            . "OR ciniki_wineproduction_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR ciniki_wineproduction_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' ) "
             . "";
     }
 

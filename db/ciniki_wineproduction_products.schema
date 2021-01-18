@@ -1,0 +1,106 @@
+#
+# Description
+# -----------
+# This table stores the products available for wine production.
+#
+# Fields
+# ------
+# id:                       The ID assigned to the record.
+# uuid:                     The Universal Unique ID.
+# tnid:                     The Tenant ID the record belongs to.
+#
+# name:                     The name of the product.
+# permalink:                The permalink of the product.
+# ptype:                    The type of product.
+#
+#                               0 - Unknown
+#                               10 - Wine
+#                               90 - Other
+#
+# flags:                    The options for the product.
+#
+#                               0x01 - Visible
+#                               0x02 - Sell Online **future**
+#                               0x04 - Show Price **future**
+#                               0x08 - 
+#                               0x10 - 
+#                               0x20 - 
+#                               0x40 - 
+#                               0x80 - 
+#                               0x0100 - Inventoried **future**
+#                               0x0200 - 
+#                               0x0400 - 
+#                               0x0800 - Sold Out **future**
+#                               0x1000 - 
+#                               0x2000 - 
+#                               0x4000 - 
+#                               0x8000 - 
+#
+# status:                   The status of product.
+#
+#                               0 - Unknown
+#                               10 - Active
+#                               60 - Discontinued
+#
+# start_date:               The start date and time to make product available online.
+# end_date:                 The end date and time the product is no long available.
+#
+# supplier_id:              The ID of the supplier in ciniki_wineproduction_suppliers.
+# supplier_item_number:     The suppliers unique item number for this item.
+# wine_type:                The type of wine, Red, White, Other **note: not sure if needed**
+# kit_length:               The number of weeks the kit needs
+#
+# msrp:                     The MSRP for the kit portion.
+# cost:                     The cost of the kit portion.
+# unit_amount:              The amount for 1 of this product.
+# unit_discount_amount:     The discount dollar amount for 1 kit.
+# unit_discount_percentage: The percent discount for 1 kit.
+#
+# taxtype_id:               The ID of the tax type in taxes module.
+#
+# inventory_current_num:    The current number in inventory.
+#
+# primary_image_id:         The ID of the main image for the product.
+# synopsis:                 The short description of the product for lists.
+# description:              The full description of the product.
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last update.
+#
+create table ciniki_wineproduction_products (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+
+    name varchar(250) not null,
+    permalink varchar(250) not null,
+    ptype tinyint unsigned not null,
+    flags smallint unsigned not null,
+    status tinyint unsigned not null,
+    start_date date not null,
+    end_date date not null,
+
+    supplier_id int not null,
+    supplier_item_number varchar(150) not null,
+    wine_type varchar(150) not null,
+    kit_length int not null,
+
+    msrp decimal(19,6) not null,
+    cost decimal(19,6) not null,
+    unit_amount decimal(19,6) not null,
+    unit_discount_amount decimal(19,6) not null,
+    unit_discount_percentage decimal(19,6) not null,
+    taxtype_id int not null,
+
+    inventory_current_num int not null,
+
+    primary_image_id int not null,
+    synopsis varchar(2000) not null,
+    description text,
+
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

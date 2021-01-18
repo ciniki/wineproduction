@@ -1,0 +1,275 @@
+<?php
+//
+// Description
+// -----------
+// This method will return the list of Products for a tenant.
+//
+// Arguments
+// ---------
+// api_key:
+// auth_token:
+// tnid:        The ID of the tenant to get Product for.
+//
+// Returns
+// -------
+//
+function ciniki_wineproduction_products($ciniki) {
+    //
+    // Find all the required and optional arguments
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
+    $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
+        'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
+        'tag10'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Category'),
+        'tag11'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sub Category'),
+        'tag12'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Variety'),
+        'tag13'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Oak'),
+        'tag14'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Body'),
+        'tag15'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sweetness'),
+        'supplier_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier'),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $args = $rc['args'];
+
+    //
+    // Check access to tnid as owner, or sys admin.
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.productList');
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+        
+    //
+    // Load maps
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'maps');
+    $rc = ciniki_wineproduction_maps($ciniki);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $maps = $rc['maps'];
+
+    //
+    // Get the tags
+    //
+    $strsql = "SELECT tags.tag_type, tags.tag_name, tags.permalink, COUNT(products.id) AS num_items "
+        . "FROM ciniki_wineproduction_product_tags AS tags, ciniki_wineproduction_products AS products "
+        . "WHERE tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+//        . "AND tags.tag_type = 12 "
+        . "AND tags.product_id = products.id "
+        . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "AND products.status = 10 "
+        . "GROUP BY tags.tag_type, tags.tag_name "
+        . "ORDER BY tags.tag_type, tags.tag_name "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'types', 'fname'=>'tag_type', 'fields'=>array('tag_type')),
+        array('container'=>'tags', 'fname'=>'permalink', 'fields'=>array('tag_name', 'permalink', 'num_items')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.124', 'msg'=>'Unable to load tags', 'err'=>$rc['err']));
+    }
+    $types = isset($rc['types']) ? $rc['types'] : array();
+    $tags10 = array();
+    $tags11 = array();
+    $tags12 = array();
+    $tags13 = array();
+    $tags14 = array();
+    $tags15 = array();
+    foreach($types as $type) {
+        if( $type['tag_type'] == 10 && isset($type['tags']) ) {
+            $tags10 = $type['tags'];
+        } elseif( $type['tag_type'] == 11 && isset($type['tags']) ) {
+            $tags11 = $type['tags'];
+        } elseif( $type['tag_type'] == 12 && isset($type['tags']) ) {
+            $tags12 = $type['tags'];
+        } elseif( $type['tag_type'] == 13 && isset($type['tags']) ) {
+            $tags13 = $type['tags'];
+        } elseif( $type['tag_type'] == 14 && isset($type['tags']) ) {
+            $tags14 = $type['tags'];
+        } elseif( $type['tag_type'] == 15 && isset($type['tags']) ) {
+            $tags15 = $type['tags'];
+        }
+    }
+    $strsql = "SELECT COUNT(*) AS num "
+        . "FROM ciniki_wineproduction_products "
+        . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "AND status = 60 "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
+    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.106', 'msg'=>'Unable to load get the number of items', 'err'=>$rc['err']));
+    }
+    if( isset($rc['num']) && $rc['num'] > 0 ) {
+        array_push($tags10, array(
+            'tag_name' => 'Discontinued',
+            'permalink' => 'discontinued',
+            'num_items' => $rc['num'],
+            ));
+    }
+
+    //
+    // Get the list of products
+    //
+    $strsql = "SELECT products.id, "
+        . "products.name, "
+        . "products.permalink, "
+        . "products.ptype, "
+        . "products.flags, "
+        . "IF((products.flags&0x01)=0x01, 'Visible', '') AS visible, "
+        . "products.status, "
+        . "products.start_date, "
+        . "products.end_date, "
+        . "products.supplier_id, "
+        . "products.supplier_item_number, "
+        . "products.wine_type, "
+        . "products.kit_length, "
+        . "products.msrp, "
+        . "products.cost, "
+        . "products.unit_amount, "
+        . "products.unit_discount_amount, "
+        . "products.unit_discount_percentage, "
+        . "products.taxtype_id, "
+        . "products.inventory_current_num, "
+        . "products.synopsis, "
+        . "categories.tag_name AS categories, "
+        . "subcategories.tag_name AS subcategories, "
+        . "suppliers.name AS supplier_name "
+        . "FROM ciniki_wineproduction_products AS products "
+        . "";
+    for($i = 10; $i <= 15; $i++ ) {
+        if( isset($args['tag' . $i]) && $args['tag' . $i] != '' ) {
+            $strsql .= "INNER JOIN ciniki_wineproduction_product_tags AS tags{$i} ON ("
+                . "products.id = tags{$i}.product_id "
+                . "AND tags{$i}.tag_type = {$i} "
+                . "AND tags{$i}.permalink = '" . ciniki_core_dbQuote($ciniki, $args['tag' . $i]) . "' "
+                . "AND tags{$i}.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                . ") ";
+        }
+    }
+    $strsql .= "LEFT JOIN ciniki_wineproduction_product_tags AS categories ON ("
+        . "products.id = categories.product_id "
+        . "AND categories.tag_type = 10 "
+        . "AND categories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . ") ";
+    $strsql .= "LEFT JOIN ciniki_wineproduction_product_tags AS subcategories ON ("
+        . "products.id = subcategories.product_id "
+        . "AND subcategories.tag_type = 11 "
+        . "AND subcategories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . ") ";
+    $strsql .= "LEFT JOIN ciniki_wineproduction_suppliers AS suppliers ON ("
+        . "products.supplier_id = suppliers.id "
+        . "AND suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . ") ";
+    $strsql .= "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
+    if( isset($args['tag10']) && $args['tag10'] == 'discontinued' ) {
+        $strsql .= "AND products.status = 60 ";
+    } else {
+        $strsql .= "AND products.status < 60 ";
+    }
+    if( isset($args['supplier_id']) && $args['supplier_id'] == '0' ) {
+        $strsql .= "HAVING ISNULL(suppliers.name) ";
+    } elseif( isset($args['supplier_id']) && $args['supplier_id'] != '' ) {
+        $strsql .= "AND products.supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' ";
+    }
+    $strsql .= "ORDER BY products.name, categories, subcategories "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'products', 'fname'=>'id', 
+            'fields'=>array('id', 'name', 'permalink', 'ptype', 'flags', 'status', 'start_date', 'end_date', 
+                'visible',
+                'supplier_id', 'supplier_item_number', 
+                'wine_type', 'kit_length', 'msrp', 'cost', 
+                'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 
+                'inventory_current_num', 'synopsis', 'categories', 'subcategories', 'supplier_name'),
+            'maps'=>array(
+                'status_text'=>$maps['product']['status'],
+                ),
+            'dlists'=>array(
+                'categories'=>', ',
+                'subcategories'=>', ',
+                ),
+            ),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    if( isset($rc['products']) ) {
+        $products = $rc['products'];
+        $product_ids = array();
+        foreach($products as $iid => $product) {
+            $products[$iid]['unit_amount_display'] = '$' . number_format($product['unit_amount'], 2);
+            $product_ids[] = $product['id'];
+        }
+    } else {
+        $products = array();
+        $product_ids = array();
+    }
+
+    //
+    // Get the list of suppliers
+    //
+    $strsql = "SELECT suppliers.id, suppliers.name, COUNT(products.id) AS num_items "
+        . "FROM ciniki_wineproduction_suppliers AS suppliers "
+        . "LEFT JOIN ciniki_wineproduction_products AS products ON ("
+            . "suppliers.id = products.supplier_id "
+            . "AND products.status < 60 "
+            . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "WHERE suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "GROUP BY suppliers.id "
+        . "ORDER BY suppliers.name "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'suppliers', 'fname'=>'id', 
+            'fields'=>array('id', 'name', 'num_items')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.113', 'msg'=>'Unable to load suppliers', 'err'=>$rc['err']));
+    }
+    $suppliers = isset($rc['suppliers']) ? $rc['suppliers'] : array();
+
+    //
+    // Get number with missing suppliers
+    //
+    $strsql = "SELECT products.id, suppliers.id "
+        . "FROM ciniki_wineproduction_products AS products "
+        . "LEFT JOIN ciniki_wineproduction_suppliers AS suppliers ON ("
+            . "products.supplier_id = suppliers.id "
+            . "AND suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "AND products.status < 60 "
+        . "HAVING ISNULL(suppliers.id) "
+        . "ORDER BY suppliers.name "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.114', 'msg'=>'Unable to load item', 'err'=>$rc['err']));
+    }
+    if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+        array_push($suppliers, array('id'=>0, 'name'=>'No Supplier', 'num_items'=>count($rc['rows'])));
+    }
+
+    $rsp = array('stat'=>'ok', 'products'=>$products, 
+        'tags10'=>$tags10, 
+        'tags11'=>$tags11, 
+        'tags12'=>$tags12, 
+        'tags13'=>$tags13, 
+        'tags14'=>$tags14, 
+        'tags15'=>$tags15, 
+        'tags15'=>$tags15, 
+        'suppliers'=>$suppliers, 
+        'nplist'=>$product_ids,
+        );
+
+    return $rsp;
+}
+?>

@@ -1,0 +1,27 @@
+#
+# Description
+# -----------
+#
+# Fields
+# ------
+# id:                       The ID assigned to the record.
+# uuid:                     The Universal Unique ID.
+# tnid:                     The Tenant ID the record belongs to.
+#
+# date_added:               The UTC date and time the record was added.
+# last_updated:             The UTC date and time the record was last update.
+#
+create table ciniki_wineproduction_suppliers (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+
+    name varchar(250) not null,
+    supplier_tnid int not null, 
+
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (uuid),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

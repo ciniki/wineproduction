@@ -1,0 +1,45 @@
+#
+# Description
+# -----------
+# This table stores categories and tags for products.
+#
+# Fields
+# -------
+# id:               The database ID of the tag.
+# uuid:             The Universal Unique ID for the tag.
+# tnid:             The ID of the tenant the artcatalog item is attached to.
+#
+# product_id:       The ID of the product.
+#
+# tag_type:         The type of tag, which is how it will be used.
+#   
+#                   0 - unknown
+#                   10 - Category (Red, White, Ice Wine)
+#                   11 - Wine Type
+#                   12 - Varietal
+#                   13 - Oak
+#                   14 - Body
+#                   15 - Sweetness
+#
+# tag_name:         The name of the tag, list or category.
+#
+# permalink:        The permalink made from the tag_name.
+#
+# date_added:       The UTC date and time the tag was added.
+# last_updated:     The UTC date and time the tag was last updated.
+#
+create table ciniki_wineproduction_product_tags (
+    id bigint not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+    product_id int not null,
+    tag_type int not null,
+    tag_name varchar(150) not null,
+    permalink varchar(150) not null,
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (product_id, tag_type, tag_name),
+    index (permalink),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

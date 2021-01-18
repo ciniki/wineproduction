@@ -53,7 +53,7 @@ function ciniki_wineproduction_reporting_blockProductsMissing(&$ciniki, $tnid, $
         . "products.short_description, "
         . "products.long_description, "
         . "IF((products.webflags&0x01)=0x01, 'Visible', 'Hidden') AS visible "
-        . "FROM ciniki_products AS products "
+        . "FROM ciniki_wineproduction_products AS products "
         . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND products.status < 60 "
         . "AND ("

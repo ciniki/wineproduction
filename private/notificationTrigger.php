@@ -68,7 +68,7 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
         . "orders.notes, "
         . "orders.batch_code "
         . "FROM ciniki_wineproductions AS orders "
-        . "LEFT JOIN ciniki_products AS products ON ("
+        . "LEFT JOIN ciniki_wineproduction_products AS products ON ("
             . "orders.product_id = products.id "
             . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "

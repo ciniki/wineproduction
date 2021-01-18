@@ -44,7 +44,7 @@ function ciniki_wineproduction_customerNotificationQueue(&$ciniki, $tnid, $custo
             . "queue.order_id = orders.id "
             . "AND orders.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "LEFT JOIN ciniki_products AS products ON ("
+        . "LEFT JOIN ciniki_wineproduction_products AS products ON ("
             . "orders.product_id = products.id "
             . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "

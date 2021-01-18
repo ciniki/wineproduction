@@ -52,20 +52,17 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
     // If a customer is specified, search through past orders to find preferences for customer
     //
     if( $args['start_needle'] == '' && isset($args['customer_id']) && $args['customer_id'] > 0 ) {
-        $strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, "
-            . "detail01 AS wine_type, "
-            . "detail02 AS kit_length, "
-//          . "IFNULL(d1.detail_value, '') AS wine_type, "
-//          . "IFNULL(d2.detail_value, '') AS kit_length, "
+        $strsql = "SELECT ciniki_wineproduction_products.id, "
+            . "ciniki_wineproduction_products.name AS wine_name, "
+            . "ciniki_wineproductions.wine_type, "
+            . "ciniki_wineproductions.kit_length, "
             . "order_flags "
-            . "FROM ciniki_wineproductions, ciniki_products "
-//          . "LEFT JOIN ciniki_product_details AS d1 ON (ciniki_products.id = d1.product_id AND d1.detail_key = 'wine_type') "
-//          . "LEFT JOIN ciniki_product_details AS d2 ON (ciniki_products.id = d2.product_id AND d2.detail_key = 'kit_length') "
+            . "FROM ciniki_wineproductions, ciniki_wineproduction_products "
             . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' "
-            . "AND ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-            . "AND ciniki_products.status = 10 ";
+            . "AND ciniki_wineproductions.product_id = ciniki_wineproduction_products.id "
+            . "AND ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND ciniki_wineproduction_products.status = 10 ";
     } 
 
     //
@@ -73,28 +70,22 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
     // matching names
     //
     else if( $args['start_needle'] != '' ) {
-        $strsql = "SELECT ciniki_products.id, ciniki_products.name AS wine_name, "
-            . "detail01 AS wine_type, "
-            . "detail02 AS kit_length, "
-//          . "IFNULL(d1.detail_value, '') AS wine_type, "
-//          . "IFNULL(d2.detail_value, '') AS kit_length, "
+        $strsql = "SELECT ciniki_wineproduction_products.id, ciniki_wineproduction_products.name AS wine_name, "
+            . "wine_type, "
+            . "kit_length, "
             . "0 AS order_flags "
-            . "FROM ciniki_products "
-//          . "LEFT JOIN ciniki_product_details AS d1 ON (ciniki_products.id = d1.product_id AND d1.detail_key = 'wine_type') "
-//          . "LEFT JOIN ciniki_product_details AS d2 ON (ciniki_products.id = d2.product_id AND d2.detail_key = 'kit_length') "
-//          . "LEFT JOIN ciniki_wineproductions ON (ciniki_products.id = ciniki_wineproductions.product_id "
-//              . "AND ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
-            . "WHERE ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-            . "AND (ciniki_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "  
-                . "OR ciniki_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "  
+            . "FROM ciniki_wineproduction_products "
+            . "WHERE ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND (ciniki_wineproduction_products.name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "  
+                . "OR ciniki_wineproduction_products.name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "  
                 . ") "
-            . "AND ciniki_products.status = 10 ";
+            . "AND ciniki_wineproduction_products.status = 10 ";
     } else {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.19', 'msg'=>'No search specified'));
     }
 
-    $strsql .= "GROUP BY ciniki_products.id "
-        . "ORDER BY ciniki_products.name "
+    $strsql .= "GROUP BY ciniki_wineproduction_products.id "
+        . "ORDER BY ciniki_wineproduction_products.name "
 //      . "ORDER BY COUNT(ciniki_wineproductions.id) DESC "
         . "";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {

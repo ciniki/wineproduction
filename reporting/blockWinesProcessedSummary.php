@@ -66,7 +66,7 @@ function ciniki_wineproduction_reporting_blockWinesProcessedSummary(&$ciniki, $t
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
     $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.103', 'msg'=>'Unable to load get the number of ordered wines', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.109', 'msg'=>'Unable to load get the number of ordered wines', 'err'=>$rc['err']));
     }
     $num_ordered = isset($rc['num']) ? $rc['num'] : '';
 
@@ -81,7 +81,7 @@ function ciniki_wineproduction_reporting_blockWinesProcessedSummary(&$ciniki, $t
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
     $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.103', 'msg'=>'Unable to load get the number of started wines', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.110', 'msg'=>'Unable to load get the number of started wines', 'err'=>$rc['err']));
     }
     $num_started = isset($rc['num']) ? $rc['num'] : '';
 
@@ -96,7 +96,7 @@ function ciniki_wineproduction_reporting_blockWinesProcessedSummary(&$ciniki, $t
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
     $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.103', 'msg'=>'Unable to load get the number of racked wines', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.111', 'msg'=>'Unable to load get the number of racked wines', 'err'=>$rc['err']));
     }
     $num_racked = isset($rc['num']) ? $rc['num'] : '';
 
@@ -111,7 +111,7 @@ function ciniki_wineproduction_reporting_blockWinesProcessedSummary(&$ciniki, $t
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
     $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.wineproduction', 'num');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.103', 'msg'=>'Unable to load get the number of filtered wines', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.112', 'msg'=>'Unable to load get the number of filtered wines', 'err'=>$rc['err']));
     }
     $num_filtered = isset($rc['num']) ? $rc['num'] : '';
 

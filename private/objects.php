@@ -11,6 +11,117 @@
 //
 function ciniki_wineproduction_objects($ciniki) {
     $objects = array();
+    $objects['product'] = array(
+        'name' => 'Product',
+        'sync' => 'yes',
+        'o_name' => 'product',
+        'o_container' => 'products',
+        'table' => 'ciniki_wineproduction_products',
+        'fields' => array(
+            'name' => array('name'=>'Name'),
+            'permalink' => array('name'=>'Permalink', 'default'=>''),
+            'ptype' => array('name'=>'Type', 'default'=>'10'),
+            'flags' => array('name'=>'Options', 'default'=>'0'),
+            'status' => array('name'=>'Status', 'default'=>'10'),
+            'start_date' => array('name'=>'Start Date', 'default'=>''),
+            'end_date' => array('name'=>'End Date', 'default'=>''),
+            'supplier_id' => array('name'=>'Supplier', 'ref'=>'ciniki.wineproduction.'),
+            'supplier_item_number' => array('name'=>'Supplier Item Number', 'default'=>''),
+            'wine_type' => array('name'=>'Wine Type', 'default'=>''),
+            'kit_length' => array('name'=>'Kit Length', 'default'=>''),
+            'msrp' => array('name'=>'MSRP', 'default'=>''),
+            'cost' => array('name'=>'Cost', 'default'=>''),
+            'unit_amount' => array('name'=>'Unit Amount', 'default'=>''),
+            'unit_discount_amount' => array('name'=>'Discount Amount', 'default'=>''),
+            'unit_discount_percentage' => array('name'=>'Discount Percent', 'default'=>''),
+            'taxtype_id' => array('name'=>'Taxes', 'ref'=>'ciniki.taxes.type'),
+            'inventory_current_num' => array('name'=>'Inventory', 'default'=>''),
+            'primary_image_id' => array('name'=>'Primary Image', 'default'=>'0', 'ref'=>'ciniki.images.image'),
+            'synopsis' => array('name'=>'Synopsis', 'default'=>''),
+            'description' => array('name'=>'Synopsis', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['productimage'] = array(
+        'name' => 'Product Image',
+        'sync' => 'yes',
+        'o_name' => 'image',
+        'o_container' => 'images',
+        'table' => 'ciniki_wineproduction_product_images',
+        'fields' => array(
+            'product_id' => array('name'=>'Product', 'ref'=>'ciniki.wineproduction.product'),
+            'name' => array('name'=>'Name'),
+            'permalink' => array('name'=>'Permalink', 'default'=>''),
+            'webflags' => array('name'=>'Options', 'default'=>''),
+            'sequence' => array('name'=>'Order', 'default'=>''),
+            'image_id' => array('name'=>'Image', 'ref'=>'ciniki.images.image'),
+            'description' => array('name'=>'Description', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['producttag'] = array(
+        'name' => 'Product Tag',
+        'sync' => 'yes',
+        'o_name' => 'tag',
+        'o_container' => 'tags',
+        'table' => 'ciniki_wineproduction_product_tags',
+        'fields' => array(
+            'product_id' => array('name'=>'Product', 'ref'=>'ciniki.wineproduction.product'),
+            'tag_type' => array('name'=>'Type', 'default'=>''),
+            'tag_name' => array('name'=>'Name', 'default'=>''),
+            'permalink' => array('name'=>'Permalink', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['producttagdetail'] = array(
+        'name' => 'Product Tag Details',
+        'sync' => 'yes',
+        'o_name' => 'tag',
+        'o_container' => 'tags',
+        'table' => 'ciniki_wineproduction_product_tagdetails',
+        'fields' => array(
+            'tag_type' => array('name'=>'Type', 'default'=>''),
+            'permalink' => array('name'=>'Permalink', 'default'=>''),
+            'name' => array('name'=>'Name'),
+            'sequence' => array('name'=>'Order', 'default'=>''),
+            'display' => array('name'=>'Category Format', 'default'=>''),
+            'primary_image_id' => array('name'=>'Image', 'default'=>'0', 'ref'=>'ciniki.images.image'),
+            'synopsis' => array('name'=>'Synopsis', 'default'=>''),
+            'description' => array('name'=>'Description', 'default'=>''),
+            'flags' => array('name'=>'Options', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['productfile'] = array(
+        'name' => 'Product File',
+        'sync' => 'yes',
+        'o_name' => 'file',
+        'o_container' => 'files',
+        'table' => 'ciniki_wineproduction_product_files',
+        'fields' => array(
+            'product_id' => array('name'=>'', 'ref'=>'ciniki.wineproduction.product'),
+            'extension' => array('name'=>'', 'default'=>''),
+            'name' => array('name'=>'Name'),
+            'permalink' => array('name'=>'', 'default'=>''),
+            'webflags' => array('name'=>'', 'default'=>''),
+            'description' => array('name'=>'Description', 'default'=>''),
+            'org_filename' => array('name'=>'', 'default'=>''),
+            'publish_date' => array('name'=>'', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['supplier'] = array(
+        'name' => 'Supplier',
+        'sync' => 'yes',
+        'o_name' => 'supplier',
+        'o_container' => 'suppliers',
+        'table' => 'ciniki_wineproduction_suppliers',
+        'fields' => array(
+            'name' => array('name'=>'Name'),
+            'supplier_tnid' => array('name'=>'', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
     $objects['order'] = array(
         'name'=>'Wine Production Order',
         'table'=>'ciniki_wineproductions',

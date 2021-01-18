@@ -1706,7 +1706,9 @@ function ciniki_wineproduction_main() {
 //          if( this.add.sections['wines' + ext] != null && this.add.formFieldValue('product_id' + ext) == 0 ) {
 //          if( this.add.formFieldValue(this.add.sections.wines.fields.product_id, 'product_id' + ext) == 0 ) {
             if( M.gE(this.add.panelUID + '_product_id_' + i).value == 0 ) {
-                var wine_name = M.gE(this.add.panelUID + '_product_id_' + i + '_fkidstr').value;
+                M.alert('Invalid wine, please search for a valid wine.');
+                return false;
+/*                var wine_name = M.gE(this.add.panelUID + '_product_id_' + i + '_fkidstr').value;
                 var wine_type = M.gE(this.add.panelUID + '_wine_type_' + i).value;
                 var kit_length = M.gE(this.add.panelUID + '_kit_length_' + i).value;
                 var rsp = M.api.getJSON('ciniki.products.productAdd', {'tnid':M.curTenantID, 
@@ -1721,7 +1723,7 @@ function ciniki_wineproduction_main() {
                     M.api.err(rsp);
                     return false;
                 }
-                M.gE(this.add.panelUID + '_product_id_' + i).value = rsp.id;
+                M.gE(this.add.panelUID + '_product_id_' + i).value = rsp.id; */
             }
             // Check if there are multiple of this wine and add A/B/C after invoice number
             var pid = M.gE(this.add.panelUID + '_product_id_' + i).value;

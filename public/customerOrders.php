@@ -76,7 +76,8 @@ function ciniki_wineproduction_customerOrders($ciniki) {
     //
     $strsql = "SELECT ciniki_wineproductions.id, "
         . "invoice_number, "
-        . "ciniki_products.name AS wine_name, wine_type, kit_length, "
+        . "ciniki_wineproduction_products.name AS wine_name, "
+        . "wine_type, kit_length, "
         . "ciniki_wineproductions.status, "
         . "ciniki_wineproductions.status AS status_text, "
         . "DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS order_date, "
@@ -87,8 +88,10 @@ function ciniki_wineproduction_customerOrders($ciniki) {
         . "DATE_FORMAT(IF(rack_date > 0, DATE_ADD(rack_date, INTERVAL (kit_length) DAY), "
             . "DATE_ADD(ciniki_wineproductions.start_date, INTERVAL kit_length WEEK)), '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS approx_filtering_date "
         . "FROM ciniki_wineproductions "
-        . "LEFT JOIN ciniki_products ON (ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "') "
+        . "LEFT JOIN ciniki_wineproduction_products ON ("
+            . "ciniki_wineproductions.product_id = ciniki_wineproduction_products.id "
+            . "AND ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
         . "WHERE ciniki_wineproductions.customer_id = '" . ciniki_core_dbQuote($ciniki, $args['customer_id']) . "' "
         . "AND ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "";

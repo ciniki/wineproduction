@@ -54,7 +54,7 @@ function ciniki_wineproduction_getHistory($ciniki) {
         return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'ciniki_customers', 'id', "ciniki_customers.display_name");
     } elseif( $args['field'] == 'product_id' ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbGetModuleHistoryFkId');
-        return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'ciniki_products', 'id', "ciniki_products.name");
+        return ciniki_core_dbGetModuleHistoryFkId($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 'ciniki_wineproductions', $args['wineproduction_id'], $args['field'], 'ciniki_wineproduction_products', 'id', "ciniki_wineproduction_products.name");
     } elseif( $args['field'] == 'order_date' 
         || $args['field'] == 'start_date' 
         || $args['field'] == 'racking_date' 

@@ -61,7 +61,7 @@ function ciniki_wineproduction_reporting_blockWinesProcessed(&$ciniki, $tnid, $a
     $strsql = "SELECT ciniki_wineproductions.id, "
         . "ciniki_customers.display_name AS customer_name, "
         . "invoice_number, "
-        . "ciniki_products.name AS wine_name, "
+        . "ciniki_wineproduction_products.name AS wine_name, "
         . "wine_type, "
         . "kit_length, "
         . "ciniki_wineproductions.status, "
@@ -88,13 +88,13 @@ function ciniki_wineproduction_reporting_blockWinesProcessed(&$ciniki, $tnid, $a
             . "ciniki_wineproductions.customer_id = ciniki_customers.id "
             . "AND ciniki_customers.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
-        . "LEFT JOIN ciniki_products ON ("
-            . "ciniki_wineproductions.product_id = ciniki_products.id "
-            . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "LEFT JOIN ciniki_wineproduction_products ON ("
+            . "ciniki_wineproductions.product_id = ciniki_wineproduction_products.id "
+            . "AND ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
-        . "AND ciniki_wineproductions.product_id = ciniki_products.id "
-        . "AND ciniki_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+        . "AND ciniki_wineproductions.product_id = ciniki_wineproduction_products.id "
+        . "AND ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "";
     if( isset($args['status']) && $args['status'] != '' && $args['status'] > 0 ) {
         $strsql .= "AND ciniki_wineproductions.status = '" . ciniki_core_dbQuote($ciniki, $args['status']) . "' ";

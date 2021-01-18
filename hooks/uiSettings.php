@@ -70,6 +70,38 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
             )
         ) {
         $menu_item = array(
+            'priority'=>5800,
+            'label'=>'Products', 
+            'edit'=>array('app'=>'ciniki.wineproduction.products', 'args'=>array()),
+            'add'=>array('app'=>'ciniki.wineproduction.products', 'args'=>array('product_id'=>0)),
+            'search'=>array(
+                'method'=>'ciniki.wineproduction.productSearch',
+                'args'=>array('status'=>'active'),
+                'container'=>'products',
+                'cols'=>1,
+                'cellValues'=>array(
+                    '0'=>'d.name;',
+                    ),
+                'noData'=>'No products found',
+                'edit'=>array('method'=>'ciniki.wineproduction.products', 'args'=>array('product_id'=>'d.id;')),
+//                'submit'=>array('method'=>'ciniki.wineproduction.main', 'args'=>array('search'=>'search_str')),
+                ), 
+            );
+        $rsp['menu_items'][] = $menu_item;
+    } 
+
+
+    //
+    // Check permissions for what menu items should be available
+    //
+    if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && (isset($args['permissions']['owners'])
+            || isset($args['permissions']['employees'])
+            || isset($args['permissions']['resellers'])
+            || ($ciniki['session']['user']['perms']&0x01) == 0x01
+            )
+        ) {
+        $menu_item = array(
             'priority'=>5000,
             'label'=>'Production Schedule', 
             'edit'=>array('app'=>'ciniki.wineproduction.main', 'args'=>array('schedule'=>'"\'today\'"')),

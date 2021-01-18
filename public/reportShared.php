@@ -108,7 +108,7 @@ function ciniki_wineproduction_reportShared($ciniki) {
             . "orders.customer_id = customers.id "
             . "AND customers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
-        . "LEFT JOIN ciniki_products AS products ON ("
+        . "LEFT JOIN ciniki_wineproduction_products AS products ON ("
             . "orders.product_id = products.id "
             . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . ") "
