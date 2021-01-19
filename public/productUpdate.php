@@ -28,7 +28,6 @@ function ciniki_wineproduction_productUpdate(&$ciniki) {
         'supplier_item_number'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier Item Number'),
         'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'),
         'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Kit Length'),
-        'msrp'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'MSRP'),
         'cost'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Cost'),
         'unit_amount'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Unit Amount'),
         'unit_discount_amount'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Discount Amount'),

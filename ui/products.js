@@ -215,7 +215,9 @@ function ciniki_wineproduction_products() {
         }},
         'general':{'label':'Product', 'aside':'yes', 'fields':{
             'name':{'label':'Name', 'required':'yes', 'type':'text'},
-            'ptype':{'label':'Type', 'type':'toggle', 'toggles':{'10':'Wine', '90':'Supplies/Other'}},
+            'ptype':{'label':'Type', 'type':'toggle', 'toggles':{'10':'Wine', '90':'Other'},
+                'onchange':'M.ciniki_wineproduction_products.product.updateForm();'},
+                },
             'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
             'status':{'label':'Status', 'type':'toggle', 'toggles':{'10':'Active', '60':'Discontinued'}},
             'start_date':{'label':'Start Date', 'type':'date'},
@@ -225,12 +227,24 @@ function ciniki_wineproduction_products() {
         'supplier':{'label':'', 'aside':'yes', 'fields':{
             'supplier_id':{'label':'Supplier', 'type':'select', 'options':{}, 'complex_options':{'name':'label', 'value':'value'}},
             'supplier_item_number':{'label':'Supplier Item Number', 'type':'text'},
-            'wine_type':{'label':'Wine Type', 'type':'text'},
+            'list_price':{'label':'List Price', 'type':'text', 'size':'small',
+                'onchange':'M.ciniki_wineproduction_products.product.updateForm();',
+                },
+            'list_discount_percent':{'label':'Discount %', 'type':'text', 'size':'small', 
+                'onchange':'M.ciniki_wineproduction_products.product.updateForm();',
+                },
+            'cost':{'label':'Cost', 'type':'text', 'size':'small', 'editable':'no'},
+            'wine_type':{'label':'Wine Type', 'type':'multitoggle', 'none':'yes', 
+                'toggles':{'Red':'Red', 'White':'White', 'Specialty':'Specialty'},
+                },
             'kit_length':{'label':'# Weeks', 'type':'text'},
             }},
         'price':{'label':'', 'aside':'yes', 'fields':{
-            'cost':{'label':'Cost', 'type':'text', 'size':'small'},
-            'unit_amount':{'label':'Unit Amount', 'type':'text', 'size':'small'},
+            // Only visible for Wine types
+            'kit_price_id':{'label':'Kit Price', 'type':'select', 'options':{}},
+            'processing_price_id':{'label':'Processing Price', 'type':'select', 'options':{}},
+            // Visible for Suppliers/Other
+            'unit_amount':{'label':'', 'type':'text', 'size':'small'},
             'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
             'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
             'taxtype_id':{'label':'Taxes', 'type':'select', 'options':{}, 'complex_options':{'name':'name', 'value':'id'}},
@@ -275,6 +289,9 @@ function ciniki_wineproduction_products() {
     this.product.thumbFn = function(s, i, d) {
              return 'M.ciniki_wineproduction_products.product.save("M.ciniki_wineproduction_products.image.open(\'M.ciniki_wineproduction_products.product.open();\',' + d.id + ',M.ciniki_wineproduction_products.product.product_id);");';
     }
+    this.product.updateForm = function() {
+        console.log('cost');
+    }
     this.product.fieldHistoryArgs = function(s, i) {
         return {'method':'ciniki.wineproduction.productHistory', 'args':{'tnid':M.curTenantID, 'product_id':this.product_id, 'field':i}};
     }
@@ -288,7 +305,6 @@ function ciniki_wineproduction_products() {
             }
             var p = M.ciniki_wineproduction_products.product;
             p.data = rsp.product;
-            console.log(rsp.product.images);
             p.sections._tags10.fields.tags10.tags = rsp.tags10;
             p.sections._tags11.fields.tags11.tags = rsp.tags11;
             p.sections._tags12.fields.tags12.tags = rsp.tags12;

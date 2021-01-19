@@ -50,8 +50,11 @@
 # wine_type:                The type of wine, Red, White, Other **note: not sure if needed**
 # kit_length:               The number of weeks the kit needs
 #
-# msrp:                     The MSRP for the kit portion.
+# list_price:               The list price of the kit.
+# list_discount_percent:    The percent discount from the supplier.
 # cost:                     The cost of the kit portion.
+# kit_price_id:             The ID of the kit price.
+# processing_price_id:      The ID of the processing price.
 # unit_amount:              The amount for 1 of this product.
 # unit_discount_amount:     The discount dollar amount for 1 kit.
 # unit_discount_percentage: The percent discount for 1 kit.
@@ -85,7 +88,6 @@ create table ciniki_wineproduction_products (
     wine_type varchar(150) not null,
     kit_length int not null,
 
-    msrp decimal(19,6) not null,
     cost decimal(19,6) not null,
     unit_amount decimal(19,6) not null,
     unit_discount_amount decimal(19,6) not null,

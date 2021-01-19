@@ -29,7 +29,6 @@ function ciniki_wineproduction_objects($ciniki) {
             'supplier_item_number' => array('name'=>'Supplier Item Number', 'default'=>''),
             'wine_type' => array('name'=>'Wine Type', 'default'=>''),
             'kit_length' => array('name'=>'Kit Length', 'default'=>''),
-            'msrp' => array('name'=>'MSRP', 'default'=>''),
             'cost' => array('name'=>'Cost', 'default'=>''),
             'unit_amount' => array('name'=>'Unit Amount', 'default'=>''),
             'unit_discount_amount' => array('name'=>'Discount Amount', 'default'=>''),
