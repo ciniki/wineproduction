@@ -88,7 +88,11 @@ create table ciniki_wineproduction_products (
     wine_type varchar(150) not null,
     kit_length int not null,
 
+    list_price decimal(19,6) not null,
+    list_discount_percent decimal(19,6) not null,
     cost decimal(19,6) not null,
+    kit_price_id int not null,
+    processing_price_id int not null,
     unit_amount decimal(19,6) not null,
     unit_discount_amount decimal(19,6) not null,
     unit_discount_percentage decimal(19,6) not null,

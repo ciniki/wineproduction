@@ -97,7 +97,11 @@ function ciniki_wineproduction_productGet($ciniki) {
             . "ciniki_wineproduction_products.supplier_item_number, "
             . "ciniki_wineproduction_products.wine_type, "
             . "ciniki_wineproduction_products.kit_length, "
+            . "ciniki_wineproduction_products.list_price, "
+            . "ciniki_wineproduction_products.list_discount_percent, "
             . "ciniki_wineproduction_products.cost, "
+            . "ciniki_wineproduction_products.kit_price_id, "
+            . "ciniki_wineproduction_products.processing_price_id, "
             . "ciniki_wineproduction_products.unit_amount, "
             . "ciniki_wineproduction_products.unit_discount_amount, "
             . "ciniki_wineproduction_products.unit_discount_percentage, "
@@ -113,7 +117,12 @@ function ciniki_wineproduction_productGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
             array('container'=>'products', 'fname'=>'id', 
-                'fields'=>array('name', 'permalink', 'ptype', 'flags', 'status', 'start_date', 'end_date', 'supplier_id', 'supplier_item_number', 'wine_type', 'kit_length', 'cost', 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 'inventory_current_num', 'primary_image_id', 'synopsis', 'description'),
+                'fields'=>array('name', 'permalink', 'ptype', 'flags', 'status', 'start_date', 'end_date', 
+                    'supplier_id', 'supplier_item_number', 'wine_type', 'kit_length', 
+                    'list_price', 'list_discount_percent', 'cost', 
+                    'kit_price_id', 'processing_price_id', 
+                    'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 
+                    'inventory_current_num', 'primary_image_id', 'synopsis', 'description'),
                 'utctotz'=>array(
                     'start_date'=>array('format'=>$date_format, 'timezone'=>'UTC'),
                     'end_date'=>array('format'=>$date_format, 'timezone'=>'UTC'),
@@ -128,6 +137,8 @@ function ciniki_wineproduction_productGet($ciniki) {
         }
         $product = $rc['products'][0];
 
+        $product['list_price'] = '$' . number_format($product['list_price'], 2);
+        $product['list_price_percent'] = (float)$product['list_price_percent'] . '%';
         $product['cost'] = '$' . number_format($product['cost'], 2);
         $product['unit_amount'] = '$' . number_format($product['unit_amount'], 2);
         $product['unit_discount_amount'] = '$' . number_format($product['unit_discount_amount'], 2);
@@ -167,7 +178,6 @@ function ciniki_wineproduction_productGet($ciniki) {
             }
         }
 
-        
         //
         // Load the images for the product
         //
@@ -260,6 +270,10 @@ function ciniki_wineproduction_productGet($ciniki) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.107', 'msg'=>'Unable to load ', 'err'=>$rc['err']));
     }
     $rsp['suppliers'] = isset($rc['suppliers']) ? $rc['suppliers'] : array();
+    array_unshift($rsp['suppliers'], array(
+        'value' => 0,
+        'label' => 'No Supplier',
+        ));
 
     //
     // Get the taxtypes

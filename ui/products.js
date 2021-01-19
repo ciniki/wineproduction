@@ -216,12 +216,10 @@ function ciniki_wineproduction_products() {
         'general':{'label':'Product', 'aside':'yes', 'fields':{
             'name':{'label':'Name', 'required':'yes', 'type':'text'},
             'ptype':{'label':'Type', 'type':'toggle', 'toggles':{'10':'Wine', '90':'Other'},
-                'onchange':'M.ciniki_wineproduction_products.product.updateForm();'},
+                'onchange':'M.ciniki_wineproduction_products.product.updateForm();',
                 },
             'flags':{'label':'Options', 'type':'flags', 'flags':{'1':{'name':'Visible'}}},
             'status':{'label':'Status', 'type':'toggle', 'toggles':{'10':'Active', '60':'Discontinued'}},
-            'start_date':{'label':'Start Date', 'type':'date'},
-            'end_date':{'label':'End Date', 'type':'date'},
             'inventory_current_num':{'label':'Inventory', 'type':'text', 'size':'small'},
             }},
         'supplier':{'label':'', 'aside':'yes', 'fields':{
@@ -244,7 +242,7 @@ function ciniki_wineproduction_products() {
             'kit_price_id':{'label':'Kit Price', 'type':'select', 'options':{}},
             'processing_price_id':{'label':'Processing Price', 'type':'select', 'options':{}},
             // Visible for Suppliers/Other
-            'unit_amount':{'label':'', 'type':'text', 'size':'small'},
+            'unit_amount':{'label':'', 'type':'text', 'size':'small', 'editable':'no'},
             'unit_discount_amount':{'label':'Discount Amount', 'type':'text', 'size':'small'},
             'unit_discount_percentage':{'label':'Discount Percent', 'type':'text', 'size':'small'},
             'taxtype_id':{'label':'Taxes', 'type':'select', 'options':{}, 'complex_options':{'name':'name', 'value':'id'}},
