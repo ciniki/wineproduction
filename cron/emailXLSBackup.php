@@ -54,7 +54,7 @@ function ciniki_wineproduction_emailXLSBackup($ciniki, $cronjob) {
     $objPHPExcel = new PHPExcel();
 
     $strsql = "SELECT ciniki_wineproductions.id, CONCAT_WS(' ', first, last) AS customer_name, invoice_number, "
-        . "ciniki_wineproduction_products.name AS wine_name, wine_type, kit_length, ciniki_wineproductions.status, colour_tag, rack_colour, filter_colour, "
+        . "ciniki_wineproduction_products.name AS wine_name, ciniki_wineproduction_products.wine_type, ciniki_wineproduction_products.kit_length, ciniki_wineproductions.status, colour_tag, rack_colour, filter_colour, "
         . "order_flags, "
         . "IFNULL(DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS order_date, "
         . "IFNULL(DATE_FORMAT(start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS start_date, "

@@ -138,7 +138,7 @@ function ciniki_wineproduction_productGet($ciniki) {
         $product = $rc['products'][0];
 
         $product['list_price'] = '$' . number_format($product['list_price'], 2);
-        $product['list_price_percent'] = (float)$product['list_price_percent'] . '%';
+        $product['list_discount_percent'] = (float)$product['list_discount_percent'] . '%';
         $product['cost'] = '$' . number_format($product['cost'], 2);
         $product['unit_amount'] = '$' . number_format($product['unit_amount'], 2);
         $product['unit_discount_amount'] = '$' . number_format($product['unit_discount_amount'], 2);
@@ -273,6 +273,56 @@ function ciniki_wineproduction_productGet($ciniki) {
     array_unshift($rsp['suppliers'], array(
         'value' => 0,
         'label' => 'No Supplier',
+        ));
+
+    //
+    // Get the list of kit prices
+    //
+    $strsql = "SELECT id, name, unit_amount "
+        . "FROM ciniki_wineproduction_product_pricing "
+        . "WHERE price_type = 10 "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "ORDER BY sequence, name, unit_amount "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'prices', 'fname'=>'id', 'fields'=>array('id', 'name', 'unit_amount')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.140', 'msg'=>'Unable to load prices', 'err'=>$rc['err']));
+    }
+    $rsp['kit_prices'] = isset($rc['prices']) ? $rc['prices'] : array();
+    foreach($rsp['kit_prices'] as $pid => $price) {
+        $rsp['kit_prices'][$pid]['label'] = $price['name'] . ' ($' . number_format($price['unit_amount'], 2) . ')';
+    }
+    array_unshift($rsp['kit_prices'], array(
+        'id' => 0,
+        'label' => 'No Pricing',
+        ));
+
+    //
+    // Get the list of processing prices
+    //
+    $strsql = "SELECT id, name, unit_amount "
+        . "FROM ciniki_wineproduction_product_pricing "
+        . "WHERE price_type = 20 "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "ORDER BY sequence, name, unit_amount "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'prices', 'fname'=>'id', 'fields'=>array('id', 'name', 'unit_amount')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.140', 'msg'=>'Unable to load prices', 'err'=>$rc['err']));
+    }
+    $rsp['processing_prices'] = isset($rc['prices']) ? $rc['prices'] : array();
+    foreach($rsp['processing_prices'] as $pid => $price) {
+        $rsp['processing_prices'][$pid]['label'] = $price['name'] . ' ($' . number_format($price['unit_amount'], 2) . ')';
+    }
+    array_unshift($rsp['processing_prices'], array(
+        'id' => 0,
+        'label' => 'No Pricing',
         ));
 
     //

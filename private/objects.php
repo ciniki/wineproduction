@@ -45,6 +45,20 @@ function ciniki_wineproduction_objects($ciniki) {
             ),
         'history_table' => 'ciniki_wineproduction_history',
         );
+    $objects['productprice'] = array(
+        'name' => 'Price',
+        'sync' => 'yes',
+        'o_name' => 'price',
+        'o_container' => 'prices',
+        'table' => 'ciniki_wineproduction_product_pricing',
+        'fields' => array(
+            'price_type' => array('name'=>'Type'),
+            'name' => array('name'=>'Name'),
+            'sequence' => array('name'=>'Order', 'default'=>''),
+            'unit_amount' => array('name'=>'Price', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
     $objects['productimage'] = array(
         'name' => 'Product Image',
         'sync' => 'yes',

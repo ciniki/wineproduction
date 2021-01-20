@@ -27,6 +27,7 @@ function ciniki_wineproduction_products($ciniki) {
         'tag14'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Body'),
         'tag15'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Sweetness'),
         'supplier_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier'),
+        'list'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'List'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -51,6 +52,16 @@ function ciniki_wineproduction_products($ciniki) {
         return $rc;
     }
     $maps = $rc['maps'];
+
+    //
+    // Load the tax types
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'taxes', 'hooks', 'taxTypesRates');
+    $rc = ciniki_taxes_hooks_taxTypesRates($ciniki, $args['tnid'], array());
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.141', 'msg'=>'Unable to get tax rates', 'err'=>$rc['err']));
+    }
+    $tax_types = isset($rc['types']) ? $rc['types'] : array();
 
     //
     // Get the tags
@@ -129,13 +140,20 @@ function ciniki_wineproduction_products($ciniki) {
         . "products.supplier_item_number, "
         . "products.wine_type, "
         . "products.kit_length, "
+        . "products.list_price, "
+        . "products.list_discount_percent, "
         . "products.cost, "
+        . "IFNULL(kit_pricing.unit_amount, 0) AS kit_unit_amount, "
+        . "IFNULL(processing_pricing.unit_amount, 0) AS processing_unit_amount, "
+        . "products.unit_amount, "
         . "products.unit_amount, "
         . "products.unit_discount_amount, "
         . "products.unit_discount_percentage, "
         . "products.taxtype_id, "
         . "products.inventory_current_num, "
+        . "products.primary_image_id, "
         . "products.synopsis, "
+        . "products.last_updated, "
         . "categories.tag_name AS categories, "
         . "subcategories.tag_name AS subcategories, "
         . "suppliers.name AS supplier_name "
@@ -161,12 +179,26 @@ function ciniki_wineproduction_products($ciniki) {
         . "AND subcategories.tag_type = 11 "
         . "AND subcategories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . ") ";
+//    if( isset($args['list']) && $args['list'] == 'pricing' ) {
+        $strsql .= "LEFT JOIN ciniki_wineproduction_product_pricing AS kit_pricing ON ("
+            . "products.kit_price_id = kit_pricing.id "
+            . "AND kit_pricing.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") ";
+//    }
+//    if( isset($args['list']) && $args['list'] == 'pricing' ) {
+        $strsql .= "LEFT JOIN ciniki_wineproduction_product_pricing AS processing_pricing ON ("
+            . "products.processing_price_id = processing_pricing.id "
+            . "AND processing_pricing.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") ";
+//    }
     $strsql .= "LEFT JOIN ciniki_wineproduction_suppliers AS suppliers ON ("
         . "products.supplier_id = suppliers.id "
         . "AND suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . ") ";
     $strsql .= "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' ";
     if( isset($args['tag10']) && $args['tag10'] == 'discontinued' ) {
+        $strsql .= "AND products.status = 60 ";
+    } elseif( isset($args['list']) && $args['list'] == 'discontinued' ) {
         $strsql .= "AND products.status = 60 ";
     } else {
         $strsql .= "AND products.status < 60 ";
@@ -184,9 +216,11 @@ function ciniki_wineproduction_products($ciniki) {
             'fields'=>array('id', 'name', 'permalink', 'ptype', 'flags', 'status', 'start_date', 'end_date', 
                 'visible',
                 'supplier_id', 'supplier_item_number', 
-                'wine_type', 'kit_length', 'cost', 
+                'wine_type', 'kit_length', 'list_price', 'list_discount_percent', 'cost', 
+                'kit_unit_amount', 'processing_unit_amount',
                 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 
-                'inventory_current_num', 'synopsis', 'categories', 'subcategories', 'supplier_name'),
+                'inventory_current_num', 'primary_image_id', 'synopsis', 'categories', 'subcategories', 'supplier_name',
+                'last_updated'),
             'maps'=>array(
                 'status_text'=>$maps['product']['status'],
                 ),
@@ -202,8 +236,49 @@ function ciniki_wineproduction_products($ciniki) {
     if( isset($rc['products']) ) {
         $products = $rc['products'];
         $product_ids = array();
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadThumbnail');
         foreach($products as $iid => $product) {
+            if( isset($args['list']) && $args['list'] == 'website' && $product['primary_image_id'] > 0 ) {
+                $rc = ciniki_images_hooks_loadThumbnail($ciniki, $args['tnid'], 
+                    array('image_id'=>$product['primary_image_id'], 'maxlength'=>75, 'last_updated'=>$product['last_updated']));
+                if( $rc['stat'] != 'ok' ) {
+                    return $rc;
+                }
+                $products[$iid]['image'] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
+            }
+            $products[$iid]['list_price_display'] = '$' . number_format($product['list_price'], 2);
+            $products[$iid]['list_discount_percent_display'] = (float)$product['list_discount_percent'] . '%';
+            $products[$iid]['cost_display'] = '$' . number_format($product['cost'], 2);
+
+            if( $product['ptype'] == 10 ) {
+                $products[$iid]['kit_price_display'] = '$' . number_format($product['kit_unit_amount'], 2);
+                $products[$iid]['processing_price_display'] = '$' . number_format($product['processing_unit_amount'], 2);
+            } else {
+                $products[$iid]['kit_price_display'] = '';
+                $products[$iid]['processing_price_display'] = '';
+            }
             $products[$iid]['unit_amount_display'] = '$' . number_format($product['unit_amount'], 2);
+            $products[$iid]['unit_discount_amount_display'] = '$' . number_format($product['unit_discount_amount'], 2);
+            $products[$iid]['unit_discount_percentage_display'] = (float)$product['unit_discount_percentage'] . '%';
+            $total = $product['unit_amount'] - $product['unit_discount_amount'];
+            if( $product['unit_discount_percentage'] > 0 ) {
+                $total = $total - ($total * ($product['unit_discount_percentage']/100));
+            }
+            $products[$iid]['tax_amount'] = 0;
+            if( isset($tax_types[$product['taxtype_id']]['rates']) ) {
+                foreach($tax_types[$product['taxtype_id']]['rates'] as $rate) {
+                    if( $rate['item_percentage'] > 0 ) {
+                        if( $product['ptype'] == 10 ) {
+                            $products[$iid]['tax_amount'] += ($product['processing_unit_amount'] * ($rate['item_percentage']/100));
+                        } else {
+                            $products[$iid]['tax_amount'] += ($product['unit_amount'] * ($rate['item_percentage']/100));
+                        }
+                    }
+                }
+            }
+            $total += $products[$iid]['tax_amount'];
+            $products[$iid]['total_display'] = '$' . number_format($total, 2);
+            $products[$iid]['tax_amount_display'] = '$' . number_format($products[$iid]['tax_amount'], 2);
             $product_ids[] = $product['id'];
         }
     } else {

@@ -52,6 +52,24 @@ function ciniki_wineproduction_productUpdate(&$ciniki) {
         return $rc;
     }
     $args = $rc['args'];
+    if( isset($args['list_price']) ) {
+        $args['list_price'] = preg_replace("/[^0-9\.]/", "", $args['list_price']);
+    }
+    if( isset($args['list_discount_percent']) ) {
+        $args['list_discount_percent'] = preg_replace("/[^0-9\.]/", "", $args['list_discount_percent']);
+    }
+    if( isset($args['cost']) ) {
+        $args['cost'] = preg_replace("/[^0-9\.]/", "", $args['cost']);
+    }
+    if( isset($args['unit_amount']) ) {
+        $args['unit_amount'] = preg_replace("/[^0-9\.]/", "", $args['unit_amount']);
+    }
+    if( isset($args['unit_discount_amount']) ) {
+        $args['unit_discount_amount'] = preg_replace("/[^0-9\.]/", "", $args['unit_discount_amount']);
+    }
+    if( isset($args['unit_discount_percentage']) ) {
+        $args['unit_discount_percentage'] = preg_replace("/[^0-9\.]/", "", $args['unit_discount_percentage']);
+    }
 
     //
     // Make sure this module is activated, and
@@ -117,6 +135,15 @@ function ciniki_wineproduction_productUpdate(&$ciniki) {
                 return $rc;
             }
         }
+    }
+    
+    //
+    // Update the pricing
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'productPricingUpdate');
+    $rc = ciniki_wineproduction_productPricingUpdate($ciniki, $args['tnid'], array('product_id'=>$args['product_id']));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.139', 'msg'=>'Unable to update pricing', 'err'=>$rc['err']));
     }
 
     //

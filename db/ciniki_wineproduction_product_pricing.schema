@@ -1,0 +1,39 @@
+#
+# Description
+# -----------
+#
+# Fields
+# ------
+# id:               The unique id number for each category in the database.
+# uuid:             The Universal Unique ID.
+# tnid:             The tenant the product category is attached to.  
+#
+# price_type:           The type of:
+#                           10 - Kit Price
+#                           20 - Processing Price
+#
+# name:                 The name to be used for display on the website, overrides the tag_name.
+#
+# sequence:             The order to display the category or subcategories in.
+#
+# unit_amount:          The price to the charged to the customer.
+#
+# date_added:           The UTC date and time the record was added to the database.
+# last_updated:         The UTC date and time of the last update.
+#
+create table ciniki_wineproduction_product_pricing (
+    id int not null auto_increment,
+    uuid char(36) not null,
+    tnid int not null,
+
+    price_type int not null,
+    name varchar(150) not null,
+    sequence tinyint unsigned not null,
+    unit_amount decimal(19,6) not null,
+
+    date_added datetime not null,
+    last_updated datetime not null,
+    primary key (id),
+    unique index (tnid, price_type, name),
+    index sync (tnid, uuid, last_updated)
+) ENGINE='InnoDB', COMMENT='v1.01';

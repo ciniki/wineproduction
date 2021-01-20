@@ -58,6 +58,26 @@ function ciniki_wineproduction_hooks_checkObjectUsed($ciniki, $tnid, $args) {
         }
     }
 
+    if( $args['object'] == 'ciniki.taxes.type' ) {
+        //
+        // Check the wineproductions
+        //
+        $strsql = "SELECT 'items', COUNT(*) "
+            . "FROM ciniki_wineproduction_products "
+            . "WHERE taxtype_id = '" . ciniki_core_dbQuote($ciniki, $args['object_id']) . "' "
+            . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
+            . "";
+        $rc = ciniki_core_dbCount($ciniki, $strsql, 'ciniki.sapos', 'num');
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        if( isset($rc['num']['items']) && $rc['num']['items'] > 0 ) {
+            $used = 'yes';
+            $count = $rc['num']['items'];
+            $msg .= ($msg!=''?' ':'') . "There " . ($count==1?'is':'are') . " $count product" . ($count==1?'':'s') . " for this tax type.";
+        }
+    }
+
     return array('stat'=>'ok', 'used'=>$used, 'count'=>$count, 'msg'=>$msg);
 }
 ?>
