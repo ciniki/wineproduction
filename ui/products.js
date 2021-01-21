@@ -341,6 +341,12 @@ function ciniki_wineproduction_products() {
             'addTxt':'Add Image',
             'addFn':'M.ciniki_wineproduction_products.product.save("M.ciniki_wineproduction_products.image.open(\'M.ciniki_wineproduction_products.product.open();\',0,M.ciniki_wineproduction_products.product.product_id);");',
             },
+        'files':{'label':'Files', 'type':'simplegrid', 'num_cols':1, 'panelcolumn':2,
+            'headerValues':null,
+            'cellClasses':['multiline'],
+            'addTxt':'Add File',
+            'addFn':'M.ciniki_wineproduction_products.product.save("M.ciniki_wineproduction_products.addfile.open(\'M.ciniki_wineproduction_products.product.open();\',M.ciniki_wineproduction_products.product.product_id);");',
+            },
         '_buttons':{'label':'', 'panelcolumn':2, 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_wineproduction_products.product.save();'},
             'delete':{'label':'Delete', 
@@ -410,6 +416,12 @@ function ciniki_wineproduction_products() {
     }
     this.product.fieldHistoryArgs = function(s, i) {
         return {'method':'ciniki.wineproduction.productHistory', 'args':{'tnid':M.curTenantID, 'product_id':this.product_id, 'field':i}};
+    }
+    this.product.cellValue = function(s, i, j, d) {
+        return d.name;
+    }
+    this.product.rowFn = function(s, i, d) {
+        return 'M.ciniki_wineproduction_products.product.save("M.ciniki_wineproduction_products.editfile.open(\'M.ciniki_wineproduction_products.product.open();\',\'' + d.id + '\',M.ciniki_wineproduction_products.product.product_id);");';
     }
     this.product.open = function(cb, pid, list) {
         if( pid != null ) { this.product_id = pid; }
@@ -951,6 +963,131 @@ function ciniki_wineproduction_products() {
     this.price.addButton('next', 'Next');
     this.price.addLeftButton('prev', 'Prev');
 
+    //
+    // The panel to display the add form
+    //
+    this.addfile = new M.panel('Add File',
+        'ciniki_wineproduction_products', 'addfile',
+        'mc', 'medium', 'sectioned', 'ciniki.wineproduction.products.files');
+    this.addfile.data = {}; 
+    this.addfile.sections = {
+        '_file':{'label':'File', 'fields':{
+            'uploadfile':{'label':'', 'type':'file', 'hidelabel':'yes'},
+        }},
+        'info':{'label':'Information', 'type':'simpleform', 'fields':{
+            'name':{'label':'Title', 'type':'text'},
+            'webflags':{'label':'Website', 'type':'flags', 'default':'1', 'flags':{'1':{'name':'Visible'}}},
+        }},
+        '_save':{'label':'', 'buttons':{
+            'save':{'label':'Save', 'fn':'M.ciniki_wineproduction_products.addfile.save();'},
+        }},
+    };
+//    this.addfile.fieldValue = function(s, i, d) { 
+//        if( this.data[i] != null ) {
+//            return this.data[i]; 
+//        } 
+//        return ''; 
+//    };
+    this.addfile.open = function(cb, pid) {
+        this.product_id = pid;
+        this.reset();
+        this.file_id = 0;
+        this.data = {'name':''};
+        this.refresh();
+        this.show(cb);
+    }
+    this.addfile.save = function() {
+        var c = this.serializeFormData('yes');
+
+        if( c != '' ) {
+            M.api.postJSONFormData('ciniki.wineproduction.productFileAdd', {'tnid':M.curTenantID, 'product_id':this.product_id}, c,
+                function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_wineproduction_products.addfile.close();
+                });
+        } else {
+            M.ciniki_wineproduction_products.addfile.close();
+        }
+    };
+    this.addfile.addButton('save', 'Save', 'M.ciniki_wineproduction_products.addfile.save();');
+    this.addfile.addClose('Cancel');
+
+    //
+    // The panel to display the edit form
+    //
+    this.editfile = new M.panel('File',
+        'ciniki_wineproduction_products', 'editfile',
+        'mc', 'medium', 'sectioned', 'ciniki.wineproduction.products.editfile');
+    this.editfile.file_id = 0;
+    this.editfile.data = null;
+    this.editfile.sections = {
+        'info':{'label':'Details', 'type':'simpleform', 'fields':{
+            'name':{'label':'Title', 'type':'text'},
+            'webflags':{'label':'Website', 'type':'flags', 'default':'1', 'flags':{'1':{'name':'Visible'}}},
+        }},
+        '_save':{'label':'', 'buttons':{
+            'save':{'label':'Save', 'fn':'M.ciniki_wineproduction_products.editfile.save();'},
+            'download':{'label':'Download', 'fn':'M.ciniki_wineproduction_products.editfile.download();'},
+            'delete':{'label':'Delete', 'fn':'M.ciniki_wineproduction_products.editfile.remove();'},
+        }},
+    };
+//    this.editfile.fieldValue = function(s, i, d) { 
+//        return this.data[i]; 
+//    }
+    this.editfile.sectionData = function(s) {
+        return this.data[s];
+    };
+    this.editfile.fieldHistoryArgs = function(s, i) {
+        return {'method':'ciniki.wineproduction.productFileHistory', 'args':{'tnid':M.curTenantID, 
+            'file_id':this.file_id, 'field':i}};
+    };
+    this.editfile.open = function(cb, fid) {
+        if( fid != null ) { this.file_id = fid; }
+        var rsp = M.api.getJSONCb('ciniki.wineproduction.productFileGet', {'tnid':M.curTenantID, 
+            'file_id':this.file_id}, function(rsp) {
+                if( rsp.stat != 'ok' ) {
+                    M.api.err(rsp);
+                    return false;
+                }
+                M.ciniki_wineproduction_products.editfile.data = rsp.file;
+                M.ciniki_wineproduction_products.editfile.refresh();
+                M.ciniki_wineproduction_products.editfile.show(cb);
+            });
+    };
+    this.editfile.save = function() {
+        var c = this.serializeFormData('no');
+        if( c != '' ) {
+            M.api.postJSONFormData('ciniki.wineproduction.productFileUpdate', {'tnid':M.curTenantID, 'file_id':this.file_id}, c,
+                    function(rsp) {
+                        if( rsp.stat != 'ok' ) {
+                            M.api.err(rsp);
+                            return false;
+                        } else {
+                            M.ciniki_wineproduction_products.editfile.close();
+                        }
+                    });
+        }
+    };
+    this.editfile.remove = function() {
+        M.confirm('Are you sure you want to delete \'' + this.data.name + '\'?  All information about it will be removed and unrecoverable.',null,function() {
+            M.api.getJSONCb('ciniki.wineproduction.productFileDelete', {'tnid':M.curTenantID, 
+                'file_id':M.ciniki_wineproduction_products.editfile.file_id}, function(rsp) {
+                    if( rsp.stat != 'ok' ) {
+                        M.api.err(rsp);
+                        return false;
+                    } 
+                    M.ciniki_wineproduction_products.editfile.close();
+                });
+        });
+    };
+    this.editfile.download = function() {
+        M.api.openFile('ciniki.wineproduction.productFileDownload', {'tnid':M.curTenantID, 'file_id':this.file_id});
+    };
+    this.editfile.addButton('save', 'Save', 'M.ciniki_wineproduction_products.editfile.save();');
+    this.editfile.addClose('Cancel');
     //
     // Arguments:
     // aG - The arguments to be parsed into args

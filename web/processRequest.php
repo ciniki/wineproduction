@@ -42,8 +42,8 @@ function ciniki_wineproduction_web_processRequest(&$ciniki, $settings, $tnid, $a
         && isset($args['uri_split'][$num_uri-3]) && $args['uri_split'][$num_uri-3] != ''
         && isset($args['uri_split'][$num_uri-2]) && $args['uri_split'][$num_uri-2] == 'download'
         && isset($args['uri_split'][$num_uri-1]) && $args['uri_split'][$num_uri-1] != '' ) {
-        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'web', 'fileDownload');
-        $rc = ciniki_wineproduction_web_fileDownload($ciniki, $ciniki['request']['tnid'], 
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'web', 'productFileDownload');
+        $rc = ciniki_wineproduction_web_productFileDownload($ciniki, $ciniki['request']['tnid'], 
             $ciniki['request']['uri_split'][$num_uri-3], $ciniki['request']['uri_split'][$num_uri-1]);
         if( $rc['stat'] == 'ok' ) {
             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");

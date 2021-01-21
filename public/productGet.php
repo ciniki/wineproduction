@@ -214,6 +214,22 @@ function ciniki_wineproduction_productGet($ciniki) {
         } else {
             $product['images'] = array();
         }
+
+        //
+        // Load the files for a product
+        //
+        $strsql = "SELECT id, name, extension, permalink "
+            . "FROM ciniki_wineproduction_product_files "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+            array('container'=>'files', 'fname'=>'id', 'fields'=>array('id', 'name', 'extension', 'permalink')),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return $rc;
+        }
+        $product['files'] = isset($rc['files']) ? $rc['files'] : array();
     }
 
     $rsp = array('stat'=>'ok', 'product'=>$product);

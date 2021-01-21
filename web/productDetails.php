@@ -119,7 +119,7 @@ function ciniki_wineproduction_web_productDetails($ciniki, $settings, $tnid, $ar
     //
     // Check if any files are attached to the product
     //
-/*    $strsql = "SELECT id, name, extension, permalink, description "
+    $strsql = "SELECT id, name, extension, permalink, description "
         . "FROM ciniki_wineproduction_product_files "
         . "WHERE ciniki_wineproduction_product_files.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND ciniki_wineproduction_product_files.product_id = '" . ciniki_core_dbQuote($ciniki, $product['id']) . "' "
@@ -135,7 +135,7 @@ function ciniki_wineproduction_web_productDetails($ciniki, $settings, $tnid, $ar
     if( isset($rc['files']) ) {
         $product['files'] = $rc['files'];
     }
-*/
+
     //
     // Check if any similar products
     //
