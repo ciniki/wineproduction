@@ -287,6 +287,31 @@ function ciniki_wineproduction_products($ciniki) {
     }
 
     //
+    // Get the list of open purchase orders if supplier is requested
+    //
+    $strsql = "SELECT orders.id, "
+        . "suppliers.name, "
+        . "orders.po_number, "
+        . "orders.date_ordered "
+        . "FROM ciniki_wineproduction_purchaseorders AS orders "
+        . "LEFT JOIN ciniki_wineproduction_suppliers AS suppliers ON ("
+            . "orders.supplier_id = suppliers.id "
+            . "AND suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "WHERE orders.status < 90 "
+        . "AND orders.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "";
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+    $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'orders', 'fname'=>'id', 
+            'fields'=>array('id', 'name', 'po_number', 'date_ordered')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.167', 'msg'=>'Unable to load orders', 'err'=>$rc['err']));
+    }
+    $purchaseorders = isset($rc['orders']) ? $rc['orders'] : array();
+
+    //
     // Get the list of suppliers
     //
     $strsql = "SELECT suppliers.id, suppliers.name, COUNT(products.id) AS num_items "
@@ -341,6 +366,7 @@ function ciniki_wineproduction_products($ciniki) {
         'tags15'=>$tags15, 
         'tags15'=>$tags15, 
         'suppliers'=>$suppliers, 
+        'purchaseorders'=>$purchaseorders, 
         'nplist'=>$product_ids,
         );
 

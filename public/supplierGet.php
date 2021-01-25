@@ -60,6 +60,8 @@ function ciniki_wineproduction_supplierGet($ciniki) {
         $supplier = array('id'=>0,
             'name'=>'',
             'supplier_tnid'=>'',
+            'po_name_address'=>'',
+            'po_email'=>'',
         );
     }
 
@@ -69,7 +71,9 @@ function ciniki_wineproduction_supplierGet($ciniki) {
     else {
         $strsql = "SELECT ciniki_wineproduction_suppliers.id, "
             . "ciniki_wineproduction_suppliers.name, "
-            . "ciniki_wineproduction_suppliers.supplier_tnid "
+            . "ciniki_wineproduction_suppliers.supplier_tnid, "
+            . "ciniki_wineproduction_suppliers.po_name_address, "
+            . "ciniki_wineproduction_suppliers.po_email "
             . "FROM ciniki_wineproduction_suppliers "
             . "WHERE ciniki_wineproduction_suppliers.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
             . "AND ciniki_wineproduction_suppliers.id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
@@ -77,7 +81,7 @@ function ciniki_wineproduction_supplierGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
             array('container'=>'suppliers', 'fname'=>'id', 
-                'fields'=>array('name', 'supplier_tnid'),
+                'fields'=>array('name', 'supplier_tnid', 'po_name_address', 'po_email'),
                 ),
             ));
         if( $rc['stat'] != 'ok' ) {

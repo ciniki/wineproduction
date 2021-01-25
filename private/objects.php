@@ -135,7 +135,42 @@ function ciniki_wineproduction_objects($ciniki) {
         'table' => 'ciniki_wineproduction_suppliers',
         'fields' => array(
             'name' => array('name'=>'Name'),
-            'supplier_tnid' => array('name'=>'', 'default'=>''),
+            'supplier_tnid' => array('name'=>'Supplier Tenant ID', 'default'=>''),
+            'po_name_address' => array('name'=>'Purchase Order Name/Address', 'default'=>''),
+            'po_email' => array('name'=>'Purchase Order Email Address', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['purchaseorder'] = array(
+        'name' => 'Purchase Order',
+        'sync' => 'yes',
+        'o_name' => 'purchaseorder',
+        'o_container' => 'purchaseorders',
+        'table' => 'ciniki_wineproduction_purchaseorders',
+        'fields' => array(
+            'supplier_id' => array('name'=>'Supplier', 'ref'=>'ciniki.wineproduction.supplier'),
+            'po_number' => array('name'=>'PO Number'),
+            'status' => array('name'=>'Status', 'default'=>'10'),
+            'date_ordered' => array('name'=>'Date Ordered', 'default'=>''),
+            'date_received' => array('name'=>'Date Received', 'default'=>''),
+            'notes' => array('name'=>'Notes', 'default'=>''),
+            ),
+        'history_table' => 'ciniki_wineproduction_history',
+        );
+    $objects['purchaseorderitem'] = array(
+        'name' => 'Purchase Order Item',
+        'sync' => 'yes',
+        'o_name' => 'item',
+        'o_container' => 'items',
+        'table' => 'ciniki_wineproduction_purchaseorder_items',
+        'fields' => array(
+            'order_id' => array('name'=>'Order', 'ref'=>'ciniki.wineproduction.purchaseorder'),
+            'product_id' => array('name'=>'Product', 'ref'=>'ciniki.wineproduction.product', 'default'=>'0'),
+            'description' => array('name'=>'Description', 'default'=>''),
+            'quantity_ordered' => array('name'=>'Quantity Ordered', 'default'=>''),
+            'quantity_received' => array('name'=>'Quantity Received', 'default'=>''),
+            'unit_amount' => array('name'=>'Price', 'default'=>''),
+            'taxtype_id' => array('name'=>'Tax Type', 'ref'=>'ciniki.taxes.type', 'default'=>'0'),
             ),
         'history_table' => 'ciniki_wineproduction_history',
         );

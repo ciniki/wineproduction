@@ -125,6 +125,14 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
         ) {
         $rsp['settings_menu_items'][] = array('priority'=>3900, 'label'=>'Production Notifications', 'edit'=>array('app'=>'ciniki.wineproduction.notifications'));
     }
+    if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && (isset($args['permissions']['owners'])
+            || isset($args['permissions']['resellers'])
+            || ($ciniki['session']['user']['perms']&0x01) == 0x01
+            )
+        ) {
+        $rsp['settings_menu_items'][] = array('priority'=>3800, 'label'=>'Purchase Orders', 'edit'=>array('app'=>'ciniki.wineproduction.settings', 'args'=>array('purchaseorders'=>"'\'yes\''")));
+    }
 
     return $rsp;
 }

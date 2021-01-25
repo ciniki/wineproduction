@@ -290,6 +290,9 @@ function ciniki_wineproduction_settingsUpdate(&$ciniki) {
         'order.flags.12.name',
         'order.flags.12.colour',
         'order.flags.12.fontcolour',
+        'purchaseorder-header-image',
+        'purchaseorder-name-address',
+        'purchaseorder-bottom-message',
         );
     //
     // Check each valid setting and see if a new value was passed in the arguments for it.

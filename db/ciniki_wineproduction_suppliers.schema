@@ -19,6 +19,9 @@ create table ciniki_wineproduction_suppliers (
     name varchar(250) not null,
     supplier_tnid int not null, 
 
+    po_name_address varchar(1000) not null,
+    po_email varchar(250) not null,
+
     date_added datetime not null,
     last_updated datetime not null,
     primary key (id),

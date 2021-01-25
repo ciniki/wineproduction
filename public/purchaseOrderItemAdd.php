@@ -1,26 +1,32 @@
 <?php
 //
 // Description
-// ===========
+// -----------
+// This method will add a new purchase order item for the tenant.
 //
 // Arguments
 // ---------
+// api_key:
+// auth_token:
+// tnid:        The ID of the tenant to add the Purchase Order Item to.
 //
 // Returns
 // -------
 //
-function ciniki_wineproduction_supplierUpdate(&$ciniki) {
+function ciniki_wineproduction_purchaseOrderItemAdd(&$ciniki) {
     //
     // Find all the required and optional arguments
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'prepareArgs');
     $rc = ciniki_core_prepareArgs($ciniki, 'no', array(
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
-        'supplier_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Supplier'),
-        'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
-        'supplier_tnid'=>array('required'=>'no', 'blank'=>'yes', 'name'=>''),
-        'po_name_address'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'PO Name Address'),
-        'po_email'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'PO Email'),
+        'order_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'),
+        'product_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Product'),
+        'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'),
+        'quantity_ordered'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Quantity Ordered'),
+        'quantity_received'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Quantity Received'),
+        'unit_amount'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'number', 'name'=>'Price'),
+        'taxtype_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Tax Type'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -28,11 +34,10 @@ function ciniki_wineproduction_supplierUpdate(&$ciniki) {
     $args = $rc['args'];
 
     //
-    // Make sure this module is activated, and
-    // check permission to run this function for this tenant
+    // Check access to tnid as owner
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.supplierUpdate');
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.purchaseOrderItemAdd');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
@@ -50,14 +55,15 @@ function ciniki_wineproduction_supplierUpdate(&$ciniki) {
     }
 
     //
-    // Update the Supplier in the database
+    // Add the purchase order item to the database
     //
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
-    $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.wineproduction.supplier', $args['supplier_id'], $args, 0x04);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+    $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.wineproduction.purchaseorderitem', $args, 0x04);
     if( $rc['stat'] != 'ok' ) {
         ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
         return $rc;
     }
+    $item_id = $rc['id'];
 
     //
     // Commit the transaction
@@ -78,8 +84,8 @@ function ciniki_wineproduction_supplierUpdate(&$ciniki) {
     // Update the web index if enabled
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'hookExec');
-    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.wineproduction.supplier', 'object_id'=>$args['supplier_id']));
+    ciniki_core_hookExec($ciniki, $args['tnid'], 'ciniki', 'web', 'indexObject', array('object'=>'ciniki.wineproduction.purchaseOrderItem', 'object_id'=>$item_id));
 
-    return array('stat'=>'ok');
+    return array('stat'=>'ok', 'id'=>$item_id);
 }
 ?>

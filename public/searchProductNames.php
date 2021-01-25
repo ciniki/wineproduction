@@ -71,8 +71,8 @@ function ciniki_wineproduction_searchProductNames($ciniki) {
     //
     else if( $args['start_needle'] != '' ) {
         $strsql = "SELECT ciniki_wineproduction_products.id, ciniki_wineproduction_products.name AS wine_name, "
-            . "wine_type, "
-            . "kit_length, "
+            . "ciniki_wineproduction_products.wine_type, "
+            . "ciniki_wineproduction_products.kit_length, "
             . "0 AS order_flags "
             . "FROM ciniki_wineproduction_products "
             . "WHERE ciniki_wineproduction_products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "

@@ -23,6 +23,14 @@ function ciniki_wineproduction_maps(&$ciniki) {
             '60'=>'Discontinued',
             ),
         );
+    $maps['purchaseorder'] = array(
+        'status'=>array(
+            '10'=>'Draft',
+            '30'=>'Sent',
+            '50'=>'Received',
+            '90'=>'Closed',
+            ),
+        );
     $maps['wineproduction'] = array(
         'status'=>array(
             '10'=>'Ordered',

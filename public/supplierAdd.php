@@ -22,6 +22,8 @@ function ciniki_wineproduction_supplierAdd(&$ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'name'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Name'),
         'supplier_tnid'=>array('required'=>'no', 'blank'=>'yes', 'name'=>''),
+        'po_name_address'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'PO Name Address'),
+        'po_email'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'PO Email'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
