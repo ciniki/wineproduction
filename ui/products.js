@@ -282,7 +282,7 @@ function ciniki_wineproduction_products() {
     //
     // The panel to edit Product
     //
-    this.product = new M.panel('Product', 'ciniki_wineproduction_products', 'Product', 'mc', 'large mediumaside columns', 'sectioned', 'ciniki.wineproduction.products.product');
+    this.product = new M.panel('Product', 'ciniki_wineproduction_products', 'product', 'mc', 'large mediumaside columns', 'sectioned', 'ciniki.wineproduction.products.product');
     this.product.data = null;
     this.product.product_id = 0;
     this.product.nplist = [];
