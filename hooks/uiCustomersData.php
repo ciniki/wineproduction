@@ -92,6 +92,8 @@ function ciniki_wineproduction_hooks_uiCustomersData($ciniki, $tnid, $args) {
             'multiline aligncenter',
             ),
         'noData' => 'No current orders',
+        'addTxt' => 'Add Order',
+        'addApp'=>array('app'=>'ciniki.wineproduction.main', 'args'=>array('add'=>"'yes'",'customer_id'=>$args['customer_id'])),
         'editApp' => array('app'=>'ciniki.wineproduction.main', 'args'=>array('order_id'=>'d.id;')),
         'cellValues' => array(
             '0' => "M.multiline(d.invoice_number, d.status_text);",

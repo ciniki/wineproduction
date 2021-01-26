@@ -164,7 +164,7 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.95', 'msg'=>'Unable to check for last message sent', 'err'=>$rc['err']));
     }
     $existing_messages = isset($rc['messages']) ? $rc['messages'] : array();
-   
+
     //
     // Check existing messages
     //
@@ -321,7 +321,7 @@ function ciniki_wineproduction_notificationQueueItemProcess(&$ciniki, $tnid, $qu
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectDelete');
         foreach($orders as $order) {
             if( isset($order['queue_id']) && $order['queue_id'] > 0 ) {
-                $rc = ciniki_core_objectDelete($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', $orders['queue_id'], $orders['queue_uuid'], 0x04);
+                $rc = ciniki_core_objectDelete($ciniki, $tnid, 'ciniki.wineproduction.notification_queue', $order['queue_id'], $orders['queue_uuid'], 0x04);
                 if( $rc['stat'] != 'ok' ) {
                     return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.104', 'msg'=>'Unable to remove notification queue item', 'err'=>$rc['err']));
                 }
