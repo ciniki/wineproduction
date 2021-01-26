@@ -122,6 +122,40 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
         $rc = ciniki_core_dbAddModuleHistory($ciniki, 'ciniki.wineproduction', 'ciniki_wineproduction_history', $args['tnid'], 
             2, 'ciniki_wineproductions', $args['wineproduction_id'], 'batch_code', $args['batch_code']);
 
+        //
+        // Get the current number in inventory and decrement by 1
+        //
+        $strsql_inventory = "SELECT orders.id, "
+            . "IFNULL(products.id, 0) AS product_id, "
+            . "IFNULL(products.inventory_current_num, 0) AS inventory_current_num "
+            . "FROM ciniki_wineproductions AS orders "
+            . "LEFT JOIN ciniki_wineproduction_products AS products ON ("
+                . "orders.product_id = products.id "
+                . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                . ") "
+            . "WHERE orders.id = '" . ciniki_core_dbQuote($ciniki, $args['wineproduction_id']) . "' "
+            . "AND orders.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "";
+        $rc = ciniki_core_dbHashQuery($ciniki, $strsql_inventory, 'ciniki.wineproduction', 'product');
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.199', 'msg'=>'Unable to load product', 'err'=>$rc['err']));
+        }
+        if( isset($rc['product']['product_id']) && $rc['product']['product_id'] > 0 
+            && isset($rc['product']['inventory_current_num']) && $rc['product']['inventory_current_num'] > 0 
+            ) {
+            //
+            // Update the inventory
+            //
+            ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
+            $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.wineproduction.product', $rc['product']['product_id'], array(
+                'inventory_current_num' => ($rc['product']['inventory_current_num'] - 1),
+                ), 0x04);
+            if( $rc['stat'] != 'ok' ) {
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.200', 'msg'=>'Unable to update the inventory'));
+            }
+        }
+        
+
         $notification_trigger = 'started';
     } 
 
@@ -229,6 +263,7 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
     if( $strsql != "" ) {
         $rc = ciniki_core_dbUpdate($ciniki, $strsql, 'ciniki.wineproduction');
         if( $rc['stat'] != 'ok' ) { 
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
             return $rc;
         }
     }
