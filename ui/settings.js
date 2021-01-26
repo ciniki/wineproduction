@@ -32,7 +32,7 @@ function ciniki_wineproduction_settings() {
                 'racking.autoschedule.madeonfri':{'label':'Fri', 'type':'integer'},
                 'racking.autoschedule.madeonsat':{'label':'Sat', 'type':'integer'},
             }},
-            'order.flags':{'label':'Order Flags', 'type':'gridform', 'rows':12, 'cols':3,
+            'order.flags':{'label':'Order Options', 'type':'gridform', 'rows':12, 'cols':3,
                 'header':['Flag Name','Background','Font'],
                 'rowhistory':'yes', 'fields':[
                 [   {'id':'order.flags.1.name', 'label':'Name', 'type':'text'},
@@ -84,7 +84,7 @@ function ciniki_wineproduction_settings() {
                     {'id':'order.flags.12.fontcolour', 'label':'Font Colour', 'type':'colour'},
                 ]],
             },
-            'bottling.flags':{'label':'Bottling Flags', 'type':'gridform', 'rows':9, 'cols':3,
+            'bottling.flags':{'label':'Appointment Confirmation', 'type':'gridform', 'rows':9, 'cols':3,
                 'header':['Flag Name','Background','Font'],
                 'rowhistory':'yes', 'fields':[
                 [   {'id':'bottling.flags.0.name', 'label':'Default', 'type':'text'},
@@ -124,7 +124,7 @@ function ciniki_wineproduction_settings() {
                     {'id':'bottling.flags.8.fontcolour', 'label':'Font Colour', 'type':'colour'},
                 ]],
             },
-            'bottling.nocolour.flags':{'label':'Bottling Flags', 'type':'gridform', 'rows':8, 'cols':1,
+            'bottling.nocolour.flags':{'label':'Bottling Options', 'type':'gridform', 'rows':8, 'cols':1,
                 'header':['Flag Name','Background','Font'],
                 'rowhistory':'yes', 'fields':[
                 [{'id':'bottling.nocolour.flags.1.name', 'label':'Name', 'type':'text'}],
@@ -137,7 +137,7 @@ function ciniki_wineproduction_settings() {
                 [{'id':'bottling.nocolour.flags.8.name', 'label':'Name', 'type':'text'}],
                 ],
             },
-            'bottling.status':{'label':'Bottling Status Flags', 'type':'gridform', 'rows':4, 'cols':3,
+            'bottling.status':{'label':'Bottling Status Options', 'type':'gridform', 'rows':4, 'cols':3,
                 'header':['Text', 'Background','Font'],
                 'labels':['Default', 'Reschedule', 'Rush', 'Ready'], 
                 'rowhistory':'yes', 'fields':[
@@ -185,6 +185,7 @@ function ciniki_wineproduction_settings() {
                 ]],
             },
             'racking.autocolour':{'label':'Racking Auto-Colour', 'type':'gridform', 'rows':'3', 'cols':'7', 
+                'visible':function() { return M.modFlagSet('ciniki.wineproduction', 0x01); },
                 'rowhistory':'yes',
                 'sectioncolours':'racking.autocolour',
                 'labels':['Week 1', 'Week 2', 'Week 3', 'Week 4'], 
@@ -227,6 +228,7 @@ function ciniki_wineproduction_settings() {
 //                  ]
                 ]},
             'filtering.autocolour':{'label':'Filtering Auto-Colour', 'type':'gridform', 'rows':'7', 'cols':'7', 
+                'visible':function() { return M.modFlagSet('ciniki.wineproduction', 0x01); },
                 'rowhistory':'yes',
                 'labels':['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13'], 
                 'compact_header':['S','M','T','W','T','F','S'],

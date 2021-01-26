@@ -45,6 +45,7 @@ function ciniki_wineproduction_purchaseOrderItemSearch($ciniki) {
     $strsql = "SELECT ciniki_wineproduction_purchaseorder_items.id, "
         . "ciniki_wineproduction_purchaseorder_items.order_id, "
         . "ciniki_wineproduction_purchaseorder_items.product_id, "
+        . "ciniki_wineproduction_purchaseorder_items.sku, "
         . "ciniki_wineproduction_purchaseorder_items.description, "
         . "ciniki_wineproduction_purchaseorder_items.quantity_ordered, "
         . "ciniki_wineproduction_purchaseorder_items.quantity_received, "
@@ -65,7 +66,7 @@ function ciniki_wineproduction_purchaseOrderItemSearch($ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'items', 'fname'=>'id', 
-            'fields'=>array('id', 'order_id', 'product_id', 'description', 'quantity_ordered', 'quantity_received', 'unit_amount', 'taxtype_id')),
+            'fields'=>array('id', 'order_id', 'product_id', 'sku', 'description', 'quantity_ordered', 'quantity_received', 'unit_amount', 'taxtype_id')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

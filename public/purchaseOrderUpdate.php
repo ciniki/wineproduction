@@ -22,6 +22,7 @@ function ciniki_wineproduction_purchaseOrderUpdate(&$ciniki) {
         'status'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Status'),
         'date_ordered'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Date Ordered'),
         'date_received'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'date', 'name'=>'Date Received'),
+        'notes'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Notes'),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;

@@ -2,7 +2,7 @@ function ciniki_wineproduction_products() {
     //
     // The panel to list the product
     //
-    this.menu = new M.panel('product', 'ciniki_wineproduction_products', 'menu', 'mc', 'xlarge narrowaside', 'sectioned', 'ciniki.wineproduction.products.menu');
+    this.menu = new M.panel('Products', 'ciniki_wineproduction_products', 'menu', 'mc', 'xlarge narrowaside', 'sectioned', 'ciniki.wineproduction.products.menu');
     this.tag10 = '';
     this.tag11 = '';
     this.tag12 = '';
@@ -69,7 +69,7 @@ function ciniki_wineproduction_products() {
 //                return 'M.ciniki_wineproduction_products.supplier.open(\'M.ciniki_wineproduction_products.menu.open();\',\'' + d.id + '\',null);';
 //                },
             'noData':'No Open Purchase Orders',
-            'addTxt':'Add Order',
+            'addTxt':'Add Purchase Order',
             'addFn':'M.ciniki_wineproduction_products.purchaseorder.open(\'M.ciniki_wineproduction_products.menu.open();\',0,M.ciniki_wineproduction_products.menu.supplier_id,null);'
             },
         '_buttons':{'label':'', 'aside':'yes', 
@@ -143,17 +143,18 @@ function ciniki_wineproduction_products() {
         }
         if( s == 'products' && this.sections._ptabs.selected == 'pricing' ) {
             switch(j) {
-                case 0: return d.name;
-                case 1: return d.list_price_display;
-                case 2: return d.list_discount_percent_display;
-                case 3: return d.cost_display;
-                case 4: return d.kit_price_display;
-                case 5: return d.processing_price_display;
-                case 6: return d.unit_amount_display;
-                case 7: return d.unit_discount_amount_display;
-                case 8: return d.unit_discount_percentage_display;
-                case 9: return d.tax_amount_display;
-                case 10: return d.total_display;
+                case 0: return d.supplier_item_number;
+                case 1: return d.name;
+                case 2: return (d.list_price != 0 ? d.list_price_display : '');
+                case 3: return (d.list_discount_percent != 0 ? d.list_discount_percent_display : '');
+                case 4: return (d.cost != 0 ? d.cost_display : '');
+                case 5: return (d.kit_unit_amount != 0 ? d.kit_price_display : '');
+                case 6: return (d.processing_unit_amount != 0 ? d.processing_price_display : '');
+                case 7: return (d.unit_amount != 0 ? d.unit_amount_display : '');
+                case 8: return (d.unit_discount_amount != 0 ? d.unit_discount_amount_display : '');
+                case 9: return (d.unit_discount_percentage != 0 ? d.unit_discount_percentage_display : '');
+                case 10: return (d.tax_amount != 0 ? d.tax_amount_display : '');
+                case 11: return d.total_display;
             }
         }
         if( s == 'products' && this.sections._ptabs.selected == 'website' ) {
@@ -256,17 +257,20 @@ function ciniki_wineproduction_products() {
             p.data = rsp;
             p.nplist = (rsp.nplist != null ? rsp.nplist : null);
             if( p.sections._ptabs.selected == 'pricing' ) {
-                p.sections.products.num_cols = 11;
-                p.sections.products.headerValues = ['Name', 'List', 'Discount', 'Cost', 'Kit', 'Processing', 'Price', 'Discount $', 'Discount %', 'Tax', 'Total'];
-                p.sections.products.headerClasses = ['', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright'];
-                p.sections.products.cellClasses = ['', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright'];
+                p.sections.products.num_cols = 12;
+                p.sections.products.sortTypes = ['text', 'text', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number', 'number'];
+                p.sections.products.headerValues = ['Sku', 'Name', 'List', 'Disc', 'Cost', 'Kit', 'Proc', 'Price', 'Disc$', 'Disc%', 'Tax', 'Total'];
+                p.sections.products.headerClasses = ['','', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright'];
+                p.sections.products.cellClasses = ['','', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright'];
             } else if( p.sections._ptabs.selected == 'website' ) {
                 p.sections.products.num_cols = 6;
+                p.sections.products.sortTypes = ['', 'text', 'text', 'text', 'text', 'number'];
                 p.sections.products.headerValues = ['Image', 'Name', 'Categories', 'SubCategories', 'Visible', 'Price'];
                 p.sections.products.headerClasses = ['', '', '', '', '', 'alignright'];
                 p.sections.products.cellClasses = ['thumbnail', '', '', '', '', 'alignright'];
             } else { // overview or discontinued
                 p.sections.products.num_cols = 7;
+                p.sections.products.sortTypes = ['text', 'text', 'text', 'text', 'number', 'text', 'number'];
                 p.sections.products.headerValues = ['Name', 'Categories', 'SubCategories', 'Visible', 'Price', 'Supplier', 'Inv'];
                 p.sections.products.headerClasses = ['', '', '', '', 'alignright', '', 'alignright'];
                 p.sections.products.cellClasses = ['', '', '', '', 'alignright', '', 'alignright'];
@@ -404,16 +408,20 @@ function ciniki_wineproduction_products() {
             this.setFieldValue('cost', '$' + cost.toFixed(2));
             var kit_price_id = this.formValue('kit_price_id');
             var kit_unit_amount = 0;
-            var processing_price_id = this.formValue('kit_price_id');
+            var processing_price_id = this.formValue('processing_price_id');
             var processing_unit_amount = 0;
             for(var i in this.sections.price.fields.kit_price_id.options) {
                 if( this.sections.price.fields.kit_price_id.options[i].id == kit_price_id ) {
-                    kit_unit_amount = this.sections.price.fields.kit_price_id.options[i].unit_amount;
-                }
-                if( this.sections.price.fields.processing_price_id.options[i].id == processing_price_id ) {
-                    processing_unit_amount = this.sections.price.fields.processing_price_id.options[i].unit_amount;
+                    kit_unit_amount = parseFloat(this.sections.price.fields.kit_price_id.options[i].unit_amount);
                 }
             }
+            for(var i in this.sections.price.fields.processing_price_id.options) {
+                if( this.sections.price.fields.processing_price_id.options[i].id == processing_price_id ) {
+                    processing_unit_amount = parseFloat(this.sections.price.fields.processing_price_id.options[i].unit_amount);
+                }
+            }
+            var unit_amount = kit_unit_amount + processing_unit_amount;
+            this.setFieldValue('unit_amount', '$' + unit_amount.toFixed(2));
             this.sections._tags12.visible = 'yes';
             this.sections._tags13.visible = 'yes';
             this.sections._tags14.visible = 'yes';
@@ -807,7 +815,6 @@ function ciniki_wineproduction_products() {
                     return false;
                 }
                 var p = M.ciniki_wineproduction_products.tagdetail;
-                console.log(rsp);
                 p.data = rsp.detail;
                 p.detail_id = rsp.detail.id;
 //                p.sections._name.fields.tag_type.options = {'0':'All'};
@@ -857,13 +864,13 @@ function ciniki_wineproduction_products() {
     this.prices.data = {};
     this.prices.nplist = [];
     this.prices.sections = {
-        'kit_prices':{'label':'Price', 'type':'simplegrid', 'num_cols':2,
+        'kit_prices':{'label':'Kit Prices', 'type':'simplegrid', 'num_cols':2,
             'cellClasses':['', 'alignright'],
             'noData':'No kit prices',
             'addTxt':'Add Price',
             'addFn':'M.ciniki_wineproduction_products.price.open(\'M.ciniki_wineproduction_products.prices.open();\',0,10,null);'
             },
-        'processing_prices':{'label':'Price', 'type':'simplegrid', 'num_cols':2,
+        'processing_prices':{'label':'Processing Prices', 'type':'simplegrid', 'num_cols':2,
             'cellClasses':['', 'alignright'],
             'noData':'No processing prices',
             'addTxt':'Add Price',
@@ -887,7 +894,6 @@ function ciniki_wineproduction_products() {
             }
             var p = M.ciniki_wineproduction_products.prices;
             p.data = rsp;
-            console.log(rsp);
             p.nplist = (rsp.nplist != null ? rsp.nplist : null);
             p.refresh();
             p.show(cb);
@@ -931,6 +937,11 @@ function ciniki_wineproduction_products() {
             }
             var p = M.ciniki_wineproduction_products.price;
             p.data = rsp.price;
+            if( rsp.price.price_type == 10 || (rsp.price.price_type == 0 && p.price_type == 10) ) {
+                p.title = 'Kit Price';
+            } else if( rsp.price.price_type == 20 || (rsp.price.price_type == 0 && p.price_type == 20) ) {
+                p.title = 'Processing Price';
+            }
             p.refresh();
             p.show(cb);
         });
@@ -1207,18 +1218,20 @@ function ciniki_wineproduction_products() {
         '_notes':{'label':'Notes', 'aside':'yes', 'fields':{
             'notes':{'label':'', 'hidelabel':'yes', 'type':'textarea', 'size':'medium'},
             }},
-        'items':{'label':'Items', 'type':'simplegrid', 'num_cols':6,
-            'headerValues':['Item', 'Qty', 'Rate', 'Amount', 'Inventory', 'Ordered'],
-            'headerClasses':['', 'aligncenter', 'alignright', 'alignright', 'alignright', 'alignright'],
-            'cellClasses':['', 'aligncenter', 'alignright', 'alignright', 'alignright', 'alignright'],
+        'items':{'label':'Items', 'type':'simplegrid', 'num_cols':7,
+            'headerValues':['SKU', 'Item', 'Qty', 'Rate', 'Amount', 'Inventory', 'Ordered'],
+            'headerClasses':['', '', 'aligncenter', 'alignright', 'alignright', 'alignright', 'alignright'],
+            'cellClasses':['', '', 'aligncenter', 'alignright', 'alignright', 'alignright', 'alignright'],
+            'sortable':'yes',
+            'sortTypes':['number', 'text', 'number', 'number', 'number', 'number', 'number'],
             'noData':'No Items Added',
             'addTxt':'Add Item',
             'addFn':'M.ciniki_wineproduction_products.purchaseorder.save("M.ciniki_wineproduction_products.poitem.open(\'M.ciniki_wineproduction_products.purchaseorder.open();\',0,M.ciniki_wineproduction_products.purchaseorder.order_id);");',
             },
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save', 'fn':'M.ciniki_wineproduction_products.purchaseorder.save();'},
-            'pullitems':{'label':'Auto Generate', 'fn':'M.ciniki_wineproduction_products.purchaseorder.pullitems();'},
-            'download':{'label':'Download', 'fn':'M.ciniki_wineproduction_products.purchaseorder.download();'},
+            'pullitems':{'label':'Auto Generate', 'fn':'M.ciniki_wineproduction_products.purchaseorder.save("M.ciniki_wineproduction_products.purchaseorder.pullitems();");'},
+            'download':{'label':'Download', 'fn':'M.ciniki_wineproduction_products.purchaseorder.save("M.ciniki_wineproduction_products.purchaseorder.download();");'},
             'delete':{'label':'Delete', 
                 'visible':function() {return M.ciniki_wineproduction_products.purchaseorder.order_id > 0 ? 'yes' : 'no'; },
                 'fn':'M.ciniki_wineproduction_products.purchaseorder.remove();'},
@@ -1240,12 +1253,13 @@ function ciniki_wineproduction_products() {
         }
         if( s == 'items' ) {
             switch(j) {
-                case 0: return d.description;
-                case 1: return d.quantity_ordered;
-                case 2: return d.unit_amount_display;
-                case 3: return d.total_amount_display;
-                case 4: return d.inventory_current_num;
-                case 5: return d.num_orders;
+                case 0: return d.sku;
+                case 1: return d.description;
+                case 2: return d.quantity_ordered;
+                case 3: return d.unit_amount_display;
+                case 4: return d.total_amount_display;
+                case 5: return d.inventory_current_num;
+                case 6: return d.num_orders;
             }
         }
     }

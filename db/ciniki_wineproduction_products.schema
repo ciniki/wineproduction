@@ -46,7 +46,7 @@
 # end_date:                 The end date and time the product is no long available.
 #
 # supplier_id:              The ID of the supplier in ciniki_wineproduction_suppliers.
-# supplier_item_number:     The suppliers unique item number for this item.
+# supplier_item_number:     The SKU for this item.
 # wine_type:                The type of wine, Red, White, Other **note: not sure if needed**
 # kit_length:               The number of weeks the kit needs
 #

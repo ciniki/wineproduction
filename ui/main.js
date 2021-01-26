@@ -621,8 +621,12 @@ function ciniki_wineproduction_main() {
             }},
             'details':{'label':'Details', 'fields':{
                 'status':{'label':'Status', 'type':'select', 'options':this.statusOptions},
-                'rack_colour':{'label':'Rack', 'type':'colourswatches', 'colours':this.rackingColours},
-                'filter_colour':{'label':'Filter', 'type':'colourswatches', 'colours':this.filteringColours},
+                'rack_colour':{'label':'Rack', 'type':'colourswatches', 'colours':this.rackingColours,
+                    'visible':function() { return M.modFlagSet('ciniki.wineproduction', 0x01); },
+                    },
+                'filter_colour':{'label':'Filter', 'type':'colourswatches', 'colours':this.filteringColours,
+                    'visible':function() { return M.modFlagSet('ciniki.wineproduction', 0x01); },
+                    },
                 'start_date':{'label':'Started', 'type':'date', 'caloffset':0},
                 'sg_reading':{'label':'SG', 'type':'text', 'size':'small'},
                 'racking_date':{'label':'RD', 'type':'date', 'caloffset':0, 'colourize':'bg'},
@@ -1288,30 +1292,52 @@ function ciniki_wineproduction_main() {
 
         if( this.workdone.worklist == 'all' || this.workdone.worklist == 'started' ) {
             this.workdone.sections['started'].visible = 'yes';
-            this.workdone.sections['started'].num_cols = 6;
-            this.workdone.sections['started'].headerValues = ['', 'INV#', 'Wine', 'Ordered', 'BD', ''];
-            this.workdone.sections['started'].sortTypes = ['colour', 'number', 'text', 'date', 'date', 'none'];
-            this.workdone.dataMaps['started'] = ['rack_colour', 'invoice_number', 'wine_name', 'order_date', 'bottling_date', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.workdone.sections['started'].num_cols = 6;
+                this.workdone.sections['started'].headerValues = ['', 'INV#', 'Wine', 'Ordered', 'BD', ''];
+                this.workdone.sections['started'].sortTypes = ['colour', 'number', 'text', 'date', 'date', 'none'];
+                this.workdone.dataMaps['started'] = ['rack_colour', 'invoice_number', 'wine_name', 'order_date', 'bottling_date', 'notes'];
+            } else {
+                this.workdone.sections['started'].num_cols = 5;
+                this.workdone.sections['started'].headerValues = ['INV#', 'Wine', 'Ordered', 'BD', ''];
+                this.workdone.sections['started'].sortTypes = ['number', 'text', 'date', 'date', 'none'];
+                this.workdone.dataMaps['started'] = ['invoice_number', 'wine_name', 'order_date', 'bottling_date', 'notes'];
+            }
         } else {
             this.workdone.sections['started'].visible = 'no';
         }
 
         if( this.workdone.worklist == 'all' || this.workdone.worklist == 'racked' ) {
             this.workdone.sections['racked'].visible = 'yes';
-            this.workdone.sections['racked'].num_cols = 8;
-            this.workdone.sections['racked'].headerValues = ['', 'INV#', 'Wine', 'SG', 'Started', 'BD', 'RD', '', ''];
-            this.workdone.sections['racked'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
-            this.workdone.dataMaps['racked'] = ['rack_colour', 'invoice_number', 'wine_name', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
+
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.workdone.sections['racked'].num_cols = 8;
+                this.workdone.sections['racked'].headerValues = ['', 'INV#', 'Wine', 'SG', 'Started', 'BD', 'RD', '', ''];
+                this.workdone.sections['racked'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
+                this.workdone.dataMaps['racked'] = ['rack_colour', 'invoice_number', 'wine_name', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
+            } else {
+                this.workdone.sections['racked'].num_cols = 7;
+                this.workdone.sections['racked'].headerValues = ['INV#', 'Wine', 'SG', 'Started', 'BD', 'RD', '', ''];
+                this.workdone.sections['racked'].sortTypes = ['number', 'text', 'text', 'date', 'date', 'date', 'none'];
+                this.workdone.dataMaps['racked'] = ['invoice_number', 'wine_name', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
+            }
         } else {
             this.workdone.sections['racked'].visible = 'no';
         }
 
         if( this.workdone.worklist == 'all' || this.workdone.worklist == 'filtered' ) {
             this.workdone.sections['filtered'].visible = 'yes';
-            this.workdone.sections['filtered'].num_cols = 7;
-            this.workdone.sections['filtered'].headerValues = ['', 'INV#', 'Wine', 'Racked', 'BD', 'FD', ''];
-            this.workdone.sections['filtered'].sortTypes = ['colour', 'number', 'text', 'date', 'date', 'date', 'none'];
-            this.workdone.dataMaps['filtered'] = ['filter_colour', 'invoice_number', 'wine_name', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.workdone.sections['filtered'].num_cols = 7;
+                this.workdone.sections['filtered'].headerValues = ['', 'INV#', 'Wine', 'Racked', 'BD', 'FD', ''];
+                this.workdone.sections['filtered'].sortTypes = ['colour', 'number', 'text', 'date', 'date', 'date', 'none'];
+                this.workdone.dataMaps['filtered'] = ['filter_colour', 'invoice_number', 'wine_name', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
+            } else {
+                this.workdone.sections['filtered'].num_cols = 6;
+                this.workdone.sections['filtered'].headerValues = ['INV#', 'Wine', 'Racked', 'BD', 'FD', ''];
+                this.workdone.sections['filtered'].sortTypes = ['number', 'text', 'date', 'date', 'date', 'none'];
+                this.workdone.dataMaps['filtered'] = ['invoice_number', 'wine_name', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
+            }
         } else {
             this.workdone.sections['filtered'].visible = 'no';
         }
@@ -1342,18 +1368,32 @@ function ciniki_wineproduction_main() {
 //              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'started_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'racked' ) {
                 this.workdone.title = 'Rack Schedule';
-                this.workdone.sections['racked'].num_cols = 10;
-                this.workdone.sections['racked'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
-                this.workdone.sections['racked'].sortTypes = ['colour', 'number', 'text', 'text', 'text', 'date', 'date', 'date', 'none'];
-                this.workdone.dataMaps['racked'] = ['rack_colour', 'invoice_number', 'wine_name', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
+                if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                    this.workdone.sections['racked'].num_cols = 10;
+                    this.workdone.sections['racked'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
+                    this.workdone.sections['racked'].sortTypes = ['colour', 'number', 'text', 'text', 'text', 'date', 'date', 'date', 'none'];
+                    this.workdone.dataMaps['racked'] = ['rack_colour', 'invoice_number', 'wine_name', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
+                } else {
+                    this.workdone.sections['racked'].num_cols = 9;
+                    this.workdone.sections['racked'].headerValues = ['INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
+                    this.workdone.sections['racked'].sortTypes = ['number', 'text', 'text', 'text', 'date', 'date', 'date', 'none'];
+                    this.workdone.dataMaps['racked'] = ['invoice_number', 'wine_name', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date', 'racking_date', 'notes'];
+                }
                 args.racking_date = this.workdone.workdate;
 //              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'racking_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'filtered' ) {
                 this.workdone.title = 'Filter Schedule';
-                this.workdone.sections['filtered'].num_cols = 9;
-                this.workdone.sections['filtered'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', ''];
-                this.workdone.sections['filtered'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
-                this.workdone.dataMaps['filtered'] = ['filter_colour', 'invoice_number', 'wine_name', 'wine_type_and_length', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
+                if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                    this.workdone.sections['filtered'].num_cols = 9;
+                    this.workdone.sections['filtered'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', ''];
+                    this.workdone.sections['filtered'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
+                    this.workdone.dataMaps['filtered'] = ['filter_colour', 'invoice_number', 'wine_name', 'wine_type_and_length', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
+                } else {
+                    this.workdone.sections['filtered'].num_cols = 8;
+                    this.workdone.sections['filtered'].headerValues = ['INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', ''];
+                    this.workdone.sections['filtered'].sortTypes = ['number', 'text', 'text', 'date', 'date', 'date', 'none'];
+                    this.workdone.dataMaps['filtered'] = ['invoice_number', 'wine_name', 'wine_type_and_length', 'rack_date', 'bottling_date', 'filtering_date', 'notes'];
+                }
                 args.filtering_date = this.workdone.workdate;
 //              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'filtering_date':this.workdone.workdate});
             } else if( this.workdone.worklist == 'bottled' ) {
@@ -1455,10 +1495,17 @@ function ciniki_wineproduction_main() {
             this.list.sections['pending'].num_cols = 7;
             this.list.sections['pending'].sortTypes = ['number', 'text', 'text', 'date', 'date', 'none', 'none'];
             this.list.dataMaps['pending'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'bottling_date_and_flags', 'buttons', 'notes'];
-            this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Ordered', 'BD', ''];
-            this.list.sections['completed'].num_cols = 7;
-            this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'none'];
-            this.list.dataMaps['completed'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'bottling_date_and_flags', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Ordered', 'BD', ''];
+                this.list.sections['completed'].num_cols = 7;
+                this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'none'];
+                this.list.dataMaps['completed'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'bottling_date_and_flags', 'notes'];
+            } else {
+                this.list.sections['completed'].headerValues = ['INV#', 'Wine', 'Type', 'Ordered', 'BD', ''];
+                this.list.sections['completed'].num_cols = 6;
+                this.list.sections['completed'].sortTypes = ['number', 'text', 'text', 'date', 'date', 'none'];
+                this.list.dataMaps['completed'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'order_date', 'bottling_date_and_flags', 'notes'];
+            }
             args = {'tnid':M.curTenantID, 'status':'10', 'sorting':'invoice_number'};
 //          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'10', 'sorting':'invoice_number'});
             if( ordertype == 'start' ) {
@@ -1473,15 +1520,28 @@ function ciniki_wineproduction_main() {
             this.list.sections['completed'].label = 'Read Today';
             this.list.sections['completed'].visible = 'yes';
 
-            this.list.sections['pending'].num_cols = 6;
-            this.list.sections['pending'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', ''];
-            this.list.sections['pending'].sortTypes = ['colour', 'number', 'text', 'text', 'number', 'none'];
-            this.list.dataMaps['pending'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.list.sections['pending'].num_cols = 6;
+                this.list.sections['pending'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', ''];
+                this.list.sections['pending'].sortTypes = ['colour', 'number', 'text', 'text', 'number', 'none'];
+                this.list.dataMaps['pending'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
+            } else {
+                this.list.sections['pending'].num_cols = 5;
+                this.list.sections['pending'].headerValues = ['INV#', 'Wine', 'Type', 'SG', ''];
+                this.list.sections['pending'].sortTypes = ['number', 'text', 'text', 'number', 'none'];
+                this.list.dataMaps['pending'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
+            }
             this.list.sections['completed'].label = 'SG Read';
             this.list.sections['completed'].visible = 'yes';
-            this.list.sections['completed'].num_cols = 6;
-            this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', ''];
-            this.list.dataMaps['completed'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.list.sections['completed'].num_cols = 6;
+                this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', ''];
+                this.list.dataMaps['completed'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
+            } else {
+                this.list.sections['completed'].num_cols = 5;
+                this.list.sections['completed'].headerValues = ['INV#', 'Wine', 'Type', 'SG', ''];
+                this.list.dataMaps['completed'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'sgbuttons'];
+            }
             args = {'tnid':M.curTenantID, 'status':'20', 'before_racking_date':encodeURIComponent('today+4days'), 'sorting':'racking_date,invoice_number'};
             args2 = {'tnid':M.curTenantID, 'status':'25', 'sorting':'invoice_number'};
 //          rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'20', 'before_racking_date':encodeURIComponent('today+4days'), 'sorting':'racking_date,invoice_number'});
@@ -1520,14 +1580,25 @@ function ciniki_wineproduction_main() {
 //              rsp2 = null;
             }
             this.list.buttonText = 'Racked';
-            this.list.sections['pending'].num_cols = 10;
-            this.list.sections['pending'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
-            this.list.sections['pending'].sortTypes = ['colour', 'number', 'text', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
-            this.list.dataMaps['pending'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'racking_date', 'buttons', 'notes'];
-            this.list.sections['completed'].num_cols = 9;
-            this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'FD', '', ''];
-            this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'number', 'date', 'date', 'date', 'none'];
-            this.list.dataMaps['completed'] = ['filter_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'filtering_date', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.list.sections['pending'].num_cols = 10;
+                this.list.sections['pending'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
+                this.list.sections['pending'].sortTypes = ['colour', 'number', 'text', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
+                this.list.dataMaps['pending'] = ['rack_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'racking_date', 'buttons', 'notes'];
+                this.list.sections['completed'].num_cols = 9;
+                this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'FD', '', ''];
+                this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'number', 'date', 'date', 'date', 'none'];
+                this.list.dataMaps['completed'] = ['filter_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'filtering_date', 'notes'];
+            } else {
+                this.list.sections['pending'].num_cols = 9;
+                this.list.sections['pending'].headerValues = ['INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
+                this.list.sections['pending'].sortTypes = ['number', 'text', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
+                this.list.dataMaps['pending'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'racking_date', 'buttons', 'notes'];
+                this.list.sections['completed'].num_cols = 8;
+                this.list.sections['completed'].headerValues = ['INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'FD', '', ''];
+                this.list.sections['completed'].sortTypes = ['number', 'text', 'text', 'number', 'date', 'date', 'date', 'none'];
+                this.list.dataMaps['completed'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'filtering_date', 'notes'];
+            }
         }
         
         else if( ordertype == 'todaysfiltering' || ordertype == 'racked' || ordertype == 'filter' || ordertype == 'futurefiltering') {
@@ -1556,13 +1627,23 @@ function ciniki_wineproduction_main() {
 //              rsp2 = null;
             }
             this.list.sections['pending'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
-            this.list.sections['pending'].num_cols = 9;
-            this.list.sections['pending'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
-            this.list.dataMaps['pending'] = ['filter_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'buttons', 'notes'];
-            this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', ''];
-            this.list.sections['completed'].num_cols = 8;
-            this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
-            this.list.dataMaps['completed'] = ['filter_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.list.sections['pending'].num_cols = 9;
+                this.list.sections['pending'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
+                this.list.dataMaps['pending'] = ['filter_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'buttons', 'notes'];
+                this.list.sections['completed'].headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', ''];
+                this.list.sections['completed'].num_cols = 8;
+                this.list.sections['completed'].sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none'];
+                this.list.dataMaps['completed'] = ['filter_colour', 'invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'notes'];
+            } else {
+                this.list.sections['pending'].num_cols = 8;
+                this.list.sections['pending'].sortTypes = ['number', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
+                this.list.dataMaps['pending'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'buttons', 'notes'];
+                this.list.sections['completed'].headerValues = ['INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', ''];
+                this.list.sections['completed'].num_cols = 7;
+                this.list.sections['completed'].sortTypes = ['number', 'text', 'text', 'date', 'date', 'date', 'none'];
+                this.list.dataMaps['completed'] = ['invoice_number_and_flags', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'notes'];
+            }
         } 
         
         else if( ordertype == 'filtered' || ordertype == 'futurebottle' ) {
@@ -1961,10 +2042,17 @@ function ciniki_wineproduction_main() {
                 args.sorting = 'invoice_number';
 //              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status_list':'20,25', 'before_racking_date':this.schedule.ordersDate + ' 12:00AM', 'sorting':'invoice_number'});
             }
-            this.schedule.sections.orders.num_cols = 10;
-            this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
-            this.schedule.sections.orders.sortTypes = ['colour', 'number', 'text', 'text', 'number', 'date', 'date', 'date', 'none', 'none'];
-            this.schedule.dataMaps.orders = ['rack_colour', 'invoice_number', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'racking_date', 'buttons', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.schedule.sections.orders.num_cols = 10;
+                this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
+                this.schedule.sections.orders.sortTypes = ['colour', 'number', 'text', 'text', 'number', 'date', 'date', 'date', 'none', 'none'];
+                this.schedule.dataMaps.orders = ['rack_colour', 'invoice_number', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'racking_date', 'buttons', 'notes'];
+            } else {
+                this.schedule.sections.orders.num_cols = 9;
+                this.schedule.sections.orders.headerValues = ['INV#', 'Wine', 'Type', 'SG', 'Started', 'BD', 'RD', '', ''];
+                this.schedule.sections.orders.sortTypes = ['number', 'text', 'text', 'number', 'date', 'date', 'date', 'none', 'none'];
+                this.schedule.dataMaps.orders = ['invoice_number', 'wine_and_customer', 'wine_type_and_length', 'sg_reading', 'start_date', 'bottling_date_and_flags', 'racking_date', 'buttons', 'notes'];
+            }
         } 
         
         else if( ordertype == 'filtering' || ordertype == 'before_filtering' || ordertype == 'after_filtering' ) {
@@ -1993,10 +2081,17 @@ function ciniki_wineproduction_main() {
                 args.sorting = 'invoice_number';
 //              rsp = M.api.getJSON('ciniki.wineproduction.list', {'tnid':M.curTenantID, 'status':'30', 'before_filtering_date':this.schedule.ordersDate + ' 12:00AM', 'sorting':'invoice_number'});
             }
-            this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
-            this.schedule.sections.orders.num_cols = 9;
-            this.schedule.sections.orders.sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
-            this.schedule.dataMaps.orders = ['filter_colour', 'invoice_number', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'buttons', 'notes'];
+            if( M.modFlagOn('ciniki.wineproduction', 0x01) ) {
+                this.schedule.sections.orders.headerValues = ['', 'INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
+                this.schedule.sections.orders.num_cols = 9;
+                this.schedule.sections.orders.sortTypes = ['colour', 'number', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
+                this.schedule.dataMaps.orders = ['filter_colour', 'invoice_number', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'buttons', 'notes'];
+            } else {
+                this.schedule.sections.orders.headerValues = ['INV#', 'Wine', 'Type', 'Racked', 'BD', 'FD', '', ''];
+                this.schedule.sections.orders.num_cols = 8;
+                this.schedule.sections.orders.sortTypes = ['number', 'text', 'text', 'date', 'date', 'date', 'none', 'none'];
+                this.schedule.dataMaps.orders = ['invoice_number', 'wine_and_customer', 'wine_type_and_length', 'rack_date', 'bottling_date_and_flags', 'filtering_date', 'buttons', 'notes'];
+            }
         } 
         else if( ordertype == 'bottling' || ordertype == 'before_bottling' || ordertype == 'after_bottling' ) {
             this.schedule.buttonText = 'Filter Today';

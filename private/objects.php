@@ -166,6 +166,7 @@ function ciniki_wineproduction_objects($ciniki) {
         'fields' => array(
             'order_id' => array('name'=>'Order', 'ref'=>'ciniki.wineproduction.purchaseorder'),
             'product_id' => array('name'=>'Product', 'ref'=>'ciniki.wineproduction.product', 'default'=>'0'),
+            'sku' => array('name'=>'Sku', 'default'=>''),
             'description' => array('name'=>'Description', 'default'=>''),
             'quantity_ordered' => array('name'=>'Quantity Ordered', 'default'=>''),
             'quantity_received' => array('name'=>'Quantity Received', 'default'=>''),

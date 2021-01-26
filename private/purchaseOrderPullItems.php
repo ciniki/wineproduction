@@ -56,6 +56,7 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
     //
     $strsql = "SELECT products.id, "
         . "products.name, "
+        . "products.supplier_item_number, "
         . "products.cost, "
         . "products.taxtype_id, "
         . "products.inventory_current_num, "
@@ -73,13 +74,12 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'cost', 'taxtype_id', 'inventory_current_num', 'num_required')),
+            'fields'=>array('id', 'name', 'supplier_item_number', 'cost', 'taxtype_id', 'inventory_current_num', 'num_required')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.174', 'msg'=>'Unable to load products', 'err'=>$rc['err']));
     }
     $required = isset($rc['products']) ? $rc['products'] : array();
-
 
     //
     // Check existing order items if anything needs to be updated
@@ -122,11 +122,11 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
             //
             // Add item to order
             //
-            error_log("Add: " . $product_id);
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
             $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.purchaseorderitem', array(
                 'order_id' => $order_id,
                 'product_id' => $product_id,
+                'sku' => $item['supplier_item_number'],
                 'description' => $item['name'],
                 'quantity_ordered' => $qty_required,
                 'quantity_received' => 0,

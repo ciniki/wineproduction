@@ -34,7 +34,7 @@ function ciniki_wineproduction_productPricingUpdate(&$ciniki, $tnid, $args) {
             . "AND kits.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "LEFT JOIN ciniki_wineproduction_product_pricing AS processing ON ("
-            . "products.kit_price_id = processing.id "
+            . "products.processing_price_id = processing.id "
             . "AND processing.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
             . ") "
         . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "

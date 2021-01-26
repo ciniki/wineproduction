@@ -29,6 +29,7 @@ create table ciniki_wineproduction_purchaseorder_items (
 
     order_id int not null,
     product_id int not null,
+    sku varchar(150) not null,
     description varchar(250) not null,
     quantity_ordered int not null,
     quantity_received int not null,

@@ -22,6 +22,7 @@ function ciniki_wineproduction_purchaseOrderItemAdd(&$ciniki) {
         'tnid'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Tenant'),
         'order_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Order'),
         'product_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Product'),
+        'sku'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'SKU'),
         'description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Description'),
         'quantity_ordered'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Quantity Ordered'),
         'quantity_received'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Quantity Received'),

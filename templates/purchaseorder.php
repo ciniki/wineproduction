@@ -68,6 +68,7 @@ function ciniki_wineproduction_templates_purchaseorder(&$ciniki, $tnid, $order_i
     //
     $strsql = "SELECT items.id, "
         . "items.product_id, "
+        . "IF(items.product_id > 0, products.supplier_item_number, items.sku) AS sku, "
         . "IF(items.product_id > 0, products.name, items.description) AS description, "
         . "items.quantity_ordered, "
         . "items.quantity_received, "
@@ -84,7 +85,7 @@ function ciniki_wineproduction_templates_purchaseorder(&$ciniki, $tnid, $order_i
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'items', 'fname'=>'id', 
-            'fields'=>array('id', 'product_id', 'description', 
+            'fields'=>array('id', 'product_id', 'sku', 'description', 
                 'quantity_ordered', 'quantity_received', 'unit_amount', 'inventory_current_num'),
             ),
         ));
@@ -276,14 +277,15 @@ function ciniki_wineproduction_templates_purchaseorder(&$ciniki, $tnid, $order_i
     //
     // Add the invoice items
     //
-    $w = array(120, 20, 20, 20);
+    $w = array(25, 89, 22, 22, 22);
     $pdf->SetFillColor(224);
     $pdf->SetFont('', 'B');
     $pdf->SetCellPadding(2);
-    $pdf->Cell($w[0], 6, 'Item', 1, 0, 'C', 1);
-    $pdf->Cell($w[1], 6, 'Quantity', 1, 0, 'C', 1);
-    $pdf->Cell($w[2], 6, 'Rate', 1, 0, 'C', 1);
-    $pdf->Cell($w[3], 6, 'Amount', 1, 0, 'C', 1);
+    $pdf->Cell($w[0], 6, 'SKU', 1, 0, 'C', 1);
+    $pdf->Cell($w[1], 6, 'Item', 1, 0, 'C', 1);
+    $pdf->Cell($w[2], 6, 'Quantity', 1, 0, 'C', 1);
+    $pdf->Cell($w[3], 6, 'Rate', 1, 0, 'C', 1);
+    $pdf->Cell($w[4], 6, 'Amount', 1, 0, 'C', 1);
     $pdf->Ln();
     $pdf->SetFillColor(236);
     $pdf->SetTextColor(0);
@@ -292,37 +294,40 @@ function ciniki_wineproduction_templates_purchaseorder(&$ciniki, $tnid, $order_i
     $fill=0;
     $total_amount = 0;
     foreach($items as $item) {
-        $height = $pdf->getStringHeight($w[0], $item['description']);
+        $height = $pdf->getStringHeight($w[1], $item['description']);
         // Check if we need a page break
         if( $pdf->getY() > ($pdf->getPageHeight() - 30 - $height) ) {
             $pdf->AddPage();
             $pdf->SetFillColor(224);
             $pdf->SetFont('', 'B');
-            $pdf->Cell($w[0], 6, 'Item', 1, 0, 'C', 1);
-            $pdf->Cell($w[1], 6, 'Quantity', 1, 0, 'C', 1);
-            $pdf->Cell($w[2], 6, 'Rate', 1, 0, 'C', 1);
-            $pdf->Cell($w[3], 6, 'Amount', 1, 0, 'C', 1);
+            $pdf->Cell($w[0], 6, 'SKU', 1, 0, 'C', 1);
+            $pdf->Cell($w[1], 6, 'Item', 1, 0, 'C', 1);
+            $pdf->Cell($w[2], 6, 'Quantity', 1, 0, 'C', 1);
+            $pdf->Cell($w[3], 6, 'Rate', 1, 0, 'C', 1);
+            $pdf->Cell($w[4], 6, 'Amount', 1, 0, 'C', 1);
             $pdf->Ln();
             $pdf->SetFillColor(236);
             $pdf->SetTextColor(0);
             $pdf->SetFont('');
         }
-        $pdf->MultiCell($w[0], $height, $item['description'], 1, 'L', $fill, 
+        $pdf->MultiCell($w[0], $height, $item['sku'], 1, 'L', $fill, 
             0, '', '', true, 0, false, true, 0, 'T', false);
-        $pdf->MultiCell($w[1], $height, $item['quantity_ordered'], 1, 'R', $fill, 
+        $pdf->MultiCell($w[1], $height, $item['description'], 1, 'L', $fill, 
             0, '', '', true, 0, false, true, 0, 'T', false);
-        $pdf->MultiCell($w[2], $height, '$' . number_format($item['unit_amount'], 2), 1, 'R', $fill, 
+        $pdf->MultiCell($w[2], $height, $item['quantity_ordered'], 1, 'R', $fill, 
+            0, '', '', true, 0, false, true, 0, 'T', false);
+        $pdf->MultiCell($w[3], $height, '$' . number_format($item['unit_amount'], 2), 1, 'R', $fill, 
             0, '', '', true, 0, false, true, 0, 'T', false);
         $item_total = $item['quantity_ordered'] * $item['unit_amount'];
         $total_amount += $item_total;
-        $pdf->MultiCell($w[3], $height, '$' . number_format($item_total, 2), 1, 'R', $fill, 
+        $pdf->MultiCell($w[4], $height, '$' . number_format($item_total, 2), 1, 'R', $fill, 
             1, '', '', true, 0, false, true, 0, 'T', false);
         $fill=!$fill;
     }
     $pdf->SetFont('', 'B');
-    $pdf->Cell($w[0], 6, '', 0, 0, 'C', 0);
-    $pdf->Cell($w[1] + $w[2], 6, 'Total', 1, 0, 'R', 1);
-    $pdf->Cell($w[3], 6, '$' . number_format($total_amount, 2), 1, 0, 'R', 1);
+    $pdf->Cell($w[0] + $w[1], 6, '', 0, 0, 'C', 0);
+    $pdf->Cell($w[2] + $w[3], 6, 'Total', 1, 0, 'R', 1);
+    $pdf->Cell($w[4], 6, '$' . number_format($total_amount, 2), 1, 0, 'R', 1);
 
     //
     // Check if there is a notes to be displayed

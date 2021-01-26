@@ -140,6 +140,7 @@ function ciniki_wineproduction_purchaseOrderGet($ciniki) {
     if( $purchaseorder['id'] > 0 ) {
         $strsql = "SELECT items.id, "
             . "items.product_id, "
+            . "IF(items.product_id > 0, products.supplier_item_number, items.sku) AS sku, "
             . "IF(items.product_id > 0, products.name, items.description) AS description, "
             . "items.quantity_ordered, "
             . "items.quantity_received, "
@@ -157,7 +158,7 @@ function ciniki_wineproduction_purchaseOrderGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
             array('container'=>'items', 'fname'=>'id', 
-                'fields'=>array('id', 'product_id', 'description', 
+                'fields'=>array('id', 'product_id', 'sku', 'description', 
                     'quantity_ordered', 'quantity_received', 'unit_amount', 'inventory_current_num'),
                 ),
             ));
