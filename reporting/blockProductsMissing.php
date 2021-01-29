@@ -47,7 +47,6 @@ function ciniki_wineproduction_reporting_blockProductsMissing(&$ciniki, $tnid, $
     //
     $strsql = "SELECT products.id, "
         . "products.name, "
-        . "products.code, "
         . "products.status, "
         . "IF(products.primary_image_id=0, 'Missing', '') AS image, "
         . "products.short_description, "
