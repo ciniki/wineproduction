@@ -13,11 +13,11 @@ function ciniki_wineproduction_products() {
     this.menu.data = {};
     this.menu.nplist = [];
     this.menu.sections = {
-        '_tabs':{'label':'', 'type':'paneltabs', 'selected':'categories', 'aside':'yes', 'tabs':{
+        '_tabs':{'label':'', 'type':'paneltabs', 'selected':'suppliers', 'aside':'yes', 'tabs':{
+            'suppliers':{'label':'Suppliers', 'fn':'M.ciniki_wineproduction_products.menu.switchTab("suppliers");'},
             'categories':{'label':'Categories', 'fn':'M.ciniki_wineproduction_products.menu.switchTab("categories");'},
             'varietals':{'label':'Varietals', 'fn':'M.ciniki_wineproduction_products.menu.switchTab("varietals");'},
             'obs':{'label':'O/B/S', 'fn':'M.ciniki_wineproduction_products.menu.switchTab("obs");'},
-            'suppliers':{'label':'Suppliers', 'fn':'M.ciniki_wineproduction_products.menu.switchTab("suppliers");'},
             }},
         'tags10':{'label':'Categories', 'type':'simplegrid', 'num_cols':1, 'aside':'yes',
             'visible':function() { return M.ciniki_wineproduction_products.menu.sections._tabs.selected == 'categories' ? 'yes' : 'hidden';},

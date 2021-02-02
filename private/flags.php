@@ -13,8 +13,8 @@
 function ciniki_wineproduction_flags($ciniki, $modules) {
     $flags = array(
         // 0x01
-        array('flag'=>array('bit'=>'1', 'name'=>'Colour Code Options')),
-//        array('flag'=>array('bit'=>'2', 'name'=>'')),
+        array('flag'=>array('bit'=>'1', 'name'=>'Products')),
+        array('flag'=>array('bit'=>'2', 'name'=>'Product Supplier')),
 //        array('flag'=>array('bit'=>'3', 'name'=>'')),
 //        array('flag'=>array('bit'=>'4', 'name'=>'')),
         // 0x10
@@ -23,8 +23,8 @@ function ciniki_wineproduction_flags($ciniki, $modules) {
 //        array('flag'=>array('bit'=>'7', 'name'=>'')),
 //        array('flag'=>array('bit'=>'8', 'name'=>'')),
         // 0x0100
-//        array('flag'=>array('bit'=>'9', 'name'=>'')),
-//        array('flag'=>array('bit'=>'10', 'name'=>'')),
+        array('flag'=>array('bit'=>'9', 'name'=>'Wine Production')),
+        array('flag'=>array('bit'=>'10', 'name'=>'Colour Code Options')),
 //        array('flag'=>array('bit'=>'11', 'name'=>'')),
 //        array('flag'=>array('bit'=>'12', 'name'=>'')),
         // 0x1000

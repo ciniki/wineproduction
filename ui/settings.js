@@ -185,7 +185,7 @@ function ciniki_wineproduction_settings() {
                 ]],
             },
             'racking.autocolour':{'label':'Racking Auto-Colour', 'type':'gridform', 'rows':'3', 'cols':'7', 
-                'active':function() { return M.modFlagSet('ciniki.wineproduction', 0x01); },
+                'active':function() { return M.modFlagSet('ciniki.wineproduction', 0x0200); },
                 'rowhistory':'yes',
                 'sectioncolours':'racking.autocolour',
                 'labels':['Week 1', 'Week 2', 'Week 3', 'Week 4'], 
@@ -228,7 +228,7 @@ function ciniki_wineproduction_settings() {
 //                  ]
                 ]},
             'filtering.autocolour':{'label':'Filtering Auto-Colour', 'type':'gridform', 'rows':'7', 'cols':'7', 
-                'active':function() { return M.modFlagSet('ciniki.wineproduction', 0x01); },
+                'active':function() { return M.modFlagSet('ciniki.wineproduction', 0x0200); },
                 'rowhistory':'yes',
                 'labels':['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7', 'Week 8', 'Week 9', 'Week 10', 'Week 11', 'Week 12', 'Week 13'], 
                 'compact_header':['S','M','T','W','T','F','S'],
