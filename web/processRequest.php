@@ -122,8 +122,8 @@ function ciniki_wineproduction_web_processRequest(&$ciniki, $settings, $tnid, $a
             ),
         '15' => array(
             'id' => 15,
-            'names' => 'Sweetness',
-            'pname' => 'Sweetness',
+            'names' => 'Dryness',
+            'pname' => 'Dryness',
             ),
         );
 
