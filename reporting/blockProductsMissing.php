@@ -49,16 +49,16 @@ function ciniki_wineproduction_reporting_blockProductsMissing(&$ciniki, $tnid, $
         . "products.name, "
         . "products.status, "
         . "IF(products.primary_image_id=0, 'Missing', '') AS image, "
-        . "products.short_description, "
-        . "products.long_description, "
+        . "products.synopsis, "
+        . "products.description, "
         . "IF((products.webflags&0x01)=0x01, 'Visible', 'Hidden') AS visible "
         . "FROM ciniki_wineproduction_products AS products "
         . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND products.status < 60 "
         . "AND ("
             . "products.primary_image_id = 0 "
-            . "OR products.short_description = '' "
-            . "OR products.long_description = '' "
+            . "OR products.synopsis = '' "
+            . "OR products.description = '' "
             . ") "
         . "ORDER BY name "
         . "";
@@ -77,8 +77,8 @@ function ciniki_wineproduction_reporting_blockProductsMissing(&$ciniki, $tnid, $
             'columns'=>array(
                 array('label'=>'Product', 'pdfwidth'=>'30%', 'field'=>'name'),
                 array('label'=>'Image', 'pdfwidth'=>'10%', 'field'=>'image'),
-                array('label'=>'Synopsis', 'pdfwidth'=>'30%', 'field'=>'short_description'),
-                array('label'=>'Description', 'pdfwidth'=>'30%', 'field'=>'long_description'),
+                array('label'=>'Synopsis', 'pdfwidth'=>'30%', 'field'=>'synopsis'),
+                array('label'=>'Description', 'pdfwidth'=>'30%', 'field'=>'description'),
                 ),
             'data'=>$products,
             'editApp'=>array('app'=>'ciniki.products.edit', 'args'=>array('product_id'=>'d.id')),
@@ -88,7 +88,7 @@ function ciniki_wineproduction_reporting_blockProductsMissing(&$ciniki, $tnid, $
             //
             // Add emails to customer
             //
-            $chunk['textlist'] .= sprintf("%40s \nImage: %40s\nSynopsis:\n%s\nDescription:\n%s\n", $product['name'], $product['image'], $product['short_description'], $product['long_description']);
+            $chunk['textlist'] .= sprintf("%40s \nImage: %40s\nSynopsis:\n%s\nDescription:\n%s\n", $product['name'], $product['image'], $product['synopsis'], $product['description']);
         }
         $chunks[] = $chunk;
     }

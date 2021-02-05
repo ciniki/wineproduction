@@ -145,10 +145,9 @@ function ciniki_wineproduction_web_productDetails($ciniki, $settings, $tnid, $ar
         $strsql = "SELECT ciniki_wineproduction_products.id, "
             . "ciniki_wineproduction_products.name, "
             . "ciniki_wineproduction_products.permalink, "
-            . "ciniki_wineproduction_products.short_description, "
-            . "ciniki_wineproduction_products.long_description, "
+            . "ciniki_wineproduction_products.description, "
             . "ciniki_wineproduction_products.primary_image_id, "
-            . "ciniki_wineproduction_products.short_description, "
+            . "ciniki_wineproduction_products.synopsis, "
             . "'yes' AS is_details, "
             . "UNIX_TIMESTAMP(ciniki_wineproduction_products.last_updated) AS last_updated "
             . "FROM ciniki_product_relationships "
@@ -169,7 +168,7 @@ function ciniki_wineproduction_web_productDetails($ciniki, $settings, $tnid, $ar
         $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
             array('container'=>'products', 'fname'=>'id',
                 'fields'=>array('id', 'image_id'=>'primary_image_id', 'title'=>'name', 'permalink', 
-                    'description'=>'short_description', 'is_details', 'last_updated')),
+                    'description'=>'synopsis', 'is_details', 'last_updated')),
             ));
         if( $rc['stat'] == 'ok' && isset($rc['products']) ) {
             $product['similar'] = $rc['products'];
