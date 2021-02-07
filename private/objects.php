@@ -37,7 +37,7 @@ function ciniki_wineproduction_objects($ciniki) {
             'unit_amount' => array('name'=>'Unit Amount', 'default'=>''),
             'unit_discount_amount' => array('name'=>'Discount Amount', 'default'=>''),
             'unit_discount_percentage' => array('name'=>'Discount Percent', 'default'=>''),
-            'taxtype_id' => array('name'=>'Taxes', 'ref'=>'ciniki.taxes.type'),
+            'taxtype_id' => array('name'=>'Taxes', 'ref'=>'ciniki.taxes.type', 'default'=>'0'),
             'inventory_current_num' => array('name'=>'Inventory', 'default'=>''),
             'primary_image_id' => array('name'=>'Primary Image', 'default'=>'0', 'ref'=>'ciniki.images.image'),
             'synopsis' => array('name'=>'Synopsis', 'default'=>''),

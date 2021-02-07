@@ -31,8 +31,8 @@ function ciniki_wineproduction_productFileGet($ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this tenant
     //  
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.fileGet', 0); 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.productFileGet', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -59,12 +59,12 @@ function ciniki_wineproduction_productFileGet($ciniki) {
     //
     // Check if we need to include thumbnail images
     //
-    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.products', 'file');
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'file');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
     if( !isset($rc['file']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.60', 'msg'=>'Unable to find file'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.204', 'msg'=>'Unable to find file'));
     }
     
     return array('stat'=>'ok', 'file'=>$rc['file']);

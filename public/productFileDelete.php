@@ -15,7 +15,7 @@
 // -------
 // <rsp stat='ok' />
 //
-function ciniki_products_fileDelete(&$ciniki) {
+function ciniki_wineproduction_productFileDelete(&$ciniki) {
     //  
     // Find all the required and optional arguments
     //  
@@ -33,8 +33,8 @@ function ciniki_products_fileDelete(&$ciniki) {
     // Make sure this module is activated, and
     // check permission to run this function for this tenant
     //  
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'products', 'private', 'checkAccess');
-    $rc = ciniki_products_checkAccess($ciniki, $args['tnid'], 'ciniki.products.fileDelete', 0); 
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.productFileDelete', 0); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
@@ -62,7 +62,7 @@ function ciniki_products_fileDelete(&$ciniki) {
         return $rc;
     }
     if( !isset($rc['file']) ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.products.57', 'msg'=>'Unable to find existing item'));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.205', 'msg'=>'Unable to find existing item'));
     }
     $uuid = $rc['file']['uuid'];
 

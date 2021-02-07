@@ -93,6 +93,36 @@ function ciniki_wineproduction_supplierGet($ciniki) {
         $supplier = $rc['suppliers'][0];
     }
 
-    return array('stat'=>'ok', 'supplier'=>$supplier);
+    $rsp = array('stat'=>'ok', 'supplier'=>$supplier);
+
+    //
+    // ONLY SYSADMINS: Get the list of other tenants offering products
+    //
+    if( ($ciniki['session']['user']['perms'] & 0x01) == 0x01 ) {
+        $strsql = "SELECT tenants.id, "
+            . "tenants.name "   
+            . "FROM ciniki_tenant_modules AS modules "
+            . "INNER JOIN ciniki_tenants AS tenants ON ("
+                . "modules.tnid = tenants.id "
+                . "AND tenants.status = 1 "
+                . ") "
+            . "WHERE (modules.flags&0x02) "
+            . "AND modules.package = 'ciniki' "
+            . "AND modules.module = 'wineproduction' "
+            . "AND modules.status = 1 "
+            . "";
+        ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+        $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+            array('container'=>'suppliers', 'fname'=>'id', 
+                'fields'=>array('id', 'name')),
+            ));
+        if( $rc['stat'] != 'ok' ) {
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.201', 'msg'=>'Unable to load suppliers', 'err'=>$rc['err']));
+        }
+        $rsp['suppliers'] = isset($rc['suppliers']) ? $rc['suppliers'] : array();
+        array_unshift($suppliers, array('id'=>0, 'name'=>'No Supplier'));
+    }
+
+    return $rsp;
 }
 ?>

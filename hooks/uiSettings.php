@@ -23,6 +23,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
     // Check if wineproduction flag is set, and if the user has permissions
     //
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0100)
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -63,6 +64,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
     // Check permissions for what menu items should be available
     //
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x01)
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -95,6 +97,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
     // Check permissions for what menu items should be available
     //
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0100)
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['employees'])
             || isset($args['permissions']['resellers'])
@@ -110,6 +113,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
     } 
 
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0100)
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01
@@ -118,6 +122,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
         $rsp['settings_menu_items'][] = array('priority'=>3900, 'label'=>'Wine Production', 'edit'=>array('app'=>'ciniki.wineproduction.settings'));
     }
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0100)
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01
@@ -126,6 +131,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
         $rsp['settings_menu_items'][] = array('priority'=>3900, 'label'=>'Production Notifications', 'edit'=>array('app'=>'ciniki.wineproduction.notifications'));
     }
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
+        && ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0100)
         && (isset($args['permissions']['owners'])
             || isset($args['permissions']['resellers'])
             || ($ciniki['session']['user']['perms']&0x01) == 0x01
