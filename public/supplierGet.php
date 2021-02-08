@@ -120,7 +120,7 @@ function ciniki_wineproduction_supplierGet($ciniki) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.201', 'msg'=>'Unable to load suppliers', 'err'=>$rc['err']));
         }
         $rsp['suppliers'] = isset($rc['suppliers']) ? $rc['suppliers'] : array();
-        array_unshift($suppliers, array('id'=>0, 'name'=>'No Supplier'));
+        array_unshift($rsp['suppliers'], array('id'=>0, 'name'=>'No Supplier'));
     }
 
     return $rsp;
