@@ -78,6 +78,12 @@ function ciniki_wineproduction_productGet($ciniki) {
             'primary_image_id'=>'0',
             'synopsis'=>'',
             'description'=>'',
+            'tags10'=>'',
+            'tags11'=>'',
+            'tags12'=>'',
+            'tags13'=>'',
+            'tags14'=>'',
+            'tags15'=>'',
         );
     }
 
@@ -160,6 +166,12 @@ function ciniki_wineproduction_productGet($ciniki) {
         if( $rc['stat'] != 'ok' ) {
             return $rc;
         }
+        $product['tags10'] = '';
+        $product['tags11'] = '';
+        $product['tags12'] = '';
+        $product['tags13'] = '';
+        $product['tags14'] = '';
+        $product['tags15'] = '';
         if( isset($rc['tags']) ) {
             foreach($rc['tags'] as $tags) {
                 if( $tags['tag_type'] == 10 ) {
@@ -252,6 +264,12 @@ function ciniki_wineproduction_productGet($ciniki) {
     if( $rc['stat'] != 'ok' ) {
         return $rc;
     }
+    $rsp['tags10'] = array();
+    $rsp['tags11'] = array();
+    $rsp['tags12'] = array();
+    $rsp['tags13'] = array();
+    $rsp['tags14'] = array();
+    $rsp['tags15'] = array();
     if( isset($rc['types']) ) {
         foreach($rc['types'] as $type) {
             if( $type['tag_type'] == 10 ) {
