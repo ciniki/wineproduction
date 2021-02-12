@@ -90,7 +90,7 @@ function ciniki_wineproduction_productDelete(&$ciniki) {
         . "";
     $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'item');
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.233', 'msg'=>'Unable to remove categories', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.245', 'msg'=>'Unable to remove categories', 'err'=>$rc['err']));
     }
     $tags = isset($rc['rows']) ? $rc['rows'] : array();
     foreach($tags as $tag) {

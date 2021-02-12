@@ -143,7 +143,7 @@ function ciniki_wineproduction_productUpdate(&$ciniki) {
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'productPricingUpdate');
     $rc = ciniki_wineproduction_productPricingUpdate($ciniki, $args['tnid'], array('product_id'=>$args['product_id']));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.139', 'msg'=>'Unable to update pricing', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.249', 'msg'=>'Unable to update pricing', 'err'=>$rc['err']));
     }
 
     //

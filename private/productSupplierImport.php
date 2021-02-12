@@ -30,6 +30,10 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
     }
 
     $update_args = array();
+
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'storageFileLoad');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'storageFileAdd');
+
     //
     // If primary image, then copy image into tenant
     //
@@ -42,7 +46,7 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
             'image_id' => $args['sproduct']['primary_image_id']),
             );
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.223', 'msg'=>'Unable to load image', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.247', 'msg'=>'Unable to load image', 'err'=>$rc['err']));
         }
         $supplier_image = $rc;
 
@@ -56,7 +60,7 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
             'checksum' => $supplier_image['checksum'],
             ));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.224', 'msg'=>'Unable to add image', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.251', 'msg'=>'Unable to add image', 'err'=>$rc['err']));
         }
         $update_args['primary_image_id'] = $rc['id'];
     } 
@@ -130,8 +134,54 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
     //
     // Check for files 
     //
-    elseif( $args['field'] == 'files' ) {
+    elseif( $args['field'] == 'file_names' ) {
+        foreach($args['sproduct']['files'] as $file) {
+            if( !in_array($file['org_filename'], $args['tproduct']['files_org_filenames']) ) {
+                //
+                // Load supplier file
+                //
+                $rc = ciniki_core_storageFileLoad($ciniki, $args['supplier_tnid'], 'ciniki.wineproduction.productfile', array(
+                    'subdir' => 'files',
+                    'uuid' => $file['uuid'],
+                    ));
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.237', 'msg'=>'Unable to load supplier file', 'err'=>$rc['err']));
+                }
+                $binary_content = $rc['binary_content'];
 
+                //
+                // Generate new UUID also used to store file
+                //
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+                $rc = ciniki_core_dbUUID($ciniki, 'ciniki.wineproduction');
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.236', 'msg'=>'Unable to generate ID', 'err'=>$rc['err']));
+                }
+                $uuid = $rc['uuid'];
+
+                $rc = ciniki_core_storageFileAdd($ciniki, $tnid, 'ciniki.wineproduction.productfile', array(
+                    'subdir' => 'files',
+                    'uuid' => $uuid,
+                    'binary_content' => $binary_content,
+                    ));
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.238', 'msg'=>'Unable to load supplier file', 'err'=>$rc['err']));
+                }
+
+                //
+                // Add to the product
+                //
+                $file['product_id'] = $args['update_product_id'];
+                $file['uuid'] = $uuid;
+                $file['webflags'] = 0x01;   // Visible 
+                $file['binary_content'] = '';
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.productfile', $file, 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.239', 'msg'=>'Unable to add the product file', 'err'=>$rc['err']));
+                }
+            }
+        }
     }
 
     //

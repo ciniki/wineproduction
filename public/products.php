@@ -331,7 +331,7 @@ function ciniki_wineproduction_products($ciniki) {
             'fields'=>array('id', 'name', 'num_items')),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.113', 'msg'=>'Unable to load suppliers', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.250', 'msg'=>'Unable to load suppliers', 'err'=>$rc['err']));
     }
     $suppliers = isset($rc['suppliers']) ? $rc['suppliers'] : array();
 

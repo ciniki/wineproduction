@@ -1643,6 +1643,15 @@ function ciniki_wineproduction_products() {
                 return imgs;
             }
         }
+        if( s == 'products' && this.compare_field == 'file_names' ) {
+            switch(j) {
+                case 0: return d.supplier_item_number;
+                case 1: return d.tenant_name;
+                case 2: return d.tenant_value.replace(/\n/g, '<br/>');
+                case 3: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
+                case 4: return d.supplier_value.replace(/\n/g, '<br/>');
+            }
+        }
         if( s == 'products' ) {
             switch(j) {
                 case 0: return d.supplier_item_number;

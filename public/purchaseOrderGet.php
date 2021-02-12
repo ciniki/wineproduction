@@ -126,10 +126,10 @@ function ciniki_wineproduction_purchaseOrderGet($ciniki) {
                     'date_received'=>array('timezone'=>'UTC', 'format'=>$date_format)),                ),
             ));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.177', 'msg'=>'Purchase Order not found', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.243', 'msg'=>'Purchase Order not found', 'err'=>$rc['err']));
         }
         if( !isset($rc['purchaseorders'][0]) ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.178', 'msg'=>'Unable to find Purchase Order'));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.244', 'msg'=>'Unable to find Purchase Order'));
         }
         $purchaseorder = $rc['purchaseorders'][0];
     }
@@ -163,7 +163,7 @@ function ciniki_wineproduction_purchaseOrderGet($ciniki) {
                 ),
             ));
         if( $rc['stat'] != 'ok' ) {
-            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.189', 'msg'=>'Unable to load items', 'err'=>$rc['err']));
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.242', 'msg'=>'Unable to load items', 'err'=>$rc['err']));
         }
         $purchaseorder['items'] = isset($rc['items']) ? $rc['items'] : array();
         foreach($purchaseorder['items'] as $iid => $item) {

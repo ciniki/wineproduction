@@ -90,7 +90,7 @@ function ciniki_wineproduction_templates_purchaseorder(&$ciniki, $tnid, $order_i
             ),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.189', 'msg'=>'Unable to load items', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.246', 'msg'=>'Unable to load items', 'err'=>$rc['err']));
     }
     $items = isset($rc['items']) ? $rc['items'] : array();
 

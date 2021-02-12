@@ -323,7 +323,7 @@ function ciniki_wineproduction_productGet($ciniki) {
         array('container'=>'prices', 'fname'=>'id', 'fields'=>array('id', 'name', 'unit_amount')),
         ));
     if( $rc['stat'] != 'ok' ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.140', 'msg'=>'Unable to load prices', 'err'=>$rc['err']));
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.248', 'msg'=>'Unable to load prices', 'err'=>$rc['err']));
     }
     $rsp['kit_prices'] = isset($rc['prices']) ? $rc['prices'] : array();
     foreach($rsp['kit_prices'] as $pid => $price) {
