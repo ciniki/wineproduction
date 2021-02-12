@@ -62,6 +62,79 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
     } 
 
     //
+    // Check for an additional image
+    //
+    elseif( $args['field'] == 'additional_images' ) {
+        foreach($args['sproduct']['images'] as $image) {
+            if( !in_array($image['checksum'], $args['tproduct']['additional_image_checksums']) ) {
+                //
+                // Load image from supplier
+                //
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadOriginal');
+                $rc = ciniki_images_hooks_loadOriginal($ciniki, $args['supplier_tnid'], array(
+                    'image_id' => $image['image_id']),
+                    );
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.223', 'msg'=>'Unable to load image', 'err'=>$rc['err']));
+                }
+                $supplier_image = $rc;
+
+                //
+                // Insert image
+                //
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'insertFromImagick');
+                $rc = ciniki_images_hooks_insertFromImagick($ciniki, $tnid, array(
+                    'image' => $supplier_image['image'],
+                    'original_filename' => $supplier_image['original_filename'],
+                    'checksum' => $supplier_image['checksum'],
+                    ));
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.224', 'msg'=>'Unable to add image', 'err'=>$rc['err']));
+                } 
+                $image_id = $rc['id'];
+
+                $permalink = $image['permalink'];
+                $uuid = '';
+                if( $image['name'] == '' ) {
+                    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbUUID');
+                    $rc = ciniki_core_dbUUID($ciniki, 'ciniki.wineproduction');
+                    if( $rc['stat'] != 'ok' ) {
+                        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.232', 'msg'=>'Unable to generate ID', 'err'=>$rc['err']));
+                    }
+                    $permalink = $rc['uuid'];
+                    $uuid = $rc['uuid'];
+                }
+
+                //
+                // Add to the product
+                //
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
+                $rc = ciniki_core_objectAdd($ciniki, $tnid, 'ciniki.wineproduction.productimage', array(
+                    'product_id' => $args['update_product_id'],
+                    'uuid' => $uuid,
+                    'name' => $image['name'],
+                    'permalink' => $permalink,
+                    'webflags' => 1,
+                    'sequence' => 1,
+                    'image_id' => $image_id,
+                    'description' => '',
+                    ), 0x04);
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.231', 'msg'=>'Unable to add the productimage', 'err'=>$rc['err']));
+                }
+                    
+            }
+        }
+    }
+
+    //
+    // Check for files 
+    //
+    elseif( $args['field'] == 'files' ) {
+
+    }
+
+    //
     // Check for categories
     //
     elseif( $args['field'] == 'tags10' || $args['field'] == 'tags11' || $args['field'] == 'tags12' 

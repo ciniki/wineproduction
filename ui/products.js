@@ -58,7 +58,10 @@ function ciniki_wineproduction_products() {
         'suppliers':{'label':'Suppliers', 'type':'simplegrid', 'num_cols':1, 'aside':'yes',
             'visible':function() { return M.ciniki_wineproduction_products.menu.sections._tabs.selected == 'suppliers' ? 'yes' : 'hidden';},
             'editFn':function(s, i, d) {
-                return 'M.ciniki_wineproduction_products.supplier.open(\'M.ciniki_wineproduction_products.menu.open();\',\'' + d.id + '\',null);';
+                if( d.id > 0 ) {
+                    return 'M.ciniki_wineproduction_products.supplier.open(\'M.ciniki_wineproduction_products.menu.open();\',\'' + d.id + '\',null);';
+                }
+                return '';
                 },
             'addTxt':'Add Supplier',
             'addFn':'M.ciniki_wineproduction_products.supplier.open(\'M.ciniki_wineproduction_products.menu.open();\',0,null);'
@@ -1558,7 +1561,7 @@ function ciniki_wineproduction_products() {
             }},
         'fields':{'label':'Product Fields', 'type':'simplegrid', 'aside':'yes', 'num_cols':1,
             },
-        'products':{'label':'Products', 'type':'simplegrid', 'num_cols':4,
+        'products':{'label':'Products', 'type':'simplegrid', 'num_cols':5,
             'headerValues':['Name', 'Current', '', 'Supplier'],
             'cellClasses':['', 'alignright', '', ''],
             'headerClasses':['', 'alignright', '', ''],
@@ -1596,58 +1599,58 @@ function ciniki_wineproduction_products() {
         }
         if( s == 'products' && this.compare_field == 'name' ) {
             switch(j) {
-                case 0: return d.tenant_name;
-                case 1: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
-                case 2: return d.supplier_name;
+                case 0: return d.supplier_item_number;
+                case 1: return d.tenant_name;
+                case 2: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
+                case 3: return d.supplier_name;
             }
         }
         if( s == 'products' && this.compare_field == 'primary_image_checksum' ) {
             switch(j) {
-                case 0: return d.tenant_name;
-                case 1: 
+                case 0: return d.supplier_item_number;
+                case 1: return d.tenant_name;
+                case 2: 
                     if( d.tenant_value != '' ) {
                         return '<img width="75px" height="75px" src=\'' + d.tenant_image + '\' />'; 
                     }
                     return '<img width="75px" height="75px" src=\'/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg\' />';
-                case 2: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
-                case 3: 
+                case 3: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
+                case 4: 
                     if( d.supplier_value != '' ) {
                         return '<img width="75px" height="75px" src=\'' + d.supplier_image + '\' />'; 
                     }
                     return '<img width="75px" height="75px" src=\'/ciniki-mods/core/ui/themes/default/img/noimage_75.jpg\' />';
             }
         }
-        if( s == 'products' ) {
+        if( s == 'products' && this.compare_field == 'additional_images' ) {
             switch(j) {
-                case 0: return d.tenant_name;
-                case 1: return d.tenant_value;
-                case 2: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
-                case 3: return d.supplier_value;
-            }
-/*            if( j == 0 ) { return d.tenant_name; }
-            if( j == 1 ) {
-                switch(this.compare_field) {
-                    case 'status': return d.tenant_status_text;
-                    case 'wine_type': return d.tenant_wine_type;
-                    case 'kit_length': return d.tenant_kit_length;
-                    case 'list_price': return d.tenant_list_price;
-                    case 'synopsis': return d.tenant_synopsis.replace(/\n/g, '<br/>');
-                    case 'description': return d.tenant_description.replace(/\n/g, '<br/>');
-                }
+                case 0: return d.supplier_item_number;
+                case 1: return d.tenant_name;
+                case 3: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
             }
             if( j == 2 ) {
-                return '<';
-            }
-            if( j == 3 ) {
-                switch(this.compare_field) {
-                    case 'status': return d.supplier_status_text;
-                    case 'wine_type': return d.supplier_wine_type;
-                    case 'kit_length': return d.supplier_kit_length;
-                    case 'list_price': return d.supplier_list_price;
-                    case 'synopsis': return d.supplier_synopsis.replace(/\n/g, '<br/>');
-                    case 'description': return d.supplier_description.replace(/\n/g, '<br/>');
+                var imgs = '';
+                for(var img in d.tenant_images) {
+                    imgs += '<img width="75px" height="75px" src=\'' + d.tenant_images[img] + '\' />'; 
                 }
-            } */
+                return imgs;
+            }
+            if( j == 4 ) {
+                var imgs = '';
+                for(var img in d.supplier_images) {
+                    imgs += '<img width="75px" height="75px" src=\'' + d.supplier_images[img] + '\' />'; 
+                }
+                return imgs;
+            }
+        }
+        if( s == 'products' ) {
+            switch(j) {
+                case 0: return d.supplier_item_number;
+                case 1: return d.tenant_name;
+                case 2: return d.tenant_value;
+                case 3: return '<button onclick="M.ciniki_wineproduction_products.updater.updateField(\'' + d.id + '\');"> &lt;&lt; </button>';
+                case 4: return d.supplier_value;
+            }
         }
     }
     this.updater.rowClass = function(s, i, d) {
@@ -1688,23 +1691,29 @@ function ciniki_wineproduction_products() {
             p.sections.products.cellClasses = ['', '', '', '', 'alignright', 'aligncenter'];
             p.sections.products.sortTypes = ['text', 'text', 'text', 'number', 'number', ''];
         } else if( p.compare_field == 'name' ) {
-            p.sections.products.num_cols = 3;
-            p.sections.products.headerValues = ['Current', '', 'Supplier'];
-            p.sections.products.cellClasses = ['alignright', 'aligncenter', ''];
-            p.sections.products.headerClasses = ['alignright', 'aligncenter', ''];
-            p.sections.products.sortTypes = ['text', '', 'text'];
-        } else if( p.compare_field == 'primary_image_checksum' ) {
             p.sections.products.num_cols = 4;
-            p.sections.products.headerValues = ['Product', 'Current', '', 'Supplier'];
-            p.sections.products.cellClasses = ['', 'alignright thumbnail', 'aligncenter', 'thumbnail'];
-            p.sections.products.headerClasses = ['', 'alignright', 'aligncenter', ''];
-            p.sections.products.sortTypes = ['text', 'image', '', 'image'];
-        } else {
-            p.sections.products.num_cols = 4;
-            p.sections.products.headerValues = ['Product', 'Current', '', 'Supplier'];
+            p.sections.products.headerValues = ['Sku', 'Current', '', 'Supplier'];
             p.sections.products.cellClasses = ['', 'alignright', 'aligncenter', ''];
             p.sections.products.headerClasses = ['', 'alignright', 'aligncenter', ''];
             p.sections.products.sortTypes = ['text', 'text', '', 'text'];
+        } else if( p.compare_field == 'primary_image_checksum' ) {
+            p.sections.products.num_cols = 5;
+            p.sections.products.headerValues = ['Sku', 'Product', 'Current', '', 'Supplier'];
+            p.sections.products.cellClasses = ['', '', 'alignright thumbnail', 'aligncenter', 'thumbnail'];
+            p.sections.products.headerClasses = ['', '', 'alignright', 'aligncenter', ''];
+            p.sections.products.sortTypes = ['text', 'text', 'image', '', 'image'];
+        } else if( p.compare_field == 'additional_images' ) {
+            p.sections.products.num_cols = 5;
+            p.sections.products.headerValues = ['Sku', 'Product', 'Current', '', 'Supplier'];
+            p.sections.products.cellClasses = ['', '', 'alignright thumbnails', 'aligncenter', 'thumbnails'];
+            p.sections.products.headerClasses = ['', '', 'alignright', 'aligncenter', ''];
+            p.sections.products.sortTypes = ['text', 'text', 'image', '', 'image'];
+        } else {
+            p.sections.products.num_cols = 5;
+            p.sections.products.headerValues = ['Sku', 'Product', 'Current', '', 'Supplier'];
+            p.sections.products.cellClasses = ['', '', 'alignright', 'aligncenter', ''];
+            p.sections.products.headerClasses = ['', '', 'alignright', 'aligncenter', ''];
+            p.sections.products.sortTypes = ['text', 'text', 'text', '', 'text'];
         }
         p.refresh();
         p.show();

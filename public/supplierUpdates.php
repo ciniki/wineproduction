@@ -38,6 +38,11 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         return $rc;
     }
        
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadThumbnail');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'productSupplierImport');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
+
     //
     // Get the list of suppliers that have supplier_tnid
     //
@@ -46,7 +51,6 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . "WHERE supplier_tnid > 0 "
         . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "ORDER BY name ";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'suppliers', 'fname'=>'id', 'fields'=>array('id', 'name', 'supplier_tnid')),
         ));
@@ -129,7 +133,6 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . "AND products.status = 10 "   // Active products
         . "ORDER BY products.name, tags.tag_type, tags.tag_name "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'id', 
             'fields'=>array('id', 'name', 'status', 'wine_type', 'kit_length', 
@@ -146,10 +149,49 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
     $tenant_products = isset($rc['products']) ? $rc['products'] : array();
 
     //
+    // Load all the tenant product images
+    //
+    $strsql = "SELECT products.id AS product_id, "
+        . "pimages.id AS pimage_id, "
+        . "images.id AS image_id, "
+        . "images.title, "
+        . "images.caption, "
+        . "images.original_filename, "
+        . "images.checksum "
+        . "FROM ciniki_wineproduction_products AS products "
+        . "INNER JOIN ciniki_wineproduction_product_images AS pimages ON ("
+            . "products.id = pimages.product_id "
+            . "AND pimages.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . ") "
+        . "LEFT JOIN ciniki_images AS images ON ("
+            . "pimages.image_id = images.id "
+            . "AND images.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . ") "
+        . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "AND supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
+        . "AND products.status = 10 "   // Active products
+        . "ORDER BY products.id, images.checksum "
+        . "";
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'products', 'fname'=>'product_id', 'fields'=>array('id'=>'product_id')),
+        array('container'=>'images', 'fname'=>'image_id', 'fields'=>array('image_id', 'title', 'caption', 'original_filename', 'checksum')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.230', 'msg'=>'Unable to load images', 'err'=>$rc['err']));
+    }
+    $tenant_images = isset($rc['products']) ? $rc['products'] : array();
+    
+    //
+    // Load all the tenant product files
+    //
+
+    //
     // Load all the products and tags from the supplier
     //
     $strsql = "SELECT products.id, "
+        . "products.ptype, "
         . "products.name, "
+        . "products.permalink, "
         . "products.status, "
         . "products.wine_type, "
         . "products.kit_length, "
@@ -177,10 +219,9 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . "AND products.status = 10 "   // Active products
         . "ORDER BY products.name, tags.tag_type, tags.tag_name "
         . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'supplier_item_number', 
-            'fields'=>array('id', 'name', 'status', 'wine_type', 'kit_length', 
+            'fields'=>array('id', 'ptype', 'name', 'permalink', 'status', 'wine_type', 'kit_length', 
                 'supplier_item_number', 'list_price', 'primary_image_id', 'primary_image_checksum', 
                 'synopsis', 'description',
                 )),
@@ -192,6 +233,40 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.212', 'msg'=>'Unable to load products', 'err'=>$rc['err']));
     }
     $supplier_products = isset($rc['products']) ? $rc['products'] : array();
+
+    //
+    // Load supplier images
+    //
+    $strsql = "SELECT products.id AS product_id, "
+        . "pimages.name, "
+        . "pimages.permalink, "
+        . "pimages.id AS pimage_id, "
+        . "images.id AS image_id, "
+        . "images.title, "
+        . "images.caption, "
+        . "images.original_filename, "
+        . "images.checksum "
+        . "FROM ciniki_wineproduction_products AS products "
+        . "INNER JOIN ciniki_wineproduction_product_images AS pimages ON ("
+            . "products.id = pimages.product_id "
+            . "AND pimages.tnid = '" . ciniki_core_dbQuote($ciniki, $supplier_tnid) . "' "
+        . ") "
+        . "LEFT JOIN ciniki_images AS images ON ("
+            . "pimages.image_id = images.id "
+            . "AND images.tnid = '" . ciniki_core_dbQuote($ciniki, $supplier_tnid) . "' "
+            . ") "
+        . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $supplier_tnid) . "' "
+        . "AND products.status = 10 "   // Active products
+        . "ORDER BY products.id, images.checksum "
+        . "";
+    $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
+        array('container'=>'products', 'fname'=>'product_id', 'fields'=>array('id'=>'product_id')),
+        array('container'=>'images', 'fname'=>'image_id', 'fields'=>array('image_id', 'name', 'permalink', 'title', 'caption', 'original_filename', 'checksum')),
+        ));
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.230', 'msg'=>'Unable to load images', 'err'=>$rc['err']));
+    }
+    $supplier_images = isset($rc['products']) ? $rc['products'] : array();
 
     //
     // Compare fields
@@ -209,6 +284,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         array('field'=>'tags15', 'name'=>'Dryness', 'num_diffs'=>0),
         array('field'=>'synopsis', 'name'=>'Synopsis', 'num_diffs'=>0),
         array('field'=>'description', 'name'=>'Description', 'num_diffs'=>0),
+        array('field'=>'additional_images', 'name'=>'Images', 'num_diffs'=>0),
         );
 
     //
@@ -221,9 +297,20 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         $tenant_products[$pid]['tags13'] = '';
         $tenant_products[$pid]['tags14'] = '';
         $tenant_products[$pid]['tags15'] = '';
+        $tenant_products[$pid]['images'] = array();
+        $tenant_products[$pid]['additional_images'] = '';    // List of checksums
+        $tenant_products[$pid]['additional_image_checksums'] = array();
         if( isset($product['tags']) ) {
             foreach($product['tags'] as $tag) {
                 $tenant_products[$pid]['tags' . $tag['tag_type']] .= ($tenant_products[$pid]['tags' . $tag['tag_type']] != '' ? ', ' : '') . $tag['tag_name'];
+            }
+        }
+        // Build a list of the checksums
+        if( isset($tenant_images[$product['id']]['images']) ) {
+            $tenant_products[$pid]['images'] = $tenant_images[$product['id']]['images'];
+            foreach($tenant_images[$product['id']]['images'] as $image) {
+                $tenant_products[$pid]['additional_images'] .= ($tenant_products[$pid]['additional_images'] != '' ? ', ' : '') . $image['checksum'];
+                $tenant_products[$pid]['additional_image_checksums'][] = $image['checksum'];
             }
         }
     }
@@ -234,9 +321,19 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         $supplier_products[$pid]['tags13'] = '';
         $supplier_products[$pid]['tags14'] = '';
         $supplier_products[$pid]['tags15'] = '';
+        $supplier_products[$pid]['images'] = array();
+        $supplier_products[$pid]['additional_images'] = '';  // List of checksums
+        $supplier_products[$pid]['additional_image_checksums'] = array();
         if( isset($product['tags']) ) {
             foreach($product['tags'] as $tag) {
                 $supplier_products[$pid]['tags' . $tag['tag_type']] .= ($supplier_products[$pid]['tags' . $tag['tag_type']] != '' ? ', ' : '') . $tag['tag_name'];
+            }
+        }
+        // Build a list of the checksums
+        if( isset($supplier_images[$product['id']]['images']) ) {
+            $supplier_products[$pid]['images'] = $supplier_images[$product['id']]['images'];
+            foreach($supplier_images[$product['id']]['images'] as $image) {
+                $supplier_products[$pid]['additional_images'] .= ($supplier_products[$pid]['additional_images'] != '' ? ', ' : '') . $image['checksum'];
             }
         }
     }
@@ -252,18 +349,24 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
     foreach($tenant_products as $tid => $tproduct) {
         if( isset($supplier_products[$tproduct['supplier_item_number']]) ) {
             $sproduct = $supplier_products[$tproduct['supplier_item_number']];
+/*            if( $sproduct['id'] == 4068 ) {
+                error_log(print_r($tproduct,true));
+                error_log(print_r($sproduct,true));
+            } */
             $supplier_products[$tproduct['supplier_item_number']]['tid'] = $tid;
             foreach($fields as $fid => $field) {
                 if( $tproduct[$field['field']] != $sproduct[$field['field']] && $sproduct[$field['field']] != '' ) {
                     if( isset($args['field']) && $field['field'] == $args['field'] ) {
                         $diff_product = array(
                             'id' => $tproduct['id'],
+                            'supplier_item_number' => $tproduct['supplier_item_number'],
                             'tenant_name' => $tproduct['name'],
                             'tenant_value' => $tproduct[$field['field']],
+                            'tenant_images' => array(),
                             'supplier_value' => $sproduct[$field['field']],
+                            'supplier_images' => array(),
                             );
                         if( isset($args['update_product_id']) && $args['update_product_id'] == $tproduct['id'] ) {
-                            ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'productSupplierImport');
                             $rc = ciniki_wineproduction_productSupplierImport($ciniki, $args['tnid'], array(
                                 'supplier_tnid' => $supplier_tnid,
                                 'field' => $args['field'],
@@ -290,7 +393,6 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
                             //
                             // Load image
                             //
-                            ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadThumbnail');
                             if( $tproduct['primary_image_id'] > 0 ) {
                                 $rc = ciniki_images_hooks_loadThumbnail($ciniki, $args['tnid'], 
                                     array('image_id'=>$tproduct['primary_image_id'], 'maxlength'=>75));
@@ -307,6 +409,34 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
                             }
                             $diff_product['supplier_image'] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
                         }
+                        elseif( $args['field'] == 'additional_images' ) {
+                            // Add the tenant images
+                            if( isset($tenant_images[$tproduct['id']]['images']) ) {
+                                foreach($tenant_images[$tproduct['id']]['images'] as $image) {
+                                    $rc = ciniki_images_hooks_loadThumbnail($ciniki, $args['tnid'], 
+                                        array('image_id'=>$image['image_id'], 'maxlength'=>75));
+                                    if( $rc['stat'] != 'ok' ) {
+                                        return $rc;
+                                    }
+                                    $diff_product['tenant_images'][] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
+                                }
+                            }
+                            $available_images = array();
+                            if( isset($supplier_images[$sproduct['id']]['images']) ) {
+                                foreach($supplier_images[$sproduct['id']]['images'] as $image) {
+                                    // Only add the images that don't exist in tenant
+                                    error_log(print_r($image,true));
+                                    if( !in_array($image['checksum'], $tproduct['additional_image_checksums']) ) {
+                                        $rc = ciniki_images_hooks_loadThumbnail($ciniki, $supplier_tnid, 
+                                            array('image_id'=>$image['image_id'], 'maxlength'=>75));
+                                        if( $rc['stat'] != 'ok' ) {
+                                            return $rc;
+                                        }
+                                        $diff_product['supplier_images'][] = 'data:image/jpg;base64,' . base64_encode($rc['image']);
+                                    }
+                                }
+                            }
+                        }
                         $products[] = $diff_product;
                     }
                     $fields[$fid]['num_diffs']++;
@@ -319,42 +449,120 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
     // Check for new products
     //
     $new_products = array();
-    foreach($supplier_products as $product) {
-        if( !isset($product['tid']) ) {
-            if( isset($args['import_sku']) && $args['import_sku'] == $product['supplier_item_number'] ) {
+    foreach($supplier_products as $sproduct) {
+        if( !isset($sproduct['tid']) ) {
+            if( isset($args['import_sku']) && $args['import_sku'] == $sproduct['supplier_item_number'] ) {
+                //
+                // Check product name does not already exist
+                //
+                $strsql = "SELECT products.id, "
+                    . "products.name, "
+                    . "products.supplier_id, "
+                    . "products.supplier_item_number "
+                    . "FROM ciniki_wineproduction_products AS products "
+                    . "WHERE ("
+                        . "products.name = '" . ciniki_core_dbQuote($ciniki, $sproduct['name']) . "' "
+                        . "OR products.supplier_item_number = '" . ciniki_core_dbQuote($ciniki, $sproduct['supplier_item_number']) . "' "
+                        . ") "
+                    . "AND products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+                    . "";
+                $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'product');
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.227', 'msg'=>'Unable to load product', 'err'=>$rc['err']));
+                }
+                if( isset($rc['rows']) && count($rc['rows']) > 0 ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.228', 'msg'=>'Product name or sku already exists'));
+                }
+
+                ciniki_core_loadMethod($ciniki, 'ciniki', 'taxes', 'hooks', 'taxTypes');
+                $rc = ciniki_taxes_hooks_taxTypes($ciniki, $args['tnid'], array());
+                if( $rc['stat'] != 'ok' ) {
+                    return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.229', 'msg'=>'Unable to load taxes', 'err'=>$rc['err']));
+                }
+                $taxtype_id = 0;
+                if( isset($rc['types'][1]['id']) ) {
+                    $taxtype_id = $rc['types'][1]['id'];
+                }
 
                 //
-                // Import product
+                // Setup the main product details to import
                 //
                 $tproduct = $sproduct;
-                $primary_image_id = $sproduct['primary_image_id'];
-                $sproduct['primary_image_id'] = 0;
-                $product['supplier_id'] = $args['supplier_id'];
+                $tproduct['supplier_id'] = $args['supplier_id'];
+                $tproduct['list_discount_percent'] = 0;
+                $tproduct['cost'] = $tproduct['list_price'];
+                $tproduct['taxtype_id'] = $taxtype_id;
+                $tproduct['inventory_current_num'] = 0;
+                $tproduct['primary_image_id'] = 0;
+                
+                //
+                // Add new product
+                //
                 ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectAdd');
-                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.wineproduction.product', $product, 0x04);
+                $rc = ciniki_core_objectAdd($ciniki, $args['tnid'], 'ciniki.wineproduction.product', $tproduct, 0x04);
                 if( $rc['stat'] != 'ok' ) {
                     return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.226', 'msg'=>'Unable to add the product', 'err'=>$rc['err']));
                 }
-
                 $tproduct['id'] = $rc['id'];
+
                 //
                 // Import the primary image
                 //
-                if( $product['primary_image_id'] > 0 ) {
-/*                    $rc = ciniki_wineproduction_productSupplierImport($ciniki, $args['tnid'], array(
+                if( $sproduct['primary_image_id'] > 0 ) {
+                    $rc = ciniki_wineproduction_productSupplierImport($ciniki, $args['tnid'], array(
                         'supplier_tnid' => $supplier_tnid,
-                        'field' => 'primary_image_id',
-                        'update_product_id' => $args['update_product_id'],
+                        'field' => 'primary_image_checksum',
+                        'update_product_id' => $tproduct['id'],
                         'tproduct' => $tproduct,
                         'sproduct' => $sproduct,
                         ));
-*/        
                 }
+
+                //
+                // Import the tags
+                //
+                for($i = 10; $i <= 15; $i++ ) {
+                    $tproduct['tags10'] = '';
+                    $tproduct['tags11'] = '';
+                    $tproduct['tags12'] = '';
+                    $tproduct['tags13'] = '';
+                    $tproduct['tags14'] = '';
+                    $tproduct['tags15'] = '';
+                    $rc = ciniki_wineproduction_productSupplierImport($ciniki, $args['tnid'], array(
+                        'supplier_tnid' => $supplier_tnid,
+                        'field' => 'tags' . $i,
+                        'update_product_id' => $tproduct['id'],
+                        'tproduct' => $tproduct,
+                        'sproduct' => $sproduct,
+                        ));
+                }
+
+                //
+                // Import images
+                //
+                if( isset($supplier_images[$sproduct['id']]['images']) ) {
+                    foreach($supplier_images[$sproduct['id']]['images'] as $image) {
+                        $rc = ciniki_wineproduction_productSupplierImport($ciniki, $args['tnid'], array(
+                            'supplier_tnid' => $supplier_tnid,
+                            'field' => 'additional_images',
+                            'update_product_id' => $tproduct['id'],
+                            'tproduct' => $tproduct,
+                            'sproduct' => $sproduct,
+                            'image' => $image,
+                            ));
+                    }
+                }
+
+
+                //
+                // Import files
+                //
+
 
                 
 
             } else {
-                $new_products[] = $product;
+                $new_products[] = $sproduct;
             }
         }
     }

@@ -82,6 +82,7 @@ function ciniki_wineproduction_productSearch($ciniki) {
     $strsql .= "AND ("
             . "name LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR name LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR supplier_item_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
         . ") "
         . "ORDER BY status, name ";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {

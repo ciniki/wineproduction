@@ -55,23 +55,6 @@ function ciniki_wineproduction_productDelete(&$ciniki) {
     $product = $rc['product'];
 
     //
-    // Check for any dependencies before deleting
-    //
-    $strsql = "SELECT COUNT(id) AS num_items "
-        . "FROM ciniki_wineproduction_product_tags "
-        . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
-        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
-        . "";
-    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbSingleCount');
-    $rc = ciniki_core_dbSingleCount($ciniki, $strsql, 'ciniki.ags', 'num');
-    if( $rc['stat'] != 'ok' ) {
-        return $rc;
-    }
-    if( $rc['num'] > 0 ) {
-        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.121', 'msg'=>'There are orders for this product and cannot be removed.'));
-    }
-
-    //
     // Check if any modules are currently using this object
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectCheckUsed');
@@ -95,6 +78,72 @@ function ciniki_wineproduction_productDelete(&$ciniki) {
     $rc = ciniki_core_dbTransactionStart($ciniki, 'ciniki.wineproduction');
     if( $rc['stat'] != 'ok' ) {
         return $rc;
+    }
+
+    //
+    // Remove the tags
+    //
+    $strsql = "SELECT id, uuid "
+        . "FROM ciniki_wineproduction_product_tags "
+        . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.233', 'msg'=>'Unable to remove categories', 'err'=>$rc['err']));
+    }
+    $tags = isset($rc['rows']) ? $rc['rows'] : array();
+    foreach($tags as $tag) {
+        $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.wineproduction.producttag',
+            $tag['id'], $tag['uuid'], 0x04);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
+            return $rc;
+        }
+    }
+
+    //
+    // Remove the additional images
+    //
+    $strsql = "SELECT id, uuid "
+        . "FROM ciniki_wineproduction_product_images "
+        . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.234', 'msg'=>'Unable to remove images', 'err'=>$rc['err']));
+    }
+    $images = isset($rc['rows']) ? $rc['rows'] : array();
+    foreach($images as $image) {
+        $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.wineproduction.productimage',
+            $image['id'], $image['uuid'], 0x04);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
+            return $rc;
+        }
+    }
+    
+    //
+    // Remove the files
+    //
+    $strsql = "SELECT id, uuid "
+        . "FROM ciniki_wineproduction_product_files "
+        . "WHERE product_id = '" . ciniki_core_dbQuote($ciniki, $args['product_id']) . "' "
+        . "AND tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . "";
+    $rc = ciniki_core_dbHashQuery($ciniki, $strsql, 'ciniki.wineproduction', 'item');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.233', 'msg'=>'Unable to remove files', 'err'=>$rc['err']));
+    }
+    $files = isset($rc['rows']) ? $rc['rows'] : array();
+    foreach($files as $file) {
+        $rc = ciniki_core_objectDelete($ciniki, $args['tnid'], 'ciniki.wineproduction.productfile',
+            $file['id'], $file['uuid'], 0x04);
+        if( $rc['stat'] != 'ok' ) {
+            ciniki_core_dbTransactionRollback($ciniki, 'ciniki.wineproduction');
+            return $rc;
+        }
     }
 
     //
