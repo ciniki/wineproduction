@@ -246,7 +246,7 @@ function ciniki_wineproduction_products() {
             return 'M.ciniki_wineproduction_products.purchaseorder.open(\'M.ciniki_wineproduction_products.menu.open();\',\'' + d.id + '\');';
         }
         if( s == 'products' ) {
-            return 'M.ciniki_wineproduction_products.product.open(\'M.ciniki_wineproduction_products.menu.open();\',\'' + d.id + '\',M.ciniki_wineproduction_products.product.nplist);';
+            return 'M.ciniki_wineproduction_products.product.open(\'M.ciniki_wineproduction_products.menu.open();\',\'' + d.id + '\',M.ciniki_wineproduction_products.menu.nplist);';
         }
     }
     this.menu.openTag = function(t, p) {
