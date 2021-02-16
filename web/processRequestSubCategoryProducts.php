@@ -75,9 +75,7 @@ function ciniki_wineproduction_web_processRequestSubCategoryProducts(&$ciniki, $
     } else {
         $products = array();
     }
-        error_log(print_r($products,true));
     
-
     return array('stat'=>'ok', 'products'=>$products);
 }
 ?>
