@@ -145,7 +145,10 @@ function ciniki_wineproduction_products() {
             }
         }
         // Suppliers view of products, different from wine store
-        if( s == 'products' && !M.modFlagOn('ciniki.wineproduction', 0x0100) ) {
+        if( s == 'products' 
+            && !M.modFlagOn('ciniki.wineproduction', 0x0100) 
+            && (this.sections._ptabs.selected == 'overview' || this.sections._ptabs.selected == 'discontinued') 
+            ) {
             switch(j) {
                 case 0: return d.supplier_item_number;
                 case 1: return d.name;
