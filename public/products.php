@@ -154,8 +154,9 @@ function ciniki_wineproduction_products($ciniki) {
         . "products.primary_image_id, "
         . "products.synopsis, "
         . "products.last_updated, "
-        . "categories.tag_name AS categories, "
-        . "subcategories.tag_name AS subcategories, "
+        . "tags.id AS tag_id, "
+        . "tags.tag_type, "
+        . "tags.tag_name, "
         . "suppliers.name AS supplier_name "
         . "FROM ciniki_wineproduction_products AS products "
         . "";
@@ -169,7 +170,11 @@ function ciniki_wineproduction_products($ciniki) {
                 . ") ";
         }
     }
-    $strsql .= "LEFT JOIN ciniki_wineproduction_product_tags AS categories ON ("
+    $strsql .= "LEFT JOIN ciniki_wineproduction_product_tags AS tags ON ("
+        . "products.id = tags.product_id "
+        . "AND tags.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . ") ";
+/*    $strsql .= "LEFT JOIN ciniki_wineproduction_product_tags AS categories ON ("
         . "products.id = categories.product_id "
         . "AND categories.tag_type = 10 "
         . "AND categories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
@@ -179,6 +184,11 @@ function ciniki_wineproduction_products($ciniki) {
         . "AND subcategories.tag_type = 11 "
         . "AND subcategories.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . ") ";
+    $strsql .= "LEFT JOIN ciniki_wineproduction_product_tags AS varietals ON ("
+        . "products.id = varietals.product_id "
+        . "AND varietals.tag_type = 12 "
+        . "AND varietals.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+        . ") "; */
 //    if( isset($args['list']) && $args['list'] == 'pricing' ) {
         $strsql .= "LEFT JOIN ciniki_wineproduction_product_pricing AS kit_pricing ON ("
             . "products.kit_price_id = kit_pricing.id "
@@ -208,7 +218,7 @@ function ciniki_wineproduction_products($ciniki) {
     } elseif( isset($args['supplier_id']) && $args['supplier_id'] != '' ) {
         $strsql .= "AND products.supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' ";
     }
-    $strsql .= "ORDER BY products.name, categories, subcategories "
+    $strsql .= "ORDER BY products.name, tags.tag_type, tags.tag_name "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
@@ -219,16 +229,19 @@ function ciniki_wineproduction_products($ciniki) {
                 'wine_type', 'kit_length', 'list_price', 'list_discount_percent', 'cost', 
                 'kit_unit_amount', 'processing_unit_amount',
                 'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 
-                'inventory_current_num', 'primary_image_id', 'synopsis', 'categories', 'subcategories', 'supplier_name',
-                'last_updated'),
+                'inventory_current_num', 'primary_image_id', 'synopsis', 
+//                'categories', 'subcategories', 'varietals',
+                'supplier_name', 'last_updated'),
             'maps'=>array(
                 'status_text'=>$maps['product']['status'],
                 ),
-            'dlists'=>array(
+/*            'dlists'=>array(
                 'categories'=>', ',
                 'subcategories'=>', ',
-                ),
+                'varietals'=>', ',
+                ), */
             ),
+        array('container'=>'tags', 'fname'=>'tag_id', 'fields'=>array('tag_type', 'tag_name')),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -279,6 +292,23 @@ function ciniki_wineproduction_products($ciniki) {
             $total += $products[$iid]['tax_amount'];
             $products[$iid]['total_display'] = '$' . number_format($total, 2);
             $products[$iid]['tax_amount_display'] = '$' . number_format($products[$iid]['tax_amount'], 2);
+            
+            //
+            // Setup categories, subcategories, tags12-tags15
+            //
+            $products[$iid]['tags10'] = '';
+            $products[$iid]['tags11'] = '';
+            $products[$iid]['tags12'] = '';
+            $products[$iid]['tags13'] = '';
+            $products[$iid]['tags14'] = '';
+            $products[$iid]['tags15'] = '';
+            if( isset($product['tags']) ) {
+                foreach($product['tags'] as $tag) {
+                    $field = 'tags' . $tag['tag_type'];
+                    $products[$iid][$field] .= ($products[$iid][$field] != '' ? ', ' : '') . $tag['tag_name'];
+                }
+            }
+
             $product_ids[] = $product['id'];
         }
     } else {

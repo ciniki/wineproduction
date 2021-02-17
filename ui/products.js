@@ -94,6 +94,7 @@ function ciniki_wineproduction_products() {
             },
         '_ptabs':{'label':'', 'type':'paneltabs', 'selected':'overview', 'tabs':{
             'overview':{'label':'Overview', 'fn':'M.ciniki_wineproduction_products.menu.switchPTab("overview");'},
+            'categories':{'label':'Categories', 'fn':'M.ciniki_wineproduction_products.menu.switchPTab("categories");'},
             'pricing':{'label':'Pricing', 'fn':'M.ciniki_wineproduction_products.menu.switchPTab("pricing");',
                 'visible':function() { return M.modFlagSet('ciniki.wineproduction', 0x0100); },
                 },
@@ -148,20 +149,32 @@ function ciniki_wineproduction_products() {
             switch(j) {
                 case 0: return d.supplier_item_number;
                 case 1: return d.name;
-                case 2: return d.categories;
-                case 3: return d.subcategories;
+                case 2: return d.tags10;
+                case 3: return d.tags11;
                 case 4: return d.list_price_display;
             }
         }
         if( s == 'products' && (this.sections._ptabs.selected == 'overview' || this.sections._ptabs.selected == 'discontinued') ) {
             switch(j) {
                 case 0: return d.name;
-                case 1: return d.categories;
-                case 2: return d.subcategories;
+                case 1: return d.tags10;
+                case 2: return d.tags11;
                 case 3: return d.visible;
                 case 4: return d.total_display;
                 case 5: return d.supplier_name;
                 case 6: return d.inventory_current_num;
+            }
+        }
+        if( s == 'products' && this.sections._ptabs.selected == 'categories' ) {
+            switch(j) {
+                case 0: return d.supplier_item_number;
+                case 1: return d.name;
+                case 2: return d.tags10;
+                case 3: return d.tags11;
+                case 4: return d.tags12;
+                case 5: return d.tags13;
+                case 6: return d.tags14;
+                case 7: return d.tags15;
             }
         }
         if( s == 'products' && this.sections._ptabs.selected == 'pricing' ) {
@@ -190,8 +203,8 @@ function ciniki_wineproduction_products() {
             }
             switch(j) {
                 case 1: return d.name;
-                case 2: return d.categories;
-                case 3: return d.subcategories;
+                case 2: return d.tags10;
+                case 3: return d.tags11;
                 case 4: return d.visible;
                 case 5: return d.total_display;
             }
@@ -285,6 +298,12 @@ function ciniki_wineproduction_products() {
                 p.sections.products.headerValues = ['Sku', 'Name', 'List', 'Disc', 'Cost', 'Kit', 'Proc', 'Price', 'Disc$', 'Disc%', 'Tax', 'Total'];
                 p.sections.products.headerClasses = ['','', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright'];
                 p.sections.products.cellClasses = ['','', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright', 'alignright'];
+            } else if( p.sections._ptabs.selected == 'categories' ) {
+                p.sections.products.num_cols = 8;
+                p.sections.products.sortTypes = ['', 'text', 'text', 'text', 'text', 'number'];
+                p.sections.products.headerValues = ['Image', 'Name', 'Categories', 'SubCategories', 'Varietals', 'Oak', 'Body', 'Dryness'];
+                p.sections.products.headerClasses = ['', '', '', '', '', '', '', ''];
+                p.sections.products.cellClasses = ['', '', '', '', '', '', '', ''];
             } else if( p.sections._ptabs.selected == 'website' ) {
                 p.sections.products.num_cols = 6;
                 p.sections.products.sortTypes = ['', 'text', 'text', 'text', 'text', 'number'];
