@@ -218,7 +218,7 @@ function ciniki_wineproduction_products($ciniki) {
     } elseif( isset($args['supplier_id']) && $args['supplier_id'] != '' ) {
         $strsql .= "AND products.supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' ";
     }
-    $strsql .= "ORDER BY products.name, tags.tag_type, tags.tag_name "
+    $strsql .= "ORDER BY products.name, products.id, tags.tag_type, tags.tag_name, tags.id "
         . "";
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
