@@ -131,7 +131,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND supplier_id = '" . ciniki_core_dbQuote($ciniki, $args['supplier_id']) . "' "
         . "AND products.status = 10 "   // Active products
-        . "ORDER BY products.name, tags.tag_type, tags.tag_name "
+        . "ORDER BY products.name, products.supplier_item_number, tags.tag_type, tags.tag_name "
         . "";
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'id', 
@@ -245,7 +245,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . ") "
         . "WHERE products.tnid = '" . ciniki_core_dbQuote($ciniki, $supplier_tnid) . "' "
         . "AND products.status = 10 "   // Active products
-        . "ORDER BY products.name, tags.tag_type, tags.tag_name "
+        . "ORDER BY products.name, products.supplier_item_number, tags.tag_type, tags.tag_name "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'supplier_item_number', 
