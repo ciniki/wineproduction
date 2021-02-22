@@ -191,7 +191,11 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
         || $args['field'] == 'tags13' || $args['field'] == 'tags14' || $args['field'] == 'tags15'
         ) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'makePermalink');
-        $tenant_tags = explode(',', $args['tproduct'][$args['field']]);
+        if( $args['tproduct'][$args['field']] != '' ) {
+            $tenant_tags = explode(',', $args['tproduct'][$args['field']]);
+        } else {
+            $tenant_tags = array();
+        }
         foreach($tenant_tags as $tid => $tag) {
             $tenant_tags[$tid] = trim($tag);
         }
