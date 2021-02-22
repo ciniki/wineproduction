@@ -43,8 +43,8 @@ function ciniki_wineproduction_productSupplierImport(&$ciniki, $tnid, $args) {
         //
         ciniki_core_loadMethod($ciniki, 'ciniki', 'images', 'hooks', 'loadOriginal');
         $rc = ciniki_images_hooks_loadOriginal($ciniki, $args['supplier_tnid'], array(
-            'image_id' => $args['sproduct']['primary_image_id']),
-            );
+            'image_id' => $args['sproduct']['primary_image_id'],
+            ));
         if( $rc['stat'] != 'ok' ) {
             return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.247', 'msg'=>'Unable to load image', 'err'=>$rc['err']));
         }
