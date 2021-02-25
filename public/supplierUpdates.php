@@ -109,6 +109,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . "products.wine_type, "
         . "products.kit_length, "
         . "products.supplier_item_number, "
+        . "products.package_qty, "
         . "products.list_price, "
         . "products.primary_image_id, "
         . "IFNULL(images.checksum, '') AS primary_image_checksum, "
@@ -136,7 +137,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
     $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'id', 
             'fields'=>array('id', 'name', 'status', 'wine_type', 'kit_length', 
-                'supplier_item_number', 'list_price', 'primary_image_id', 'primary_image_checksum', 
+                'supplier_item_number', 'package_qty', 'list_price', 'primary_image_id', 'primary_image_checksum', 
                 'synopsis', 'description',
                 )),
         array('container'=>'tags', 'fname'=>'tag_id', 
@@ -224,6 +225,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
         . "products.wine_type, "
         . "products.kit_length, "
         . "products.supplier_item_number, "
+        . "products.package_qty, "
         . "products.list_price, "
         . "products.primary_image_id, "
         . "IFNULL(images.checksum, '') AS primary_image_checksum, "
@@ -250,7 +252,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'supplier_item_number', 
             'fields'=>array('id', 'ptype', 'name', 'permalink', 'status', 'wine_type', 'kit_length', 
-                'supplier_item_number', 'list_price', 'primary_image_id', 'primary_image_checksum', 
+                'supplier_item_number', 'package_qty', 'list_price', 'primary_image_id', 'primary_image_checksum', 
                 'synopsis', 'description',
                 )),
         array('container'=>'tags', 'fname'=>'tag_id', 
@@ -333,6 +335,7 @@ function ciniki_wineproduction_supplierUpdates(&$ciniki) {
     $fields = array(
         array('field'=>'wine_type', 'name'=>'Wine Type', 'num_diffs'=>0),
         array('field'=>'kit_length', 'name'=>'Kit Length', 'num_diffs'=>0),
+        array('field'=>'package_qty', 'name'=>'Package Quantity', 'num_diffs'=>0),
         array('field'=>'list_price', 'name'=>'List Price', 'num_diffs'=>0),
         array('field'=>'primary_image_checksum', 'name'=>'Primary Image', 'num_diffs'=>0),
         array('field'=>'tags10', 'name'=>'Categories', 'num_diffs'=>0),
