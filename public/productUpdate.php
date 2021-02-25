@@ -26,6 +26,7 @@ function ciniki_wineproduction_productUpdate(&$ciniki) {
         'end_date'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'datetimetoutc', 'name'=>'End Date'),
         'supplier_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier'),
         'supplier_item_number'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Supplier Item Number'),
+        'package_qty'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Package Quantity'),
         'wine_type'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Wine Type'),
         'kit_length'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Kit Length'),
         'list_price'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'List Price'),

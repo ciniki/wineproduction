@@ -385,6 +385,7 @@ function ciniki_wineproduction_products() {
                 'complex_options':{'name':'label', 'value':'value'},
                 },
             'supplier_item_number':{'label':'Supplier Item Number', 'type':'text'},
+            'package_qty':{'label':'Package Quantity', 'type':'text', 'size':'small'},
             'list_price':{'label':'List Price', 'type':'text', 'size':'small',
                 'onkeyupFn':'M.ciniki_wineproduction_products.product.updateForm',
                 },

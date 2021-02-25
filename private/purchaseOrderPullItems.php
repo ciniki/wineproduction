@@ -57,6 +57,7 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
     $strsql = "SELECT products.id, "
         . "products.name, "
         . "products.supplier_item_number, "
+        . "products.package_qty, "
         . "products.cost, "
         . "products.taxtype_id, "
         . "products.inventory_current_num, "
@@ -74,7 +75,9 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryIDTree');
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'products', 'fname'=>'id', 
-            'fields'=>array('id', 'name', 'supplier_item_number', 'cost', 'taxtype_id', 'inventory_current_num', 'num_required')),
+            'fields'=>array('id', 'name', 'supplier_item_number', 'package_qty', 
+                'cost', 'taxtype_id', 'inventory_current_num', 'num_required',
+            )),
         ));
     if( $rc['stat'] != 'ok' ) {
         return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.174', 'msg'=>'Unable to load products', 'err'=>$rc['err']));
@@ -93,6 +96,12 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
                 $qty_required = $required[$product_id]['num_required'];
             } else {
                 $qty_required = ($required[$product_id]['num_required'] - $required[$product_id]['inventory_current_num']);
+            }
+            //
+            // Check if there are multiple in package
+            //
+            if( $required[$product_id]['package_qty'] > 1 ) {
+                $qty_required = ceil($qty_required/$required[$product_id]['package_qty']);
             }
             if( $qty_required > $item['quantity_ordered'] ) {
                 //
@@ -118,6 +127,12 @@ function ciniki_wineproduction_purchaseOrderPullItems(&$ciniki, $tnid, $order_id
                 $qty_required = $item['num_required'];
             } else {
                 $qty_required = ($item['num_required'] - $item['inventory_current_num']);
+            }
+            //
+            // Check if there are multiple in package
+            //
+            if( $required[$product_id]['package_qty'] > 1 ) {
+                $qty_required = ceil($qty_required/$required[$product_id]['package_qty']);
             }
             //
             // Add item to order

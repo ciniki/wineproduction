@@ -67,6 +67,7 @@ function ciniki_wineproduction_productGet($ciniki) {
             'end_date'=>'',
             'supplier_id'=>'',
             'supplier_item_number'=>'',
+            'package_qty'=>'1',
             'wine_type'=>'',
             'kit_length'=>'',
             'cost'=>'',
@@ -101,6 +102,7 @@ function ciniki_wineproduction_productGet($ciniki) {
             . "ciniki_wineproduction_products.end_date, "
             . "ciniki_wineproduction_products.supplier_id, "
             . "ciniki_wineproduction_products.supplier_item_number, "
+            . "ciniki_wineproduction_products.package_qty, "
             . "ciniki_wineproduction_products.wine_type, "
             . "ciniki_wineproduction_products.kit_length, "
             . "ciniki_wineproduction_products.list_price, "
@@ -124,7 +126,7 @@ function ciniki_wineproduction_productGet($ciniki) {
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
             array('container'=>'products', 'fname'=>'id', 
                 'fields'=>array('name', 'permalink', 'ptype', 'flags', 'status', 'start_date', 'end_date', 
-                    'supplier_id', 'supplier_item_number', 'wine_type', 'kit_length', 
+                    'supplier_id', 'supplier_item_number', 'package_qty', 'wine_type', 'kit_length', 
                     'list_price', 'list_discount_percent', 'cost', 
                     'kit_price_id', 'processing_price_id', 
                     'unit_amount', 'unit_discount_amount', 'unit_discount_percentage', 'taxtype_id', 
