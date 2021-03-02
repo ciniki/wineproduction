@@ -19,6 +19,7 @@ function ciniki_wineproduction_productPriceUpdate(&$ciniki) {
         'price_id'=>array('required'=>'yes', 'blank'=>'no', 'name'=>'Price'),
         'price_type'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Type'),
         'name'=>array('required'=>'no', 'blank'=>'no', 'name'=>'Name'),
+        'invoice_description'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Invoice Description'),
         'sequence'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Order'),
         'unit_amount'=>array('required'=>'no', 'blank'=>'yes', 'type'=>'number', 'name'=>'Price'),
         ));

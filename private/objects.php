@@ -55,6 +55,7 @@ function ciniki_wineproduction_objects($ciniki) {
         'fields' => array(
             'price_type' => array('name'=>'Type'),
             'name' => array('name'=>'Name'),
+            'invoice_description' => array('name'=>'Name', 'default'=>''),
             'sequence' => array('name'=>'Order', 'default'=>''),
             'unit_amount' => array('name'=>'Price', 'default'=>''),
             ),

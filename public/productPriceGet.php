@@ -60,6 +60,7 @@ function ciniki_wineproduction_productPriceGet($ciniki) {
         $price = array('id'=>0,
             'price_type'=>'',
             'name'=>'',
+            'invoice_description'=>'',
             'sequence'=>'',
             'unit_amount'=>'',
         );
@@ -72,6 +73,7 @@ function ciniki_wineproduction_productPriceGet($ciniki) {
         $strsql = "SELECT ciniki_wineproduction_product_pricing.id, "
             . "ciniki_wineproduction_product_pricing.price_type, "
             . "ciniki_wineproduction_product_pricing.name, "
+            . "ciniki_wineproduction_product_pricing.invoice_description, "
             . "ciniki_wineproduction_product_pricing.sequence, "
             . "ciniki_wineproduction_product_pricing.unit_amount "
             . "FROM ciniki_wineproduction_product_pricing "
@@ -81,7 +83,7 @@ function ciniki_wineproduction_productPriceGet($ciniki) {
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbHashQueryArrayTree');
         $rc = ciniki_core_dbHashQueryArrayTree($ciniki, $strsql, 'ciniki.wineproduction', array(
             array('container'=>'prices', 'fname'=>'id', 
-                'fields'=>array('price_type', 'name', 'sequence', 'unit_amount'),
+                'fields'=>array('price_type', 'name', 'invoice_description', 'sequence', 'unit_amount'),
                 ),
             ));
         if( $rc['stat'] != 'ok' ) {

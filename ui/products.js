@@ -1006,7 +1006,7 @@ function ciniki_wineproduction_products() {
     //
     // The panel to edit Price
     //
-    this.price = new M.panel('Price', 'ciniki_wineproduction_products', 'price', 'mc', 'narrow', 'sectioned', 'ciniki.wineproduction.products.price');
+    this.price = new M.panel('Price', 'ciniki_wineproduction_products', 'price', 'mc', 'medium', 'sectioned', 'ciniki.wineproduction.products.price');
     this.price.data = null;
     this.price.price_id = 0;
     this.price.price_type = 10;
@@ -1014,6 +1014,7 @@ function ciniki_wineproduction_products() {
     this.price.sections = {
         'general':{'label':'', 'fields':{
             'name':{'label':'Name', 'required':'yes', 'type':'text'},
+            'invoice_description':{'label':'Invoice Description', 'required':'yes', 'type':'text'},
             'sequence':{'label':'Order', 'type':'text', 'size':'small'},
             'unit_amount':{'label':'Price', 'type':'text', 'size':'small'},
             }},

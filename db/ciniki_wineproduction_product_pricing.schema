@@ -14,6 +14,8 @@
 #
 # name:                 The name to be used for display on the website, overrides the tag_name.
 #
+# invoice_description:  The description of the line item when added to an invoice.
+#
 # sequence:             The order to display the category or subcategories in.
 #
 # unit_amount:          The price to the charged to the customer.
@@ -28,6 +30,7 @@ create table ciniki_wineproduction_product_pricing (
 
     price_type int not null,
     name varchar(150) not null,
+    invoice_description varchar(150) not null,
     sequence tinyint unsigned not null,
     unit_amount decimal(19,6) not null,
 
