@@ -63,16 +63,16 @@ function ciniki_wineproduction_productPricingUpdate(&$ciniki, $tnid, $args) {
         }
         if( $product['ptype'] == 10 ) {
             $unit_amount = $product['kit_unit_amount'] + $product['processing_unit_amount'];
-            if( $unit_amount != $product['unit_amount'] ) {
+            if( $product['unit_amount'] != (string)$unit_amount ) {
                 $update_args['unit_amount'] = $unit_amount;
             }
         }
 
-        if( count($update_args) > 0 ) {
+        if( count($update_args) > 0 ) { 
             ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
             $rc = ciniki_core_objectUpdate($ciniki, $tnid, 'ciniki.wineproduction.product', $product['id'], $update_args, 0x04);
             if( $rc['stat'] != 'ok' ) {
-                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.138', 'msg'=>'Unable to update the product'));
+                return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.138', 'msg'=>'Unable to update the product', 'err'=>$rc['err']));
             }
         }
     }
