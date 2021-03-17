@@ -41,11 +41,22 @@ function ciniki_wineproduction_stats($ciniki) {
     }   
 
     //
-    // FIXME: Add timezone information
+    // Load the tenant settings
     //
-    date_default_timezone_set('America/Toronto');
-    $todays_date = strftime("%Y-%m-%d");
-    $today_plus_four = strftime("%Y-%m-%d", time()+345600);
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'tenants', 'private', 'intlSettings');
+    $rc = ciniki_tenants_intlSettings($ciniki, $args['tnid']);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $intl_timezone = $rc['settings']['intl-default-timezone'];
+   
+    $dt = new DateTime('now', new DateTimezone($intl_timezone));
+    $todays_date = $dt->format('Y-m-d');
+    $dt->add(new DateInterval('P4D'));
+    $today_plus_four = $dt->format('Y-m-d');
+//    date_default_timezone_set('America/Toronto');
+//    $todays_date = strftime("%Y-%m-%d");
+//    $today_plus_four = strftime("%Y-%m-%d", time()+345600);
 
     //
     // Get the complete count information
@@ -63,7 +74,6 @@ function ciniki_wineproduction_stats($ciniki) {
     }
     $stats = $rc['stats'];
 
-    
     //
     // Get past stats
     //
@@ -85,7 +95,7 @@ function ciniki_wineproduction_stats($ciniki) {
         return array('stat'=>'ok', 'stats'=>array());
     }
     $past_stats = $rc['stats'];
-
+    
     //
     // Get todays or previous order stats
     //
@@ -106,6 +116,24 @@ function ciniki_wineproduction_stats($ciniki) {
         return array('stat'=>'ok', 'stats'=>array());
     }
     $todays_stats = $rc['stats'];
+
+    //
+    // Check for wines ready to transfer
+    //
+    if( ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0800) ) {
+        $strsql = "SELECT status, COUNT(status) AS count FROM ciniki_wineproductions "
+            . "WHERE tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
+            . "AND status = 20 "
+            . "AND transferring_date <= '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' "
+            . "GROUP BY status ";
+        $rc = ciniki_core_dbRspQuery($ciniki, $strsql, 'ciniki.wineproduction', 'stats', 'stat', array('stat'=>'ok', 'stats'=>array()));
+        if( $rc['stat'] != 'ok' ) { 
+            return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.22', 'msg'=>'Unable to retrieve statistics', 'err'=>$rc['err']));
+        }
+        if( isset($rc['stats'][0]) ) {
+            $todays_stats[] = array('stat'=>array('status'=>21, 'count'=>$rc['stats'][0]['stat']['count']));
+        }
+    }
 
     //
     // Get todays bottling stats

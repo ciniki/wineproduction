@@ -64,18 +64,22 @@ function ciniki_wineproduction_getOrder($ciniki) {
         . "invoice_number, "
         . "ciniki_wineproduction_products.id as product_id, "
         . "ciniki_wineproduction_products.name AS wine_name, "
+        . "IF((ciniki_wineproduction_products.flags&0x80)=0x80, 'yes', 'no') AS transfer, "
         . "ciniki_wineproductions.wine_type, "
         . "ciniki_wineproductions.kit_length, "
         . "ciniki_wineproductions.status, "
-        . "colour_tag, "
         . "order_flags, "
         . "rack_colour, "
         . "filter_colour, "
+        . "location, "
         . "DATE_FORMAT(ciniki_wineproductions.order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as order_date, "
         . "DATE_FORMAT(ciniki_wineproductions.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as start_date, "
+        . "tsg_reading, "
+        . "DATE_FORMAT(ciniki_wineproductions.transferring_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as transferring_date, "
+        . "DATE_FORMAT(ciniki_wineproductions.transfer_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as transfer_date, "
+        . "sg_reading, "
         . "DATE_FORMAT(ciniki_wineproductions.racking_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as racking_date, "
         . "DATE_FORMAT(ciniki_wineproductions.rack_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as rack_date, "
-        . "sg_reading, "
         . "DATE_FORMAT(ciniki_wineproductions.filtering_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filtering_date, "
         . "DATE_FORMAT(ciniki_wineproductions.filter_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') as filter_date, "
 //      . "DATE_FORMAT(ciniki_wineproductions.bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') as bottling_date, "
@@ -102,9 +106,10 @@ function ciniki_wineproduction_getOrder($ciniki) {
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
             'fields'=>array('id', 'customer_id', 'invoice_number', 
-                'product_id', 'wine_name', 'wine_type', 'kit_length', 'status', 'colour_tag', 'order_flags',
-                'rack_colour', 'order_flags', 'rack_colour', 'filter_colour', 
-                'order_date', 'start_date', 'racking_date', 'rack_date', 'sg_reading', 
+                'product_id', 'wine_name', 'wine_type', 'transfer', 'kit_length', 'status', 'order_flags',
+                'rack_colour', 'order_flags', 'rack_colour', 'filter_colour', 'location',
+                'order_date', 'start_date', 'tsg_reading', 'transferring_date', 'transfer_date',
+                'sg_reading', 'racking_date', 'rack_date', 
                 'filtering_date', 'filter_date', 'bottling_date', 'bottle_date',
                 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_duration', 'notes', 'batch_code', 
                 ),

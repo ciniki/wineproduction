@@ -377,6 +377,9 @@ function ciniki_wineproduction_products() {
                 },
             'kit_length':{'label':'# Weeks', 'type':'text', 'visible':'yes', 'size':'small'},
             'inventory_current_num':{'label':'Inventory', 'type':'text', 'size':'small'},
+            'flags8':{'label':'Transfer Step', 'type':'flagtoggle', 'field':'flags', 'default':'off', 'bit':0x80,
+                'visible':function() { return M.modFlagOn('ciniki.wineproduction', 0x0800); },
+                },
             }},
         // Only show some fields if no wine production and supplier
         'supplier':{'label':'', 'aside':'yes', 'fields':{

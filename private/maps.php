@@ -35,6 +35,7 @@ function ciniki_wineproduction_maps(&$ciniki) {
         'status'=>array(
             '10'=>'Ordered',
             '20'=>'Started',
+            '23'=>'Transferred',
             '25'=>'SG Ready',
             '30'=>'Racked',
             '40'=>'Filtered',

@@ -27,6 +27,9 @@ function ciniki_wineproduction_list($ciniki) {
         'status_list'=>array('required'=>'no', 'type'=>'idlist', 'default'=>'', 'name'=>'Status List'),
         'status'=>array('required'=>'no', 'default'=>'', 'name'=>'Status'),
         'before_start_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Start Date'),
+        'before_transferring_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Transferring Date'),
+        'after_transferring_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Transferring Date'),
+        'before_transfer_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Transfer Date'),
         'before_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
         'after_racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
         'before_rack_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Rack Date'),
@@ -37,6 +40,7 @@ function ciniki_wineproduction_list($ciniki) {
         'order_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
         'started_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
         'racking_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Racking Date'),
+        'transferred_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Transferred Date'),
         'racked_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Rack Date'),
         'filtering_date'=>array('required'=>'no', 'type'=>'date', 'default'=>'', 'name'=>'Filtering Date'),
         'filtered_date'=>array('required'=>'no', 'default'=>'', 'name'=>'Filtering Date'),
@@ -118,6 +122,9 @@ function ciniki_wineproduction_list($ciniki) {
         . "order_flags, "
         . "DATE_FORMAT(order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS order_date, "
         . "DATE_FORMAT(ciniki_wineproductions.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS start_date, "
+        . "tsg_reading, "
+        . "DATE_FORMAT(transferring_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS transferring_date, "
+        . "DATE_FORMAT(transfer_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS transfer_date, "
         . "DATE_FORMAT(racking_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS racking_date, "
         . "DATE_FORMAT(rack_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "') AS rack_date, "
         . "sg_reading, "
@@ -163,6 +170,20 @@ function ciniki_wineproduction_list($ciniki) {
         $strsql .= "AND ciniki_wineproductions.start_date <= NOW() ";
     } else if( isset($args['before_start_date']) && $args['before_start_date'] != '' ) {
         $strsql .= "AND ciniki_wineproductions.start_date <= '" . ciniki_core_dbQuote($ciniki, $args['before_start_date']) . "' ";
+    }
+    if( isset($args['before_transfer_date']) && $args['before_transfer_date'] == 'today' ) {
+        $strsql .= "AND ciniki_wineproductions.transfer_date <= NOW() ";
+    } else if( isset($args['before_transfer_date']) && $args['before_transfer_date'] != '' ) {
+        $strsql .= "AND ciniki_wineproductions.transfer_date <= '" . ciniki_core_dbQuote($ciniki, $args['before_transfer_date']) . "' ";
+    }
+    if( isset($args['before_transferring_date']) && $args['before_transferring_date'] == 'today' ) {
+        $strsql .= "AND ciniki_wineproductions.transferring_date <= NOW() ";
+    } elseif( isset($args['before_transferring_date']) && $args['before_transferring_date'] != '' ) {
+        $strsql .= "AND ciniki_wineproductions.transferring_date <= '" . ciniki_core_dbQuote($ciniki, $args['before_transferring_date']) . "' ";
+    } elseif( isset($args['after_transferring_date']) && $args['after_transferring_date'] == 'today' ) {
+        $strsql .= "AND ciniki_wineproductions.transferring_date > NOW() ";
+    } elseif( isset($args['after_transferring_date']) && $args['after_transferring_date'] != '' ) {
+        $strsql .= "AND ciniki_wineproductions.transferring_date > '" . ciniki_core_dbQuote($ciniki, $args['after_transferring_date']) . "' ";
     }
     if( isset($args['before_rack_date']) && $args['before_rack_date'] == 'today' ) {
         $strsql .= "AND ciniki_wineproductions.rack_date <= NOW() ";
@@ -218,6 +239,16 @@ function ciniki_wineproduction_list($ciniki) {
     } else if( isset($args['started_date']) && $args['started_date'] != '' ) {
         $strsql .= "AND ciniki_wineproductions.start_date = '" . ciniki_core_dbQuote($ciniki, $args['started_date']) . "' ";
     }
+    if( isset($args['transferring_date']) && $args['transferring_date'] == 'today' ) {
+        $strsql .= "AND ciniki_wineproductions.transferring_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' ";
+    } else if( isset($args['transferring_date']) && $args['transferring_date'] != '' ) {
+        $strsql .= "AND ciniki_wineproductions.transferring_date = '" . ciniki_core_dbQuote($ciniki, $args['transferring_date']) . "' ";
+    }
+    if( isset($args['transferred_date']) && $args['transferred_date'] == 'today' ) {
+        $strsql .= "AND ciniki_wineproductions.transfer_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' ";
+    } else if( isset($args['transferred_date']) && $args['transferred_date'] != '' ) {
+        $strsql .= "AND ciniki_wineproductions.transfer_date = '" . ciniki_core_dbQuote($ciniki, $args['transferred_date']) . "' ";
+    }
     if( isset($args['racking_date']) && $args['racking_date'] == 'today' ) {
         $strsql .= "AND ciniki_wineproductions.racking_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "' ";
     } else if( isset($args['racking_date']) && $args['racking_date'] != '' ) {
@@ -266,12 +297,14 @@ function ciniki_wineproduction_list($ciniki) {
     if( isset($args['schedule_date']) && $args['schedule_date'] == 'today' ) {
         $strsql .= "AND ((ciniki_wineproductions.order_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
             . "(ciniki_wineproductions.start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
+            . "(ciniki_wineproductions.transferring_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR " 
             . "(ciniki_wineproductions.racking_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR " 
             . "(ciniki_wineproductions.filtering_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
             . "(ciniki_wineproductions.bottling_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') ) ";
     } else if( isset($args['schedule_date']) && $args['schedule_date'] != '' ) {
         $strsql .= "AND ((ciniki_wineproductions.order_date = '" . ciniki_core_dbQuote($ciniki, $args['schedule_date']) . "') OR "
             . "(ciniki_wineproductions.start_date = '" . ciniki_core_dbQuote($ciniki, $args['schedule_date']) . "') OR "
+            . "(ciniki_wineproductions.transferring_date = '" . ciniki_core_dbQuote($ciniki, $args['schedule_date']) . "') OR " 
             . "(ciniki_wineproductions.racking_date = '" . ciniki_core_dbQuote($ciniki, $args['schedule_date']) . "') OR " 
             . "(ciniki_wineproductions.filtering_date = '" . ciniki_core_dbQuote($ciniki, $args['schedule_date']) . "') OR "
             . "(ciniki_wineproductions.bottling_date = '" . ciniki_core_dbQuote($ciniki, $args['schedule_date']) . "') ) ";
@@ -280,12 +313,14 @@ function ciniki_wineproduction_list($ciniki) {
     if( isset($args['work_date']) && $args['work_date'] == 'today' ) {
         $strsql .= "AND ((ciniki_wineproductions.order_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
             . "(ciniki_wineproductions.start_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
+            . "(ciniki_wineproductions.transfer_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR " 
             . "(ciniki_wineproductions.rack_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR " 
             . "(ciniki_wineproductions.filter_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') OR "
             . "(ciniki_wineproductions.bottle_date = '" . ciniki_core_dbQuote($ciniki, $todays_date) . "') ) ";
     } else if( isset($args['work_date']) && $args['work_date'] != '' ) {
         $strsql .= "AND ((ciniki_wineproductions.order_date = '" . ciniki_core_dbQuote($ciniki, $args['work_date']) . "') OR "
             . "(ciniki_wineproductions.start_date = '" . ciniki_core_dbQuote($ciniki, $args['work_date']) . "') OR "
+            . "(ciniki_wineproductions.transfer_date = '" . ciniki_core_dbQuote($ciniki, $args['work_date']) . "') OR " 
             . "(ciniki_wineproductions.rack_date = '" . ciniki_core_dbQuote($ciniki, $args['work_date']) . "') OR " 
             . "(ciniki_wineproductions.filter_date = '" . ciniki_core_dbQuote($ciniki, $args['work_date']) . "') OR "
             . "(ciniki_wineproductions.bottle_date = '" . ciniki_core_dbQuote($ciniki, $args['work_date']) . "') ) ";
@@ -293,6 +328,8 @@ function ciniki_wineproduction_list($ciniki) {
 
     if( $args['sorting'] == 'invoice_number' ) {
         $strsql .= "ORDER BY invoice_number, ciniki_wineproductions.wine_type DESC ";
+    } else if( $args['sorting'] == 'transferring_date,invoice_number' ) {
+        $strsql .= "ORDER BY ciniki_wineproductions.transferring_date, ciniki_wineproductions.invoice_number ";
     } else if( $args['sorting'] == 'racking_date,invoice_number' ) {
         $strsql .= "ORDER BY ciniki_wineproductions.racking_date, ciniki_wineproductions.invoice_number ";
     } else if( $args['sorting'] == 'bottling_date' ) {
@@ -303,6 +340,8 @@ function ciniki_wineproduction_list($ciniki) {
         $strsql .= "ORDER BY ciniki_wineproductions.kit_length, ciniki_wineproductions.wine_type DESC, order_date ASC ";
     } else if( $args['status'] == '20' ) {
         $strsql .= "ORDER BY ciniki_wineproductions.kit_length, ciniki_wineproductions.wine_type DESC, racking_date ASC ";
+    } else if( $args['status'] == '23' ) {
+        $strsql .= "ORDER BY ciniki_wineproductions.kit_length, ciniki_wineproductions.wine_type DESC, transferring_date ASC ";
     } else if( $args['status'] == '30' ) {
         $strsql .= "ORDER BY ciniki_wineproductions.kit_length, ciniki_wineproductions.wine_type DESC, filtering_date ASC ";
     } else if( $args['status'] == '40' ) {
@@ -321,7 +360,8 @@ function ciniki_wineproduction_list($ciniki) {
     $rc = ciniki_core_dbHashQueryTree($ciniki, $strsql, 'ciniki.wineproduction', array(
         array('container'=>'orders', 'fname'=>'id', 'name'=>'order',
             'fields'=>array('id', 'customer_name', 'invoice_number', 'wine_name', 'wine_type', 'kit_length', 'status', 'status_text',
-                'rack_colour', 'filter_colour', 'order_flags', 'order_date', 'start_date', 'racking_date', 'rack_date',
+                'rack_colour', 'filter_colour', 'order_flags', 'order_date', 'start_date', 
+                'tsg_reading', 'transferring_date', 'transfer_date', 'racking_date', 'rack_date',
                 'sg_reading', 'filtering_date', 'filter_date', 'bottling_date', 'bottling_status', 'bottle_date', 'approx_filtering_date', 'notes', 'appointment_id'),
             'utctotz'=>array('bottling_date'=>array('timezone'=>$intl_timezone, 'format'=>$php_date_format))),
         ));

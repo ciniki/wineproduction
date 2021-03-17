@@ -20,6 +20,16 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
     $rsp = array('stat'=>'ok', 'menu_items'=>array(), 'settings_menu_items'=>array());
 
     //
+    // Load the tenant settings
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQueryDash');
+    $rc = ciniki_core_dbDetailsQueryDash($ciniki, 'ciniki_wineproduction_settings', 'tnid', $tnid, 'ciniki.wineproduction', 'settings', '');
+    if( $rc['stat'] != 'ok' ) {
+        return array('stat'=>'fail', 'err'=>array('code'=>'ciniki.wineproduction.273', 'msg'=>'Unable to load settings', 'err'=>$rc['err']));
+    }
+    $rsp['settings'] = isset($rc['settings']) ? $rc['settings'] : array();
+
+    //
     // Check if wineproduction flag is set, and if the user has permissions
     //
     if( isset($ciniki['tenant']['modules']['ciniki.wineproduction'])
@@ -31,7 +41,7 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
             )
         ) {
         $menu_item = array(
-            'priority'=>6300,
+            'priority'=>6305,
             'label'=>'Wine Production', 
             'edit'=>array('app'=>'ciniki.wineproduction.main'),
             'add'=>array('app'=>'ciniki.wineproduction.main', 'args'=>array('add'=>'\'"yes"\'')),
@@ -58,6 +68,13 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
                 ),
             );
         $rsp['menu_items'][] = $menu_item;
+
+/*        $menu_item = array(
+           'priority'=>300,
+            'label'=>'Wine Pro', 
+            'edit'=>array('app'=>'ciniki.wineproduction.oldmain'),
+            );
+        $rsp['menu_items'][] = $menu_item; */
     } 
 
     //
@@ -86,7 +103,6 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
                     ),
                 'noData'=>'No products found',
                 'edit'=>array('method'=>'ciniki.wineproduction.products', 'args'=>array('product_id'=>'d.id;')),
-//                'submit'=>array('method'=>'ciniki.wineproduction.main', 'args'=>array('search'=>'search_str')),
                 ), 
             );
         $rsp['menu_items'][] = $menu_item;

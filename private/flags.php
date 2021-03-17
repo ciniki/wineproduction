@@ -25,10 +25,10 @@ function ciniki_wineproduction_flags($ciniki, $modules) {
         // 0x0100
         array('flag'=>array('bit'=>'9', 'name'=>'Wine Production')),
         array('flag'=>array('bit'=>'10', 'name'=>'Colour Code Options')),
-//        array('flag'=>array('bit'=>'11', 'name'=>'')),
-//        array('flag'=>array('bit'=>'12', 'name'=>'')),
+        array('flag'=>array('bit'=>'11', 'name'=>'Location Field')),
+        array('flag'=>array('bit'=>'12', 'name'=>'Transfers')),     // Preliminary racking
         // 0x1000
-//        array('flag'=>array('bit'=>'13', 'name'=>'')),
+        array('flag'=>array('bit'=>'13', 'name'=>'Shared')),
 //        array('flag'=>array('bit'=>'14', 'name'=>'')),
 //        array('flag'=>array('bit'=>'15', 'name'=>'')),
 //        array('flag'=>array('bit'=>'16', 'name'=>'')),

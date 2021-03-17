@@ -87,7 +87,7 @@ function ciniki_wineproduction_searchFull($ciniki) {
         $strsql . "AND ciniki_wineproductions.status < 60";
     }
 
-    $strsql .= "ORDER BY ciniki_wineproductions.invoice_number ASC ";
+    $strsql .= "ORDER BY ciniki_wineproductions.invoice_number DESC ";
     if( isset($args['limit']) && is_numeric($args['limit']) && $args['limit'] > 0 ) {
         $strsql .= "LIMIT " . ciniki_core_dbQuote($ciniki, $args['limit']) . " ";   // is_numeric verified
     }

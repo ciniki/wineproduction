@@ -34,7 +34,7 @@ function ciniki_wineproduction_reports() {
     }
 
     this.yearly.rowFn = function(s, i, d) {
-        return 'M.startApp(\'ciniki.customers.main\',null,\'M.ciniki_wineproduction_reports.yearly.open();\',\'mc\',{\'customer_id\':\'' + d.customer_id + '\'});';
+        return 'M.startApp(\'ciniki.customers.oldmain\',null,\'M.ciniki_wineproduction_reports.yearly.open();\',\'mc\',{\'customer_id\':\'' + d.customer_id + '\'});';
     }
     this.yearly.open = function(cb) {
         M.api.getJSONCb('ciniki.wineproduction.reportCustomersYearly', {'tnid':M.curTenantID}, function(rsp) {
@@ -126,11 +126,11 @@ function ciniki_wineproduction_reports() {
                 case 1:
                 case 2: 
                 case 3:
-                case 4: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+                case 4: return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
                 case 5:
-                case 6: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.B.id + '\'});';
+                case 6: return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.B.id + '\'});';
                 case 7:
-                case 8: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.C.id + '\'});';
+                case 8: return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.C.id + '\'});';
             }
         }
         return '';
@@ -173,7 +173,7 @@ function ciniki_wineproduction_reports() {
     }
     this.cellarnights.rowFn = function(s, i, d) {
         if( s == 'badorders' ) {
-            return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+            return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.cellarnights.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
         }
         return '';
     }
@@ -267,11 +267,11 @@ function ciniki_wineproduction_reports() {
                 case 1:
                 case 2: 
                 case 3:
-                case 4: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+                case 4: return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
                 case 5:
-                case 6: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.B.id + '\'});';
+                case 6: return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.B.id + '\'});';
                 case 7:
-                case 8: return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.C.id + '\'});';
+                case 8: return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.C.id + '\'});';
             }
         }
         return '';
@@ -314,7 +314,7 @@ function ciniki_wineproduction_reports() {
     }
     this.shared.rowFn = function(s, i, d) {
         if( s == 'badorders' ) {
-            return 'M.startApp(\'ciniki.wineproduction.main\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
+            return 'M.startApp(\'ciniki.wineproduction.oldmain\',null,\'M.ciniki_wineproduction_reports.shared.open();\',\'mc\',{\'order_id\':\'' + d.id + '\'});';
         }
         return '';
     }

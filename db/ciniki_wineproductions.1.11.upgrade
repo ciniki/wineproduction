@@ -1,0 +1,12 @@
+#
+# Add columns for location and transfers.
+#
+ALTER TABLE ciniki_wineproductions ADD COLUMN parent_id int not null AFTER tnid;
+ALTER TABLE ciniki_wineproductions ADD COLUMN batch_letter varchar(10) not null AFTER invoice_number;
+ALTER TABLE ciniki_wineproductions ADD COLUMN location varchar(150) not null AFTER rack_colour;
+ALTER TABLE ciniki_wineproductions ADD COLUMN flags smallint unsigned not null AFTER location;
+ALTER TABLE ciniki_wineproductions ADD COLUMN tsg_reading varchar(10) not null AFTER start_date;
+ALTER TABLE ciniki_wineproductions ADD COLUMN transferring_date date not null AFTER tsg_reading;
+ALTER TABLE ciniki_wineproductions ADD COLUMN transfer_date date not null AFTER transferring_date;
+ALTER TABLE ciniki_wineproductions DROP COLUMN colour_tag;
+ALTER TABLE ciniki_wineproductions COMMENT='v1.11';

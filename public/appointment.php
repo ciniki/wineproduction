@@ -50,6 +50,16 @@ function ciniki_wineproduction_appointment($ciniki) {
     }
 
     //
+    // Load maps
+    //
+    ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'maps');
+    $rc = ciniki_wineproduction_maps($ciniki);
+    if( $rc['stat'] != 'ok' ) {
+        return $rc;
+    }
+    $maps = $rc['maps'];
+
+    //
     // Grab the settings for the tenant from the database
     //
     ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'dbDetailsQuery');
@@ -77,8 +87,11 @@ function ciniki_wineproduction_appointment($ciniki) {
     $datetime_format = ciniki_users_datetimeFormat($ciniki, 'php');
 
     $strsql = "SELECT ciniki_wineproductions.id AS order_id, ciniki_wineproductions.customer_id, "
-        . "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
-        . "ciniki_customers.display_name AS customer_name, invoice_number, ciniki_wineproduction_products.name AS wine_name, "
+        . "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), "
+        . "ciniki_wineproductions.customer_id) AS id, "
+        . "ciniki_customers.display_name AS customer_name, "
+        . "invoice_number, "
+        . "ciniki_wineproduction_products.name AS wine_name, "
 //      . "DATE_FORMAT(ciniki_wineproductions.bottling_date, '%Y-%m-%d') As date, "
 //      . "DATE_FORMAT(ciniki_wineproductions.bottling_date, '%H:%i') AS time, "
         . "bottling_date, "
@@ -91,13 +104,17 @@ function ciniki_wineproduction_appointment($ciniki) {
 //      . "UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date) AS bottling_timestamp, "
         . "bottling_duration AS duration, "
 //      . "DATE_FORMAT(ciniki_wineproductions.bottling_date, '" . ciniki_core_dbQuote($ciniki, $datetime_format) . "') AS bottling_date, "
-        . "ciniki_wineproductions.bottling_flags, ciniki_wineproductions.bottling_nocolour_flags, "
+        . "ciniki_wineproductions.bottling_flags, "
+        . "ciniki_wineproductions.bottling_nocolour_flags, "
         . "ciniki_wineproduction_settings.detail_value AS colour, "
         . "DATE_FORMAT(ciniki_wineproductions.order_date, '%b %e, %Y') AS order_date, "
         . "DATE_FORMAT(ciniki_wineproductions.start_date, '%b %e, %Y') AS start_date, "
         . "DATE_FORMAT(ciniki_wineproductions.racking_date, '%b %e, %Y') AS racking_date, "
         . "DATE_FORMAT(ciniki_wineproductions.filtering_date, '%b %e, %Y') AS filtering_date, "
-        . "ciniki_wineproductions.status, IFNULL(s2.detail_value, '') AS bottling_status, "
+        . "ciniki_wineproductions.status, "
+        . "ciniki_wineproductions.status AS status_text, "
+        . "IFNULL(s2.detail_value, '') AS bottling_status, "
+        . "IFNULL(s2.detail_value, '') AS bottling_status_text, "
         . "ciniki_wineproductions.bottling_notes "
         . "FROM ciniki_wineproductions "
         . "JOIN ciniki_wineproduction_products ON ("
@@ -138,8 +155,16 @@ function ciniki_wineproduction_appointment($ciniki) {
                 'time'=>array('timezone'=>$intl_timezone, 'format'=>'H:i'),
                 '12hour'=>array('timezone'=>$intl_timezone, 'format'=>'g:i')),
             'sums'=>array('duration'), 'countlists'=>array('wine_name')),
-        array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',
-            'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 'status', 'bottling_status', 'bottling_notes', 'colour')),
+        array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 
+            'fields'=>array('order_id', 'invoice_number', 'wine_name', 'duration',
+                'order_date', 'start_date', 'racking_date', 'filtering_date', 'bottling_date', 
+                'status', 'status_text', 'bottling_status', 'bottling_status_text', 'bottling_notes', 'colour',
+                ),
+            'maps'=>array(
+                'status_text'=>$maps['wineproduction']['status'],
+                'bottling_status_text'=>$maps['wineproduction']['bottling_status'],
+                ),
+            ),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -163,6 +188,7 @@ function ciniki_wineproduction_appointment($ciniki) {
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
+                error_log(print_r($rc,true));
             $appointments[0]['appointment']['customer'] = $rc['details'];
         }
         $appointments[0]['appointment']['allday'] = ($appointments[0]['appointment']['time']=='00:00'?'yes':'no');

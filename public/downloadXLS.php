@@ -67,7 +67,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
         . "ciniki_wineproduction_products.name AS wine_name, "
         . "wine_type, "
         . "ciniki_wineproductions.kit_length, "
-        . "ciniki_wineproductions.status, colour_tag, rack_colour, filter_colour, "
+        . "ciniki_wineproductions.status, rack_colour, filter_colour, "
         . "order_flags, "
         . "IFNULL(DATE_FORMAT(ciniki_wineproductions.order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS order_date, "
         . "IFNULL(DATE_FORMAT(ciniki_wineproductions.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS start_date, "

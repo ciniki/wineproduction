@@ -45,7 +45,7 @@ function ciniki_wineproduction_dbIntegrityCheck($ciniki) {
         $rc = ciniki_core_dbFixTableHistory($ciniki, 'ciniki.wineproduction', $args['tnid'],
             'ciniki_wineproductions', 'ciniki_wineproduction_history', 
             array('uuid', 'customer_id', 'invoice_id', 'invoice_number', 'product_id', 'wine_type',
-                'kit_length', 'status', 'colour_tag', 'rack_colour', 'filter_colour',
+                'kit_length', 'status', 'rack_colour', 'filter_colour',
                 'order_flags', 'order_date', 'start_date', 'sg_reading',
                 'racking_date', 'rack_date', 'filtering_date', 'filter_date',
                 'bottling_flags', 'bottling_nocolour_flags', 'bottling_duration', 

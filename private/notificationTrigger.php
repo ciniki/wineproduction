@@ -51,7 +51,6 @@ function ciniki_wineproduction_notificationTrigger(&$ciniki, $tnid, $trigger, $o
         . "orders.wine_type, "
         . "orders.kit_length, "
         . "orders.status, "
-        . "orders.colour_tag, "
         . "orders.order_flags, "
         . "orders.order_date, "
         . "orders.start_date, "
