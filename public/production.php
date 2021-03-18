@@ -634,9 +634,11 @@ function ciniki_wineproduction_production($ciniki) {
                 $strsql .= "AND ((orders.status = 20 AND (products.flags&0x80) = 0x80) OR orders.status = 22 OR orders.status = 23 ) "
                     . "AND orders.transferring_date" . $strsql_date;
             } elseif( $args['schedulestatus'] == 'racking' ) {
-                $strsql .= "AND (((orders.status = 20 AND (products.flags&0x80) = 0) OR orders.status = 23 OR orders.status = 25) "
+                $strsql .= "AND ("
+                    . "(((orders.status = 20 AND (products.flags&0x80) = 0) OR orders.status = 23 OR orders.status = 25) "
                     . "AND orders.racking_date" . $strsql_date
-                    . ") OR (orders.status = 30 and rack_date" . $strsql_date . ")";
+                    . ") OR (orders.status = 30 and rack_date" . $strsql_date . ")"
+                    . ")";
             } elseif( $args['schedulestatus'] == 'filtering' ) {
                 $strsql .= "AND (orders.status = 30 OR orders.status = 40) ";
                 $strsql .= "AND DATE(orders.filtering_date)" . $strsql_date;
