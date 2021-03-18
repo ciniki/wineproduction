@@ -326,6 +326,7 @@ function ciniki_wineproduction_production($ciniki) {
     if( !ciniki_core_checkModuleFlags($ciniki, 'ciniki.wineproduction', 0x0800) ) {
         unset($rsp['today']['tsgreadings']);
         unset($rsp['today']['transferring']);
+        unset($rsp['statuses']['tsgread']);
         unset($rsp['statuses']['transferred']);
     }
     //
