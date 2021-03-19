@@ -188,7 +188,6 @@ function ciniki_wineproduction_appointment($ciniki) {
             if( $rc['stat'] != 'ok' ) {
                 return $rc;
             }
-                error_log(print_r($rc,true));
             $appointments[0]['appointment']['customer'] = $rc['details'];
         }
         $appointments[0]['appointment']['allday'] = ($appointments[0]['appointment']['time']=='00:00'?'yes':'no');

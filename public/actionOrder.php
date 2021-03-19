@@ -209,7 +209,6 @@ function ciniki_wineproduction_actionOrder(&$ciniki) {
         //
         // Update the order
         //
-        error_log(print_r($update_args,true));
         ciniki_core_loadMethod($ciniki, 'ciniki', 'core', 'private', 'objectUpdate');
         $rc = ciniki_core_objectUpdate($ciniki, $args['tnid'], 'ciniki.wineproduction.order', $args['wineproduction_id'], $update_args, 0x04);
         if( $rc['stat'] != 'ok' ) {
