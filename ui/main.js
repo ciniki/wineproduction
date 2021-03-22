@@ -475,7 +475,7 @@ function ciniki_wineproduction_main() {
         p.data = rsp;
         p.nplist = (rsp.nplist != null ? rsp.nplist : null);
         if( M.emWidth() < 80 ) {
-            p.size = 'medium';
+            p.size = 'large';
             if( p.view == 'menu' ) {
                 p.view_aside = 'yes';
                 p.view_content == 'no';
@@ -485,7 +485,7 @@ function ciniki_wineproduction_main() {
             }
         } else {
             if( p.view == 'menu' ) {
-                p.size = 'medium';
+                p.size = 'large';
                 p.view_aside = 'yes';
                 p.view_content = 'no';
             } else {
