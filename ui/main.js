@@ -384,10 +384,10 @@ function ciniki_wineproduction_main() {
                         + '';
                 case 'rackbtn': return M.btn('Racked', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'racked\');');
                 case 'filterbtn': 
-                    if( this.scheduledate == 'today' ) {
-                        return M.btn('Filtered', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'filtered\');');
+                    if( this.view == 'schedule' && this.scheduledate != 'today' ) {
+                        return M.btn('Filter Today', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'filtertoday\');');
                     } 
-                    return M.btn('Filter Today', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'filtertoday\');');
+                    return M.btn('Filtered', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'filtered\');');
                 case 'notes': return (d.notes != null && d.notes != '' ? '*' : '');
             }
         }
@@ -474,7 +474,7 @@ function ciniki_wineproduction_main() {
         var p = M.ciniki_wineproduction_main.menu;
         p.data = rsp;
         p.nplist = (rsp.nplist != null ? rsp.nplist : null);
-        if( M.emWidth() < 60 ) {
+        if( M.emWidth() < 80 ) {
             p.size = 'medium';
             if( p.view == 'menu' ) {
                 p.view_aside = 'yes';
