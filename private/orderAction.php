@@ -187,6 +187,7 @@ function ciniki_wineproduction_orderAction(&$ciniki, $tnid, $args) {
     //
     elseif( $args['action'] == 'filtered' ) {
         $update_args['status'] = 40;
+        $update_args['bottling_status'] = 128;
         $update_args['filter_date'] = $todays_date;
 
         $notification_trigger = 'filtered';
