@@ -18,7 +18,7 @@ function ciniki_wineproduction_main() {
     this.menu.scheduledate = '';
     this.menu.sections = {
         'search':{'label':'Search All Orders', 'type':'livesearchgrid', 'livesearchcols':8,
-            'visible':function() { return M.ciniki_wineproduction_main.menu.size == 'medium' && M.ciniki_wineproduction_main.menu.view == 'menu' ? 'yes' : 'no'; },
+            'visible':function() { return M.ciniki_wineproduction_main.menu.size == 'large' && M.ciniki_wineproduction_main.menu.view == 'menu' ? 'yes' : 'no'; },
             'headerValues':['Inv#', 'Wine', 'Type', 'BD', 'OD', 'SD', 'RD', 'FD'],
             'cellClasses':['multiline', 'multiline', 'multiline', 'multiline', 'multiline', 'multiline', 'multiline', 'multiline'],
             'hint':'inv#, customer or product',
@@ -351,7 +351,8 @@ function ciniki_wineproduction_main() {
                 case 'startbtn': return M.btn('Started', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'started\');');
                 case 'transferbtn': return M.btn('Transferred', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'transferred\');');
                 case 'tsgbtn': 
-                    return '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'992\');">92</button>'
+                    return '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\');">Enter SG</button>'
+/*                    return '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'992\');">92</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'993\');">93</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'994\');">94</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'995\');">95</button>'
@@ -360,15 +361,15 @@ function ciniki_wineproduction_main() {
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'998\');">98</button><br/>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'999\');">99</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1000\');">00</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1010\');">01</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1020\');">02</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1030\');">03</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1040\');">04</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1050\');">05</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1001\');">01</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1001\');">02</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1003\');">03</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1004\');">04</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'tsgread\',\'1005\');">05</button>'*/
                         + '';
                 case 'sgbtn': 
-                    return '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'992\');">92</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'993\');">93</button>'
+                    return '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\');">Enter SG</button>'
+/*                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'993\');">93</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'994\');">94</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'995\');">95</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'996\');">96</button>'
@@ -376,11 +377,11 @@ function ciniki_wineproduction_main() {
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'998\');">98</button><br/>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'999\');">99</button>'
                         + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1000\');">00</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1010\');">01</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1020\');">02</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1030\');">03</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1040\');">04</button>'
-                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1050\');">05</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1001\');">01</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1002\');">02</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1003\');">03</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1004\');">04</button>'
+                        + '<button onclick="event.stopPropagation(); M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'sgread\',\'1005\');">05</button>' */
                         + '';
                 case 'rackbtn': return M.btn('Racked', 'M.ciniki_wineproduction_main.menu.actionOrder(\'' + d.id + '\',\'racked\');');
                 case 'filterbtn': 
@@ -440,16 +441,16 @@ function ciniki_wineproduction_main() {
             }
         }
         if( action == 'tsgread' ) {
-            M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
-                'view':this.view, 'action':action, 'order_id':oid, 'tsg_reading':sg, 
-                'scheduledate':this.scheduledate, 'schedulestatus':this.schedulestatus}, this.openFinish);
-//            M.ciniki_wineproduction_main.sg.open('M.ciniki_wineproduction_main.menu.open();', 'tsgread', oid);
+//            M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
+//                'view':this.view, 'action':action, 'order_id':oid, 'tsg_reading':sg, 
+//                'scheduledate':this.scheduledate, 'schedulestatus':this.schedulestatus}, this.openFinish);
+            M.ciniki_wineproduction_main.sg.open('M.ciniki_wineproduction_main.menu.open();', 'tsgread', oid);
         } 
         else if( action == 'sgread' ) {
-            M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
-                'view':this.view, 'action':action, 'order_id':oid, 'sg_reading':sg, 
-                'scheduledate':this.scheduledate, 'schedulestatus':this.schedulestatus}, this.openFinish);
-//            M.ciniki_wineproduction_main.sg.open('M.ciniki_wineproduction_main.menu.open();', 'sgread', oid);
+//            M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
+//                'view':this.view, 'action':action, 'order_id':oid, 'sg_reading':sg, 
+//                'scheduledate':this.scheduledate, 'schedulestatus':this.schedulestatus}, this.openFinish);
+            M.ciniki_wineproduction_main.sg.open('M.ciniki_wineproduction_main.menu.open();', 'sgread', oid);
         }
         else if( this.view == 'schedule' ) {
             M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
@@ -498,7 +499,7 @@ function ciniki_wineproduction_main() {
         p.show();
     }
     this.menu.close = function() {
-        if( this.size == 'medium' && this.view != 'menu' ) {
+        if( this.size == 'large' && this.view != 'menu' ) {
             this.view = 'menu';
             this.view_aside = 'yes';
             this.view_content = 'no';
@@ -523,23 +524,36 @@ function ciniki_wineproduction_main() {
         this.action = action;
         this.order_id = id;
         this.sections.sg.html = '<center>';
-        for(var i = 92; i < 125; i++) {
-            if( i%5 == 0 ) {
-                this.sections.sg.html += '<br/><br/>';
+        for(var i = 992; i < 1031; i++) {
+//            if( i%5 == 0 ) {
+//                this.sections.sg.html += '<br/><br/>';
+//            }
+            if( i < 1000 ) {
+                this.sections.sg.html += '<button style="min-width:7em;margin:0.5em;" '
+                    + 'onclick="M.ciniki_wineproduction_main.sg.setSG(' + i + ');">.' + i + '</button>'
+            } else {
+                if( i%2 == 1 ) {
+                    continue;
+                }
+                this.sections.sg.html += '<button style="min-width:7em;margin:0.5em;" '
+                    + 'onclick="M.ciniki_wineproduction_main.sg.setSG(' + i + ');">1.' + (i-1000).toString().padStart(3, 0) + '</button>'
             }
-            this.sections.sg.html += '<button style="min-width:7em;margin:0.5em;" '
-                + 'onclick="M.ciniki_wineproduction_main.sg.setSG(' + i + ');">' + i + '</button>'
-            if( action == 'sgread' && i == 102 ) {
-                break;
-            }
+//            if( action == 'sgread' && i == 1002 ) {
+//                break;
+//            }
         }
         this.sections.sg.html += '</center>';
         this.refresh();
         this.show(cb);
     }
     this.sg.setSG = function(sg) {
-        M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
-            'view':M.ciniki_wineproduction_main.menu.view, 'action':this.action, 'tsg_reading':sg, 'order_id':this.order_id}, M.ciniki_wineproduction_main.menu.openFinish);
+        if( this.action == 'tsgread' ) {
+            M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
+                'view':M.ciniki_wineproduction_main.menu.view, 'action':this.action, 'tsg_reading':sg, 'order_id':this.order_id}, M.ciniki_wineproduction_main.menu.openFinish);
+        } else {
+            M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
+                'view':M.ciniki_wineproduction_main.menu.view, 'action':this.action, 'sg_reading':sg, 'order_id':this.order_id}, M.ciniki_wineproduction_main.menu.openFinish);
+        }
     }
     this.sg.addClose('Cancel');
 
@@ -1389,6 +1403,8 @@ function ciniki_wineproduction_main() {
             this.menu.open(cb);
         }
         else {
+            this.menu.view = 'menu';
+            this.menu.page_id = 0;
             this.menu.open(cb);
         }
     }
