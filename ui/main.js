@@ -807,11 +807,11 @@ function ciniki_wineproduction_main() {
         // 
         //
         if( i == 'racking_date' ) {
-            return M.curTenants.modules['ciniki.wineproduction'].settings['racking.autocolour.week' + (Math.floor(((c.getTime()/1000) - 1468800)/604800))%3 + M.dayOfWeek(c)];
+            return M.curTenant.modules['ciniki.wineproduction'].settings['racking.autocolour.week' + (Math.floor(((c.getTime()/1000) - 1468800)/604800))%3 + M.dayOfWeek(c)];
 //            return M.ciniki_wineproduction_main.settings['racking.autocolour.week' + (Math.floor(((c.getTime()/1000) - 1468800)/604800))%3 + M.dayOfWeek(c)];
         } else if( i == 'filtering_date' ) {
-            
-            return M.ciniki_wineproduction_main.settings['filtering.autocolour.week' + (Math.floor(((c.getTime()/1000) - 1468800)/604800))%7 + M.dayOfWeek(c)];
+            return M.curTenant.modules['ciniki.wineproduction'].settings['filtering.autocolour.week' + (Math.floor(((c.getTime()/1000) - 1468800)/604800))%7 + M.dayOfWeek(c)];
+//            return M.ciniki_wineproduction_main.settings['filtering.autocolour.week' + (Math.floor(((c.getTime()/1000) - 1468800)/604800))%7 + M.dayOfWeek(c)];
         }
     };
     this.order.listValue = function(s, i, d) { return d['label']; };
