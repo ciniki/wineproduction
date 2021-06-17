@@ -388,6 +388,9 @@ function ciniki_wineproduction_main() {
         if( s == 'reports' && i == 'cellarnights' ) {
             return 'M.startApp(\'ciniki.wineproduction.reports\',null,\'M.ciniki_wineproduction_main.menu.open();\',\'mc\',{\'report\':\'cellarnights\'});';
         }
+        if( s == 'reports' && i == 'export' ) {
+            return 'M.ciniki_wineproduction_main.menu.downloadXLS();';
+        }
         if( s == 'reports' && i == 'shared' ) {
             return 'M.startApp(\'ciniki.wineproduction.reports\',null,\'M.ciniki_wineproduction_main.menu.open();\',\'mc\',{\'report\':\'shared\'});';
         }
@@ -400,6 +403,9 @@ function ciniki_wineproduction_main() {
         if( this.sections[s].values != null ) {
             return 'M.ciniki_wineproduction_main.order.open(\'M.ciniki_wineproduction_main.menu.open();\',\'' + d.id + '\');';
         }
+    }
+    this.menu.downloadXLS = function() {
+        M.api.openFile('ciniki.wineproduction.downloadXLS', {'tnid':M.curTenantID});
     }
     this.menu.datePickerValue = function(s, d) {
         return this.workdate;

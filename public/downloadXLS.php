@@ -65,12 +65,14 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
 
     $strsql = "SELECT ciniki_wineproductions.id, ciniki_customers.display_name AS customer_name, invoice_number, "
         . "ciniki_wineproduction_products.name AS wine_name, "
-        . "wine_type, "
+        . "ciniki_wineproduction_products.wine_type, "
         . "ciniki_wineproductions.kit_length, "
         . "ciniki_wineproductions.status, rack_colour, filter_colour, "
         . "order_flags, "
         . "IFNULL(DATE_FORMAT(ciniki_wineproductions.order_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS order_date, "
         . "IFNULL(DATE_FORMAT(ciniki_wineproductions.start_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS start_date, "
+        . "IFNULL(DATE_FORMAT(ciniki_wineproductions.transferring_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS transferring_date, "
+        . "IFNULL(DATE_FORMAT(ciniki_wineproductions.transfer_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS transfer_date, "
         . "IFNULL(DATE_FORMAT(ciniki_wineproductions.racking_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS racking_date, "
         . "IFNULL(DATE_FORMAT(ciniki_wineproductions.rack_date, '" . ciniki_core_dbQuote($ciniki, $date_format) . "'), '') AS rack_date, "
         . "sg_reading, "
@@ -109,6 +111,8 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
     $sheets = array(
         '10'=>array('count'=>0),
         '20'=>array('count'=>0),
+        '22'=>array('count'=>0),
+        '23'=>array('count'=>0),
         '25'=>array('count'=>0),
         '30'=>array('count'=>0),
         '40'=>array('count'=>0),
@@ -117,6 +121,10 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
     $sheets[10]['sheet']->setTitle('Ordered');
     $sheets[20]['sheet'] = $objPHPExcel->createSheet();
     $sheets[20]['sheet']->setTitle('Started');
+    $sheets[22]['sheet'] = $objPHPExcel->createSheet();
+    $sheets[22]['sheet']->setTitle('TSG Ready');
+    $sheets[23]['sheet'] = $objPHPExcel->createSheet();
+    $sheets[23]['sheet']->setTitle('Transferred');
     $sheets[25]['sheet'] = $objPHPExcel->createSheet();
     $sheets[25]['sheet']->setTitle('SG Read');
     $sheets[30]['sheet'] = $objPHPExcel->createSheet();
@@ -128,7 +136,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
     // Keep track of new row counter, to avoid deleted rows.
     foreach($sheets as $status => $sht ) {
         $i = 0;
-        if( $status == 20 || $status == 25 || $status == 30 ) {
+        if( $status == 20 || $status == 22 || $status == 23 || $status == 25 || $status == 30 ) {
             $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, '', false);
         }
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'INV#', false);
@@ -141,6 +149,8 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Flags', false);
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'OD', false);
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'SD', false);
+        $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'TD', false);
+        $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Transferred', false);
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'RD', false);
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'Racked', false);
         $sheets[$status]['sheet']->setCellValueByColumnAndRow($i++, 1, 'FD', false);
@@ -162,7 +172,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
         $i = 0;
         // $sheet['sheet']->setCellValueByColumnAndRow($i, $sheet['count'], $order['invoice_number'], true);
         $row_range = 'A' . $sheet['count'] . ':' . 'O' . $sheet['count'];
-        if( $order['status'] == 20 || $order['status'] == 25) {
+        if( $order['status'] == 20 || $order['status'] == 22 || $order['status'] == 23 || $order['status'] == 25) {
             $colour = preg_replace('/\#/', '', $order['rack_colour']);
             $sheet['sheet']->setCellValueByColumnAndRow($i, $sheet['count'], ' ', false);
             $sheet['sheet']->getStyle('A' . $sheet['count'])->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getStartColor()->setRGB($colour);
@@ -213,6 +223,8 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
         $i++;
         $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['order_date'], false);
         $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['start_date'], false);
+        $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['transferring_date'], false);
+        $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['transfer_date'], false);
         $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['racking_date'], false);
         $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['rack_date'], false);
         $sheet['sheet']->setCellValueByColumnAndRow($i++, $sheet['count'], $order['filtering_date'], false);
@@ -230,6 +242,8 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
     // Set status title
     $sheets[10]['sheet']->getHeaderFooter()->setOddHeader('&C&HOrdered');
     $sheets[20]['sheet']->getHeaderFooter()->setOddHeader('&C&HStarted');
+    $sheets[22]['sheet']->getHeaderFooter()->setOddHeader('&C&HTSG Ready');
+    $sheets[23]['sheet']->getHeaderFooter()->setOddHeader('&C&HTransferred');
     $sheets[25]['sheet']->getHeaderFooter()->setOddHeader('&C&HSG Ready');
     $sheets[30]['sheet']->getHeaderFooter()->setOddHeader('&C&HRacked');
     $sheets[40]['sheet']->getHeaderFooter()->setOddHeader('&C&HFiltered');
@@ -246,7 +260,7 @@ function ciniki_wineproduction_downloadXLS($ciniki) {
         $sheets[$status]['sheet']->getColumnDimension('M')->setAutoSize(true);
         $sheets[$status]['sheet']->getColumnDimension('N')->setAutoSize(true);
         $sheets[$status]['sheet']->getColumnDimension('O')->setAutoSize(true);
-        if( $status == 20 || $status == 25 || $status == 30 ) {
+        if( $status == 20 || $status == 22 || $status == 23 || $status == 25 || $status == 30 ) {
             $sheets[$status]['sheet']->getColumnDimension('D')->setAutoSize(true);
             $sheets[$status]['sheet']->getColumnDimension('P')->setAutoSize(true);
         } else {
