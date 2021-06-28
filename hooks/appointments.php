@@ -53,6 +53,7 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
         . "CONCAT_WS('-', UNIX_TIMESTAMP(ciniki_wineproductions.bottling_date), ciniki_wineproductions.customer_id) AS id, "
         . "ciniki_customers.display_name AS customer_name, "
         . "invoice_number, "
+        . "location, "
         . "ciniki_wineproduction_products.name AS wine_name, "
         . "bottling_date AS start_date, "
         . "bottling_date AS start_ts, "
@@ -116,7 +117,7 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
 //            'countlists'=>array('wine_name'),
             ),
         array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 
-            'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 
+            'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'location',
                 'status', 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_notes'),
             ),
         ));
@@ -140,7 +141,7 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
             $appointments[$aid]['subject'] .= ' (' . count($appointment['orders']) . ')';
         }
 //        $appointments[$aid]['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['orders'][0]['invoice_number']);
-//        $appointments[$aid]['subject'] .= ' - ' . $appointment['wine_name'];
+//        $appointments[$aid]['subject'] .= ' - ' . $appointment['wine_name']; 
         $min_status = 255;
         $min_flags = 255;
         $min_order_status = 99;
@@ -176,6 +177,9 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
                 $appointments[$aid]['subject'] .= ' - ' . $order['wine_name'];
             } else {
                 $appointments[$aid]['subject'] .= ', ' . $order['wine_name'];
+            }
+            if( $order['location'] != '' ) {
+                $appointments[$aid]['subject'] .= ' [' . $order['location'] . ']';
             }
         }
         for($i=1;$i<=8;$i++) {
