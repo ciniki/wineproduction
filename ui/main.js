@@ -421,6 +421,7 @@ function ciniki_wineproduction_main() {
     }
     this.menu.actionOrder = function(oid, action,sg) {
         var batch_code = '';
+        var location = '';
         if( action == 'started' ) {
             batch_code = prompt("Enter batch code", "");
             if( batch_code == null ) { // User clicked cancel
@@ -429,6 +430,12 @@ function ciniki_wineproduction_main() {
             if( batch_code == '' ) {
                 M.alert("Invalid batch code");
                 return false;
+            }
+            if( M.modFlagOn('ciniki.wineproduction', 0x0400) ) {
+                location = prompt("Enter location", "");
+                if( location == null ) {
+                    return false;
+                }
             }
         }
         if( action == 'tsgread' ) {
@@ -448,7 +455,7 @@ function ciniki_wineproduction_main() {
                 'view':this.view, 'action':action, 'order_id':oid, 'scheduledate':this.scheduledate, 'schedulestatus':this.schedulestatus}, this.openFinish);
         } else {
             M.api.getJSONCb('ciniki.wineproduction.production', {'tnid':M.curTenantID, 
-                'view':this.view, 'action':action, 'order_id':oid, 'batch_code':batch_code}, this.openFinish);
+                'view':this.view, 'action':action, 'order_id':oid, 'batch_code':batch_code, 'location':location}, this.openFinish);
         }
     }
     this.menu.open = function(cb,view) {

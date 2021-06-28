@@ -112,8 +112,13 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
                 'date'=>array('timezone'=>$intl_timezone, 'format'=>'Y-m-d'),
                 'time'=>array('timezone'=>$intl_timezone, 'format'=>'H:i'),
                 '12hour'=>array('timezone'=>$intl_timezone, 'format'=>'g:i')),
-            'sums'=>array('duration'), 'countlists'=>array('wine_name')),
-        array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 'status', 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_notes')),
+            'sums'=>array('duration'), 
+//            'countlists'=>array('wine_name'),
+            ),
+        array('container'=>'orders', 'fname'=>'order_id', 'name'=>'order', 
+            'fields'=>array('order_id', 'customer_name', 'invoice_number', 'wine_name', 'duration', 
+                'status', 'bottling_flags', 'bottling_nocolour_flags', 'bottling_status', 'bottling_notes'),
+            ),
         ));
     if( $rc['stat'] != 'ok' ) {
         return $rc;
@@ -134,8 +139,8 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
         if( count($appointment['orders']) > 1 ) {
             $appointments[$aid]['subject'] .= ' (' . count($appointment['orders']) . ')';
         }
-        $appointments[$aid]['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['orders'][0]['invoice_number']);
-        $appointments[$aid]['subject'] .= ' - ' . $appointment['wine_name'];
+//        $appointments[$aid]['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $appointment['orders'][0]['invoice_number']);
+//        $appointments[$aid]['subject'] .= ' - ' . $appointment['wine_name'];
         $min_status = 255;
         $min_flags = 255;
         $min_order_status = 99;
@@ -163,6 +168,15 @@ function ciniki_wineproduction_hooks_appointments($ciniki, $tnid, $args) {
                 $appointments[$aid]['secondary_colour_text'] = '*';
             }
             $bottling_nocolour_flags |= $order['bottling_nocolour_flags'];
+            if( $onum == 0 ) {
+                $appointments[$aid]['subject'] .= ' - ' . preg_replace('/-\s*[A-Z]/', '', $order['invoice_number']);
+                $appointments[$aid]['subject'] .= ' - ' . $order['wine_name'];
+            } elseif( $order['invoice_number'] != $appointments[$aid]['orders'][0]['invoice_number'] ) {
+                $appointments[$aid]['subject'] .= ', ' . preg_replace('/-\s*[A-Z]/', '', $order['invoice_number']);
+                $appointments[$aid]['subject'] .= ' - ' . $order['wine_name'];
+            } else {
+                $appointments[$aid]['subject'] .= ', ' . $order['wine_name'];
+            }
         }
         for($i=1;$i<=8;$i++) {
             if( isset($settings["bottling.nocolour.flags.$i.name"]) && $settings["bottling.nocolour.flags.$i.name"] != '' 

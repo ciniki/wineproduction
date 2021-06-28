@@ -24,6 +24,7 @@ function ciniki_wineproduction_production($ciniki) {
         'action'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Action'),
         'order_id'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Order'),
         'batch_code'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Batch Code'),
+        'location'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Location'),
         'tsg_reading'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Transfer SG Reading'),
         'sg_reading'=>array('required'=>'no', 'blank'=>'yes', 'name'=>'Rack SG Reading'),
         'schedulestatus'=>array('required'=>'no', 'default'=>'', 'name'=>'Schedule Status'),

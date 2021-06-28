@@ -101,6 +101,9 @@ function ciniki_wineproduction_orderAction(&$ciniki, $tnid, $args) {
         $update_args['status'] = 20;
         $update_args['start_date'] = $todays_date;
         $update_args['batch_code'] = $args['batch_code'];
+        if( isset($args['location']) ) {
+            $update_args['location'] = $args['location'];
+        }
         $racking_autoschedule = "racking.autoschedule.madeon" . strtolower(date('D', strtotime($todays_date)));
         if( isset($settings[$racking_autoschedule]) && $settings[$racking_autoschedule] > 0 ) {
             $racking_date = new DateTime($todays_date);
