@@ -84,8 +84,11 @@ function ciniki_wineproduction_orderSearch($ciniki) {
         . "WHERE orders.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND orders.status < 60 ";
     if( is_numeric($args['start_needle']) ) {
-        $strsql .= "AND invoice_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "";
+        $strsql .= "AND ( "
+            . "invoice_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR invoice_number LIKE '0" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR invoice_number LIKE '00" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . ") ";
     } else {
         $strsql .= "AND ( "
             . "customers.first LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
