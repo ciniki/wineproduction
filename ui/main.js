@@ -804,6 +804,12 @@ function ciniki_wineproduction_main() {
             }},
         '_buttons':{'label':'', 'buttons':{
             'save':{'label':'Save order', 'fn':'M.ciniki_wineproduction_main.order.save();'},
+            'tag':{'label':'Print Tag', 'fn':'M.ciniki_wineproduction_main.order.halfsizeTagPrint();',
+                'visible':function() {M.modSetting('ciniki.wineproduction', 'tags.template') == 'halfpage' ? 'yes' : 'no';},
+                },
+            'tag':{'label':'Print Tag', 'fn':'M.ciniki_wineproduction_main.order.fourbysixTagPrint();',
+                'visible':function() {M.modSetting('ciniki.wineproduction', 'tags.template') == 'fourbysix' ? 'yes' : 'no';},
+                },
             }},
         };
     this.order.sectionData = function(s) {
@@ -864,6 +870,15 @@ function ciniki_wineproduction_main() {
             return 'M.ciniki_wineproduction_main.order.updateProduct(\'' + s + '\',\'' + f + '\',\'' + d.name.id + '\',\'' + escape(d.name.wine_name) + '\',\'' + d.name.wine_type + '\',\'' + d.name.kit_length + '\',\'' + d.name.order_flags + '\');';
         }
     };
+    //
+    // May need to add settings for download each tag format
+    //
+    this.order.halfpageTagPrint = function() {
+        M.api.openFile('ciniki.wineproduction.orderTagPDF', {'tnid':M.curTenantID, 'order_id':this.order_id});
+    }
+    this.order.fourbysixTagPrint = function() {
+        M.api.openFile('ciniki.wineproduction.orderTagPDF', {'tnid':M.curTenantID, 'order_id':this.order_id});
+    }
     this.order.updateProduct = function(s, field, product_id, wine_name, wine_type, kit_length, order_flags) {
         M.gE(this.panelUID + '_product_id').value = product_id;
         M.gE(this.panelUID + '_product_id_fkidstr').value = unescape(wine_name);

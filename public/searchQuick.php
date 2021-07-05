@@ -71,8 +71,11 @@ function ciniki_wineproduction_searchQuick($ciniki) {
         . "WHERE ciniki_wineproductions.tnid = '" . ciniki_core_dbQuote($ciniki, $args['tnid']) . "' "
         . "AND ciniki_wineproductions.status < 60 ";
     if( is_numeric($args['start_needle']) ) {
-        $strsql .= "AND invoice_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
-            . "";
+        $strsql .= "AND ("
+            . "invoice_number LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR invoice_number LIKE '0" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . "OR invoice_number LIKE '00" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
+            . ") ";
     } else {
         $strsql .= "AND ( ciniki_customers.first LIKE '" . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "
             . "OR ciniki_customers.first LIKE '% " . ciniki_core_dbQuote($ciniki, $args['start_needle']) . "%' "

@@ -72,6 +72,7 @@ function ciniki_wineproduction_settingsUpdate(&$ciniki) {
         'bottling.schedule.speed.medium',
         'bottling.schedule.speed.fast',
         'bottling.schedule.padding',            # The number of days extra to add when scheduling bottling, helps in display calendar
+        'tags.template',
         'racking.autoschedule.madeonsun',
         'racking.autoschedule.madeonmon',
         'racking.autoschedule.madeontue',

@@ -23,6 +23,13 @@ function ciniki_wineproduction_settings() {
                 'bottling.schedule.interval':{'label':'Interval', 'size':'small', 'hint':'15 or 30', 'type':'text'},
                 'bottling.schedule.batchduration':{'label':'Batch Time', 'size':'small', 'hint':'30', 'type':'text'},
             }},
+            '_tags':{'label':'Tags', 'fields':{
+                'tags.template':{'label':'Template', 'type':'select', 'options':{
+                    'none':'None', 
+                    'halfpage':'Half 8.5 x 11',
+                    'fourbysix':'4x6 Cards',
+                    }},
+            }},
             'racking.autoschedule':{'label':'Racking Auto-Schedule', 'fields':{
                 'racking.autoschedule.madeonsun':{'label':'Sun', 'type':'integer'},
                 'racking.autoschedule.madeonmon':{'label':'Mon', 'type':'integer'},
