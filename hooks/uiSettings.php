@@ -69,12 +69,12 @@ function ciniki_wineproduction_hooks_uiSettings($ciniki, $tnid, $args) {
             );
         $rsp['menu_items'][] = $menu_item;
 
-        $menu_item = array(
+/*        $menu_item = array(
             'priority'=>300,
             'label'=>'Old Wine Production', 
             'edit'=>array('app'=>'ciniki.wineproduction.oldmain'),
             );
-        $rsp['menu_items'][] = $menu_item; 
+        $rsp['menu_items'][] = $menu_item;  */
     } 
 
     //
