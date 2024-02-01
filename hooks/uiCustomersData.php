@@ -235,6 +235,7 @@ function ciniki_wineproduction_hooks_uiCustomersData($ciniki, $tnid, $args) {
     $rsp['tabs'][] = array(
         'id' => 'ciniki.wineproduction.notifications',
         'label' => 'Notifications',
+        'priority' => 1000,
         'sections' => array(
             'notifications' => array(
                 'label' => 'Notifications',
