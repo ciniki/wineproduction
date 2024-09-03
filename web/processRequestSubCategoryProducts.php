@@ -57,7 +57,7 @@ function ciniki_wineproduction_web_processRequestSubCategoryProducts(&$ciniki, $
         . "WHERE t1.tnid = '" . ciniki_core_dbQuote($ciniki, $tnid) . "' "
         . "AND t1.tag_type = 10 "
         . "AND t1.permalink = '" . ciniki_core_dbQuote($ciniki, $category['permalink']) . "' "
-        . "ORDER BY products.name COLLATE latin1_general_cs ASC, tags.tag_type, tags.tag_name "
+        . "ORDER BY products.name ASC, tags.tag_type, tags.tag_name "
         . "";
     $rc = ciniki_core_dbHashQueryIDTree($ciniki, $strsql, 'ciniki.products', array(
         array('container'=>'products', 'fname'=>'id', 
