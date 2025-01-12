@@ -32,7 +32,7 @@ function ciniki_wineproduction_reportShared($ciniki) {
     // check permission to run this function for this tenant
     //  
     ciniki_core_loadMethod($ciniki, 'ciniki', 'wineproduction', 'private', 'checkAccess');
-    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.reportCellarNights'); 
+    $rc = ciniki_wineproduction_checkAccess($ciniki, $args['tnid'], 'ciniki.wineproduction.reportShared'); 
     if( $rc['stat'] != 'ok' ) { 
         return $rc;
     }   
