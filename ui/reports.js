@@ -282,7 +282,7 @@ function ciniki_wineproduction_reports() {
                 || ((j == 5 || j == 6) && d.B.status == 60) 
                 || ((j == 7 || j == 8) && d.C.status == 60) 
                 ) {
-                return 'multiline statusgrey';
+                return 'multiline statuspurple';
             }
             if( ((j == 3 || j == 4) && d.bottling_status > 0 && d.bottling_status < 128 ) 
                 || ((j == 5 || j == 6) && d.B.bottling_status > 0 && d.B.bottling_status < 128 ) 
